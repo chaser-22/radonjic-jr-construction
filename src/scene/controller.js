@@ -187,6 +187,13 @@ export function createHouseScene(layer, canvas) {
     extra.accent.opacity = 0.08 + ghost * 0.72 + state.xray * 0.18;
     extra.ghostFillMat.opacity = 0.012 + ghost * 0.05;
 
+    const tileBuild = smooth(0.78, 0.93, state.build);
+    let tileOpacity = tileBuild;
+    if (state.focus && !["roof", "shell"].includes(state.focus)) tileOpacity *= 0.14;
+    if (state.xray > 0.02) tileOpacity *= 1 - state.xray * 0.34;
+    extra.roofTileMaterial.opacity = tileOpacity;
+    extra.roofTiles.visible = tileOpacity > 0.002;
+
     const craneAlpha =
       smooth(0.10, 0.20, state.build) * (1 - smooth(0.72, 0.84, state.build));
     extra.crane.visible = state.section === "hero" && craneAlpha > 0.01;
@@ -338,6 +345,8 @@ export function createHouseScene(layer, canvas) {
       canvas.removeEventListener("webglcontextrestored", onContextRestored);
       document.removeEventListener("visibilitychange", onVisibility);
       Object.values(ctx.textures).forEach((texture) => texture.dispose());
+      extra.roofTileGeometry?.dispose();
+      extra.roofTileMaterial?.dispose();
       renderer.dispose();
     }
   };
