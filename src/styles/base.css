@@ -54,7 +54,7 @@ img { display: block; width: 100%; }
 .house-layer {
   position: fixed;
   inset: 0;
-  z-index: 5;
+  z-index: 12;
   overflow: hidden;
   pointer-events: none;
   opacity: 1;
@@ -78,7 +78,7 @@ img { display: block; width: 100%; }
   opacity: .25;
   transition: opacity .25s ease;
 }
-.three-ready .house-fallback { opacity: 0; }
+.three-ready .house-fallback { opacity: .08; }
 .three-failed .house-fallback,
 .no-webgl .house-fallback { opacity: .55; }
 .house-fallback span { position: absolute; display: block; }

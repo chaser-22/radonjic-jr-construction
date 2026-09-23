@@ -12,8 +12,19 @@ const CYL = new THREE.CylinderGeometry(1, 1, 1, 10);
 
 export function canUseWebGL() {
   try {
-    return !!document.createElement("canvas").getContext("webgl2", { alpha: true });
-  } catch { return false; }
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("webgl2", {
+      alpha: true,
+      antialias: false,
+      depth: true,
+      stencil: false
+    });
+    if (!context) return false;
+    context.getExtension("WEBGL_lose_context")?.loseContext();
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function texture(kind) {
