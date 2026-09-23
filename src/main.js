@@ -213,13 +213,18 @@ let houseScene = null;
 if (canUseWebGL()) {
   try {
     houseScene = createHouseScene(houseLayer, houseLayer.querySelector("canvas"));
+    houseLayer.classList.remove("three-failed");
     houseLayer.classList.add("three-ready");
+    houseLayer.dataset.threeState = "ready";
   } catch (error) {
+    houseLayer.classList.remove("three-ready");
     houseLayer.classList.add("three-failed");
+    houseLayer.dataset.threeState = "failed";
     console.error("Three.js initialization failed", error);
   }
 } else {
   document.documentElement.classList.add("no-webgl");
+  houseLayer.dataset.threeState = "unsupported";
 }
 
 const hero = document.querySelector(".hero");

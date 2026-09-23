@@ -55,10 +55,14 @@ export function addFinish(ctx, xs, zs) {
   const hook=new THREE.Mesh(new THREE.BoxGeometry(1,1,1),dark); hook.scale.set(.025,2.2,.025); hook.position.set(3.15,-1.1,0); pivot.add(hook); crane.position.set(-5.1,-1.72,-1.4);
 
   const shadow=new THREE.Mesh(new THREE.PlaneGeometry(13,10),new THREE.ShadowMaterial({color:0,opacity:.16,transparent:true})); shadow.rotation.x=-Math.PI/2; shadow.position.y=-1.84; shadow.receiveShadow=true; ctx.groups.ground.add(shadow);
-  const grid=new THREE.GridHelper(16,32,0xf2b600,0x626762); grid.position.y=-1.82; (Array.isArray(grid.material)?grid.material:[grid.material]).forEach(mm=>{mm.transparent=true;mm.opacity=.13}); ctx.groups.ground.add(grid);
+  const grid=new THREE.GridHelper(16,32,0xf2b600,0x777b74); grid.position.y=-1.82; (Array.isArray(grid.material)?grid.material:[grid.material]).forEach(mm=>{mm.transparent=true;mm.opacity=.22;mm.depthWrite=false}); ctx.groups.ground.add(grid);
 
-  const ghost=new THREE.Group(); ctx.world.add(ghost); const ghostMat=new THREE.LineBasicMaterial({color:0xe8e5dc,transparent:true,opacity:.18}), accent=new THREE.LineBasicMaterial({color:0xf2b600,transparent:true,opacity:.4});
-  const ghostBox=(s,p,mat=ghostMat,r=null)=>{const l=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(...s)),mat);l.position.set(...p);if(r)l.rotation.set(...r);ghost.add(l)};
+  const ghost=new THREE.Group(); ctx.world.add(ghost);
+  const ghostMat=new THREE.LineBasicMaterial({color:0xf0eee8,transparent:true,opacity:.50,depthTest:false,depthWrite:false});
+  const accent=new THREE.LineBasicMaterial({color:0xf2b600,transparent:true,opacity:.84,depthTest:false,depthWrite:false});
+  const ghostFillMat=new THREE.MeshBasicMaterial({color:0xf2b600,transparent:true,opacity:.055,depthTest:false,depthWrite:false});
+  const ghostBox=(s,p,mat=ghostMat,r=null)=>{const l=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(...s)),mat);l.position.set(...p);if(r)l.rotation.set(...r);l.renderOrder=20;ghost.add(l)};
+  const ghostFill=new THREE.Mesh(new THREE.BoxGeometry(5.8,.16,3.95),ghostFillMat); ghostFill.position.set(0,-1.07,0); ghostFill.renderOrder=19; ghost.add(ghostFill);
   ghostBox([5.8,.24,3.95],[0,-1.07,0],accent); xs.forEach(x=>zs.forEach(z=>ghostBox([.29,4.85,.29],[x,1.46,z]))); ghostBox([5.46,.24,3.56],[0,2.04,0]); ghostBox([3.55,.16,4.86],[-1.18,4.7,0],accent,[0,0,-.5]); ghostBox([3.55,.16,4.86],[1.18,4.7,0],accent,[0,0,.5]);
-  return { crane,pivot,yellow,dark,grid,ghostMat,accent };
+  return { crane,pivot,yellow,dark,grid,ghostMat,accent,ghostFillMat };
 }
