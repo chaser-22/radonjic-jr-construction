@@ -247,7 +247,7 @@ function updateScrollState() {
   const progress = clamp01(-heroRect.top / distance);
 
   houseScene?.updateFromScroll(progress);
-  hero.style.setProperty("--hero-progress", progress.toFixed(4));
+  hero.style.setProperty("--hero-progress", progress.toFixed(4));\n  hero.style.setProperty("--hero-y", `${progress * -105}px`);\n  hero.style.setProperty("--hero-opacity", String(1 - progress * 0.68));
 
   if (buildPercent) buildPercent.textContent = `${String(Math.round(progress * 100)).padStart(3, "0")}%`;
   if (buildBar) buildBar.style.transform = `scaleX(${Math.max(0.01, progress)})`;
