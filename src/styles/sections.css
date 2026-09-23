@@ -159,7 +159,7 @@
 .structure .section-heading { grid-area: heading; }
 .stage-spacer { grid-area: stage; }
 .phase-list { grid-area: phases; }
-.structure .section-heading { position: sticky; top: 130px; align-self: start; }
+.structure .section-heading { position: relative; top: auto; align-self: start; }
 .structure .section-heading h2 { font-size: clamp(58px, 7vw, 118px); }
 .structure .section-heading h2 em { color: var(--yellow); }
 .section-description { max-width: 470px; margin: 28px 0 0; color: #b6bab1; font-size: 15px; line-height: 1.7; }
@@ -184,7 +184,7 @@
   gap: 10px;
   padding: 10px;
   border: 1px solid rgba(255,255,255,.10);
-  background: rgba(255,255,255,.025);
+  background: var(--ink);
 }
 
 .phase-list article {
@@ -196,7 +196,7 @@
   min-height: 104px;
   padding: 18px 20px;
   border: 1px solid rgba(255,255,255,.10);
-  background: rgba(16,17,15,.74);
+  background: #121310;
   overflow: hidden;
 }
 
@@ -251,7 +251,7 @@
 
 .phase-list article:hover {
   border-color: rgba(242,182,0,.28);
-  background: rgba(242,182,0,.045);
+  background: #17170f;
 }
 
 .work { padding: 150px 0 170px; }
@@ -487,4 +487,23 @@
 .contact-links a,
 .values-copy a {
   line-height: 1.25;
+}
+
+
+/* V14: phase cards must never reveal heading/3D/text underneath. */
+.phase-list {
+  position: relative;
+  z-index: 24;
+  isolation: isolate;
+}
+
+.phase-list::before {
+  display: none;
+}
+
+.phase-list article {
+  position: relative;
+  z-index: 1;
+  opacity: 1;
+  backdrop-filter: none;
 }
