@@ -19,7 +19,7 @@
   .brand { gap: 9px; padding: 4px 8px 4px 4px; }
   .brand-mark { width: 46px; height: 46px; font-size: 14px; }
   .brand-copy strong { font-size: 13px; }
-  .brand-copy span { font-size: 6.5px; }
+  .brand-copy span { font-size: 8px; }
   .header-cta { min-width: 104px; padding: 11px 12px; }
   .header-cta span { font-size: 0; }
   .header-cta span::after { content: "POZOVI"; font-size: 10px; }
@@ -29,7 +29,7 @@
   .hero-grid { background-size: 22vw 22vw; }
   .hero-content { top: 28vh; left: 15px; width: calc(100vw - 30px); }
   .hero h1 { font-size: clamp(64px, 19vw, 104px); }
-  .hero-intro { max-width: 340px; font-size: 13px; }
+  .hero-intro { max-width: 340px; font-size: 15px; }
   .hero-actions { width: min(360px, 100%); }
   .button { width: 100%; }
   .build-status { top: 14vh; right: 15px; width: 150px; }
@@ -90,7 +90,7 @@
     background: #0c0d0c;
     border-top: 1px solid rgba(255,255,255,.14);
   }
-  .mobile-contact a { display: grid; place-items: center; color: #f1efe9; font-size: 9px; font-weight: 800; }
+  .mobile-contact a { display: grid; place-items: center; color: #f7f5ef; font-size: 10px; font-weight: 800; }
   .mobile-contact a:first-child { background: var(--yellow); color: var(--ink); }
 }
 
@@ -110,4 +110,21 @@
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
   .reveal { opacity: 1; transform: none; transition: none; }
   .project-image img, .hero-content { transform: none !important; }
+}
+
+
+@media (max-width: 760px) {
+  .structure .section-heading::before,
+  .phase-list::before,
+  .services-head::before,
+  .service-list::before,
+  .contact-copy::before {
+    inset: -14px -10px;
+    background: rgba(16,17,15,.86);
+  }
+
+  .hero-content::before {
+    inset: -24px -12px;
+    background: linear-gradient(90deg, rgba(12,13,12,.80), rgba(12,13,12,.52) 72%, rgba(12,13,12,0));
+  }
 }
