@@ -90,9 +90,9 @@
   border: 1px solid rgba(255,255,255,.12);
   backdrop-filter: blur(10px);
   font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: .1em;
-  color: #d5d8d0;
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: #e0e3dc;
 }
 .build-status strong { color: var(--yellow); font-size: 10px; }
 .build-status i { grid-column: 1 / -1; height: 1px; background: rgba(255,255,255,.14); overflow: hidden; }
@@ -105,9 +105,9 @@
   align-items: center;
   gap: 14px;
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 600;
-  letter-spacing: .15em;
+  letter-spacing: .13em;
   color: #c7cac2;
 }
 .scroll-cue i { display: block; width: 52px; height: 1px; background: rgba(255,255,255,.20); position: relative; overflow: hidden; }
@@ -326,6 +326,7 @@
 .service-list,
 .contact-copy {
   position: relative;
+  isolation: isolate;
 }
 
 .structure .section-heading::before,
@@ -351,6 +352,7 @@
 }
 
 .hero-content {
+  isolation: isolate;
   text-shadow: 0 2px 26px rgba(0,0,0,.46);
 }
 
