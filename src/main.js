@@ -88,9 +88,7 @@ app.innerHTML = `
           <h2>SVAKA FAZA<br><em>IMA SVOJ RED.</em></h2>
           <p class="section-description">Kuća nije jedan potez. Ona je sistem u kojem svaka faza zavisi od prethodne.</p>
         </div>
-        <div class="stage-spacer" aria-hidden="true">
-          <span>STRUCTURAL VIEW</span><i></i><b>RJ / 02</b>
-        </div>
+        <div class="stage-spacer" aria-hidden="true"></div>
         <div class="phase-list reveal">
           <article><span>01</span><div><h3>Temelji</h3><p>Iskop, armatura i oslonac cijelog objekta.</p></div></article>
           <article><span>02</span><div><h3>Konstrukcija</h3><p>Stubovi, grede i ploče definišu geometriju.</p></div></article>
@@ -146,11 +144,7 @@ app.innerHTML = `
           `).join("")}
         </div>
 
-        <div class="service-stage" aria-hidden="true">
-          <div class="stage-top"><span>HOUSE / CAPABILITY</span><b data-active-service-code>01</b></div>
-          <div class="stage-crosshair"></div>
-          <p data-active-service-title>GRUBA GRADNJA</p>
-        </div>
+        <div class="service-stage" aria-hidden="true"></div>
       </div>
     </section>
 
@@ -314,8 +308,8 @@ function activateService(button) {
     item.classList.toggle("is-active", active);
     item.setAttribute("aria-pressed", String(active));
   });
-  serviceTitle.textContent = button.querySelector("strong").textContent.toUpperCase();
-  serviceCode.textContent = button.dataset.serviceCode;
+  if (serviceTitle) serviceTitle.textContent = button.querySelector("strong").textContent.toUpperCase();
+  if (serviceCode) serviceCode.textContent = button.dataset.serviceCode;
   houseScene?.setService(button.dataset.service);
 }
 

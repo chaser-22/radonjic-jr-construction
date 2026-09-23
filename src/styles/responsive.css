@@ -52,7 +52,7 @@
     gap: 40px;
   }
   .structure .section-heading { position: relative; top: auto; }
-  .stage-spacer { height: 52vh; min-height: 390px; }
+  .stage-spacer { height: 48vh; min-height: 340px; }
   .phase-list { margin-top: 0; }
 
   .work-intro > p { justify-self: start; }
@@ -70,7 +70,7 @@
   .service-row { grid-template-columns: 34px minmax(0, 1fr) 22px; padding: 18px 0; }
   .service-row p { grid-column: 2 / 4; margin-top: 4px; }
   .service-row i { grid-column: 3; grid-row: 1; }
-  .service-stage { height: 48vh; min-height: 360px; }
+  .service-stage { height: 44vh; min-height: 320px; }
 
   .process-grid { grid-template-columns: 1fr 1fr; }
   .process-grid article:nth-child(2) { border-right: 0; }
@@ -122,7 +122,6 @@
 
 @media (max-width: 760px) {
   .structure .section-heading::before,
-  .phase-list::before,
   .services-head::before,
   .service-list::before,
   .contact-copy::before {
@@ -174,15 +173,14 @@
 
 @media (max-width: 760px) {
   .phase-list {
-    gap: 8px;
-    padding: 8px;
+    padding: 0;
   }
 
   .phase-list article {
     grid-template-columns: 54px minmax(0, 1fr);
     gap: 14px;
     min-height: 94px;
-    padding: 16px 14px;
+    padding: 20px 0;
   }
 
   .phase-list > article > span {
@@ -208,7 +206,7 @@
   .phase-list article {
     grid-template-columns: 48px minmax(0, 1fr);
     gap: 12px;
-    padding: 14px 12px;
+    padding: 18px 0;
   }
 
   .phase-list > article > span {
