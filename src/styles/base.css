@@ -5,9 +5,9 @@
   --paper-2: #e8e4da;
   --yellow: #f2b600;
   --text: #f7f5ef;
-  --muted: #9a9d96;
+  --muted: #b7bab3;
   --dark-text: #141512;
-  --dark-muted: #666961;
+  --dark-muted: #5f625b;
   --line: rgba(255,255,255,.15);
   --dark-line: rgba(20,21,18,.16);
   --ease: cubic-bezier(.2,.72,.18,1);
@@ -201,3 +201,11 @@ img { display: block; width: 100%; }
 .header-cta i { font-style: normal; }
 .header-cta:hover,
 .header-cta:focus-visible { background: var(--yellow) !important; color: var(--ink) !important; border-color: var(--yellow) !important; outline: none; }
+
+
+/* Readability and keyboard polish */
+:where(a, button):focus-visible {
+  outline: 2px solid var(--yellow);
+  outline-offset: 3px;
+}
+h1, h2, h3, p { text-wrap: pretty; }
