@@ -74,14 +74,14 @@ export function createHouseScene(layer, canvas) {
   let failed = false;
 
   const anchors = [
-    ["hero", ".hero", 2.15, -0.24, 1.00, -0.43, 1, 0],
-    ["about", "#o-nama", 3.45, -0.58, 0.58, 0.16, 0.72, 0],
-    ["structure", "#konstrukcija", 2.55, -0.14, 0.78, 0.52, 0.98, 0.88],
-    ["work", "#radovi", 3.78, -0.62, 0.40, 1.02, 0.34, 0],
-    ["services", "#usluge", 2.65, -0.20, 0.75, -0.54, 0.98, 0.10],
-    ["values", "#vrijednosti", -3.15, -0.56, 0.50, 0.38, 0.62, 0],
-    ["process", "#proces", 3.35, -0.62, 0.46, -0.22, 0.52, 0],
-    ["contact", "#kontakt", 2.35, -0.26, 0.68, -0.08, 0.92, 0]
+    ["hero", ".hero", 2.85, -0.24, 0.96, -0.43, 1, 0],
+    ["about", "#o-nama", 3.75, -0.58, 0.50, 0.16, 0.26, 0],
+    ["structure", "#konstrukcija", 2.65, -0.14, 0.76, 0.52, 0.96, 0.88],
+    ["work", "#radovi", 4.05, -0.62, 0.34, 1.02, 0.18, 0],
+    ["services", "#usluge", 2.95, -0.20, 0.70, -0.54, 0.90, 0.10],
+    ["values", "#vrijednosti", -3.55, -0.56, 0.42, 0.38, 0.20, 0],
+    ["process", "#proces", 3.85, -0.62, 0.38, -0.22, 0.18, 0],
+    ["contact", "#kontakt", -3.05, -0.42, 0.50, 0.18, 0.28, 0]
   ]
     .map(([name, sel, x, y, scale, rotation, opacity, xray]) => ({
       name,
