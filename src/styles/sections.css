@@ -166,49 +166,28 @@
 .stage-spacer {
   height: 62vh;
   min-height: 520px;
-  border: 1px solid rgba(255,255,255,.11);
   position: relative;
-  background: linear-gradient(135deg, rgba(255,255,255,.025), transparent 45%);
 }
-.stage-spacer::before,
-.stage-spacer::after { content: ""; position: absolute; background: var(--yellow); }
-.stage-spacer::before { width: 28px; height: 1px; left: -1px; top: -1px; box-shadow: calc(100% + 0px) 0 0 var(--yellow); }
-.stage-spacer::after { width: 1px; height: 28px; left: -1px; top: -1px; }
-.stage-spacer > span,
-.stage-spacer > b { position: absolute; z-index: 2; bottom: 14px; font-family: var(--mono); font-size: 9px; font-weight: 600; letter-spacing: .12em; color: #c5c8c0; }
-.stage-spacer > span { left: 14px; }.stage-spacer > b { right: 14px; color: var(--yellow); }
-.stage-spacer > i { position: absolute; left: 50%; top: 50%; width: 110px; height: 110px; border: 1px solid rgba(255,255,255,.06); border-radius: 50%; transform: translate(-50%,-50%); }
 .phase-list {
   margin-top: 0;
   display: grid;
-  gap: 10px;
-  padding: 10px;
-  border: 1px solid rgba(255,255,255,.10);
-  background: var(--ink);
+  padding: 0;
+  background: transparent;
 }
 
 .phase-list article {
-  position: relative;
   display: grid;
   grid-template-columns: 64px minmax(0, 1fr);
   gap: 18px;
   align-items: center;
-  min-height: 104px;
-  padding: 18px 20px;
-  border: 1px solid rgba(255,255,255,.10);
-  background: #121310;
-  overflow: hidden;
+  min-height: 108px;
+  padding: 24px 0;
+  border-top: 1px solid rgba(255,255,255,.15);
+  background: transparent;
 }
 
-.phase-list article::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: var(--yellow);
-  opacity: .78;
+.phase-list article:last-child {
+  border-bottom: 1px solid rgba(255,255,255,.15);
 }
 
 .phase-list article > div {
@@ -217,13 +196,12 @@
 }
 
 .phase-list > article > span {
-  width: 52px;
-  height: 52px;
+  width: 48px;
+  height: 48px;
   display: grid;
   place-items: center;
   align-self: center;
-  border: 1px solid rgba(242,182,0,.46);
-  background: rgba(242,182,0,.08);
+  border: 1px solid rgba(242,182,0,.52);
   color: var(--yellow);
   font-family: var(--mono);
   font-size: 11px;
@@ -238,7 +216,6 @@
   font-size: clamp(19px, 1.55vw, 23px);
   line-height: 1.18;
   letter-spacing: -.03em;
-  overflow-wrap: normal;
 }
 
 .phase-list p {
@@ -247,11 +224,6 @@
   color: #d0d3cc;
   font-size: 14px;
   line-height: 1.6;
-}
-
-.phase-list article:hover {
-  border-color: rgba(242,182,0,.28);
-  background: #17170f;
 }
 
 .work { padding: 150px 0 170px; }
@@ -301,21 +273,26 @@
 .service-row i { font-style: normal; color: #c1c5bd; justify-self: end; }
 .service-row:hover,
 .service-row:focus-visible,
-.service-row.is-active { background: rgba(242,182,0,.055); padding-left: 14px; padding-right: 10px; outline: none; }
+.service-row.is-active {
+  background: transparent;
+  padding-left: 0;
+  padding-right: 0;
+  outline: none;
+}
+.service-row:hover strong,
+.service-row:focus-visible strong,
 .service-row.is-active strong,
-.service-row.is-active i { color: var(--yellow); }
+.service-row:hover i,
+.service-row:focus-visible i,
+.service-row.is-active i {
+  color: var(--yellow);
+}
 .service-stage {
   position: sticky;
   top: 132px;
   height: min(70vh, 720px);
-  border: 1px solid rgba(255,255,255,.11);
-  background: linear-gradient(135deg, rgba(255,255,255,.025), transparent 45%);
+  background: transparent;
 }
-.stage-top { position: absolute; z-index: 2; left: 15px; right: 15px; top: 14px; display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: .10em; color: #d3d6cf; }
-.stage-top b { color: var(--yellow); }
-.stage-crosshair { position: absolute; left: 50%; top: 50%; width: 1px; height: 58%; background: rgba(255,255,255,.035); transform: translate(-50%,-50%); }
-.stage-crosshair::after { content: ""; position: absolute; top: 50%; left: -26vw; width: 52vw; height: 1px; background: rgba(255,255,255,.035); }
-.service-stage > p { position: absolute; z-index: 2; left: 16px; bottom: 15px; margin: 0; font-size: 12px; font-weight: 800; color: #f7f5ef; }
 
 .values { min-height: 78vh; padding: 140px 0 150px; }
 .values-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, .62fr); gap: clamp(42px, 7vw, 108px); align-items: end; }
@@ -388,7 +365,6 @@
 
 /* Keep interactive copy readable even when the 3D model passes nearby. */
 .structure .section-heading,
-.phase-list,
 .services-head,
 .service-list,
 .contact-copy {
@@ -396,13 +372,12 @@
 }
 
 .service-row.is-active {
-  background: rgba(242,182,0,.09);
+  background: transparent;
 }
 
 
 /* V11 readability surfaces: subtle, section-colored protection behind dense copy. */
 .structure .section-heading,
-.phase-list,
 .services-head,
 .service-list,
 .contact-copy {
@@ -411,7 +386,6 @@
 }
 
 .structure .section-heading::before,
-.phase-list::before,
 .services-head::before,
 .service-list::before,
 .contact-copy::before {
@@ -490,20 +464,8 @@
 }
 
 
-/* V14: phase cards must never reveal heading/3D/text underneath. */
+/* Phase list remains above the global 3D layer without card chrome. */
 .phase-list {
   position: relative;
   z-index: 24;
-  isolation: isolate;
-}
-
-.phase-list::before {
-  display: none;
-}
-
-.phase-list article {
-  position: relative;
-  z-index: 1;
-  opacity: 1;
-  backdrop-filter: none;
 }
