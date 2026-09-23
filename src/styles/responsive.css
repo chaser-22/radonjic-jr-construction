@@ -1,14 +1,14 @@
-@media (max-width: 1050px) {
+@media (max-width: 1180px) {
   :root { --shell: calc(100vw - 48px); }
   .site-header { grid-template-columns: 1fr auto; min-height: 82px; padding-inline: 18px; }
   .desktop-nav { display: none; }
   .brand-mark { width: 54px; height: 54px; }
   .brand-copy strong { font-size: 16px; }
   .hero-content { width: min(680px, 68vw); }
-  .structure-layout { grid-template-columns: .86fr 1.14fr; }
+  .structure-layout { grid-template-columns: minmax(300px, .86fr) minmax(0, 1.14fr); column-gap: 42px; }
   .services-layout { grid-template-columns: 1fr; }
   .service-stage { position: relative; top: auto; height: 56vh; min-height: 440px; }
-  .service-row { grid-template-columns: 42px 1fr 1.4fr 22px; }
+  .service-row { grid-template-columns: 42px minmax(0, 1fr) minmax(0, 1.4fr) 22px; }
 }
 
 @media (max-width: 760px) {
@@ -28,7 +28,7 @@
   .hero { min-height: 156vh; }
   .hero-grid { background-size: 22vw 22vw; }
   .hero-content { top: 28vh; left: 15px; width: calc(100vw - 30px); }
-  .hero h1 { font-size: clamp(64px, 19vw, 104px); }
+  .hero h1 { font-size: clamp(58px, 17.5vw, 92px); line-height: .92; }
   .hero-intro { max-width: 340px; font-size: 15px; }
   .hero-actions { width: min(360px, 100%); }
   .button { width: 100%; }
@@ -37,16 +37,23 @@
 
   .about, .structure, .work, .services, .values, .process, .contact { padding-top: 105px; padding-bottom: 115px; }
   .about-layout, .work-intro, .contact-layout, .values-layout { grid-template-columns: 1fr; gap: 42px; }
-  .section-heading h2, .work-intro h2, .process-head h2, .services-head h2, .values-layout h2 { font-size: clamp(52px, 14.5vw, 88px); }
+  .section-heading h2, .work-intro h2, .process-head h2, .services-head h2, .values-layout h2 { font-size: clamp(46px, 13vw, 78px); line-height: .96; }
   .about-copy { justify-self: start; }
   .about-copy .lede { font-size: 22px; }
   .trust-row { grid-template-columns: 1fr; }
 
   .structure { min-height: auto; }
-  .structure-layout { grid-template-columns: 1fr; gap: 44px; }
+  .structure-layout {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "heading"
+      "stage"
+      "phases";
+    gap: 40px;
+  }
   .structure .section-heading { position: relative; top: auto; }
-  .stage-spacer { grid-column: 1; height: 52vh; min-height: 390px; }
-  .phase-list { grid-column: 1; margin-top: 0; }
+  .stage-spacer { height: 52vh; min-height: 390px; }
+  .phase-list { margin-top: 0; }
 
   .work-intro > p { justify-self: start; }
   .project-editorial { margin-top: 68px; gap: 78px; }
@@ -60,7 +67,7 @@
   .services-head .micro-label { grid-column: 1; }
   .services-head > p:last-child { margin: 0; }
   .services-layout { margin-top: 58px; }
-  .service-row { grid-template-columns: 34px 1fr 22px; padding: 18px 0; }
+  .service-row { grid-template-columns: 34px minmax(0, 1fr) 22px; padding: 18px 0; }
   .service-row p { grid-column: 2 / 4; margin-top: 4px; }
   .service-row i { grid-column: 3; grid-row: 1; }
   .service-stage { height: 48vh; min-height: 360px; }
@@ -70,9 +77,9 @@
   .process-grid article:nth-child(-n+2) { border-bottom: 1px solid var(--dark-line); }
 
   .contact { min-height: 86vh; align-items: center; }
-  .contact h2 { font-size: 18vw; }
+  .contact h2 { font-size: min(16vw, 76px); line-height: .96; }
   .contact-panel { padding: 12px; }
-  .phone-link { min-height: 72px; padding: 18px 16px; font-size: clamp(24px, 7.2vw, 36px); }
+  .phone-link { min-height: 72px; padding: 18px 16px; font-size: clamp(22px, 6.7vw, 34px); line-height: 1.15; }
   .contact-links { grid-template-columns: 1fr; }
   .contact-links a { padding: 16px 4px; }
   .contact-links a + a { padding-left: 4px; border-left: 0; }
@@ -127,4 +134,39 @@
     inset: -24px -12px;
     background: linear-gradient(90deg, rgba(12,13,12,.80), rgba(12,13,12,.52) 72%, rgba(12,13,12,0));
   }
+}
+
+
+@media (min-width: 761px) and (max-width: 1180px) {
+  .about-layout,
+  .work-intro,
+  .values-layout,
+  .contact-layout {
+    gap: 42px;
+  }
+
+  .about-layout { grid-template-columns: minmax(0, 1fr) minmax(300px, .82fr); }
+  .work-intro { grid-template-columns: minmax(0, 1fr) minmax(300px, .82fr); }
+  .values-layout { grid-template-columns: minmax(0, 1fr) minmax(280px, .72fr); }
+  .contact-layout { grid-template-columns: minmax(0, 1fr) minmax(340px, .9fr); }
+
+  .section-heading h2,
+  .work-intro h2,
+  .process-head h2,
+  .services-head h2,
+  .contact h2,
+  .values-layout h2 {
+    font-size: clamp(52px, 7vw, 84px);
+    line-height: .96;
+  }
+}
+
+@media (max-width: 390px) {
+  .site-header { gap: 8px; }
+  .header-cta { min-width: 74px; padding-inline: 10px; }
+  .brand-mark { width: 42px; height: 42px; }
+  .hero h1 { font-size: 16.5vw; }
+  .hero-actions { gap: 8px; }
+  .service-row strong { font-size: 16px; }
+  .phone-link { font-size: clamp(20px, 6.5vw, 28px); }
 }

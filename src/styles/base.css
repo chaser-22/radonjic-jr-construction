@@ -216,4 +216,19 @@ img { display: block; width: 100%; }
   outline: 2px solid var(--yellow);
   outline-offset: 3px;
 }
-h1, h2, h3, p { text-wrap: pretty; }
+h1, h2, h3 { text-wrap: balance; }
+p { text-wrap: pretty; }
+h1, h2, h3, p { overflow-wrap: break-word; }
+.site-header > *,
+.shell > *,
+.about-layout > *,
+.structure-layout > *,
+.work-intro > *,
+.project > *,
+.services-head > *,
+.services-layout > *,
+.values-layout > *,
+.process-grid > *,
+.contact-layout > * {
+  min-width: 0;
+}
