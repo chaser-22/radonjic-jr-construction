@@ -9,6 +9,8 @@ export const smooth = (a, b, v) => {
 
 const BOX = new THREE.BoxGeometry(1, 1, 1);
 const CYL = new THREE.CylinderGeometry(1, 1, 1, 16);
+const FOCUS_TINT = new THREE.Color(0xf2b600);
+const FOCUS_EMISSIVE = 0x6b4d00;
 
 export function canUseWebGL() {
   try {
@@ -199,7 +201,10 @@ export function registerPart(ctx, group, mesh, start, end, o={}) {
     tags: o.tags || [],
     fadeStart: o.fadeStart ?? null,
     fadeEnd: o.fadeEnd ?? null,
-    opacity: o.opacity ?? 1
+    opacity: o.opacity ?? 1,
+    baseColor: !Array.isArray(mesh.material) && mesh.material?.color
+      ? mesh.material.color.clone()
+      : null
   };
 
   ctx.groups[group].add(mesh);
@@ -229,6 +234,7 @@ export function outline(mesh, color=0x4b4a45, opacity=.14) {
     new THREE.LineBasicMaterial({ color, transparent:true, opacity, toneMapped:false })
   );
   line.userData.baseOpacity = opacity;
+  line.userData.baseColor = new THREE.Color(color);
   mesh.add(line);
   return line;
 }
@@ -239,6 +245,7 @@ export function outlineGeometry(mesh, geometry, color=0x4b4a45, opacity=.14) {
     new THREE.LineBasicMaterial({ color, transparent:true, opacity, toneMapped:false })
   );
   line.userData.baseOpacity = opacity;
+  line.userData.baseColor = new THREE.Color(color);
   mesh.add(line);
   return line;
 }
@@ -279,20 +286,24 @@ export function updatePart(mesh, build, focusWeights, xray, demolition) {
   const weights = focusWeights || {};
   const focusValues = Object.values(weights);
   const maxFocus = focusValues.length ? Math.max(0, ...focusValues) : 0;
+  let highlight = 0;
 
   if (maxFocus > .001) {
-    let match = 0;
     Object.entries(weights).forEach(([key, weight]) => {
-      if (weight <= .001 || key === "demolition") return;
+      if (weight <= .001) return;
+
       const eligible = key === "shell"
         ? d.tags.includes("shell") || d.tags.includes("concrete") || d.tags.includes("masonry")
-        : d.tags.includes(key);
-      if (eligible) match = Math.max(match, weight);
+        : key === "demolition"
+          ? d.tags.includes("masonry") || ["facade","glass"].includes(d.kind)
+          : d.tags.includes(key);
+
+      if (eligible) highlight = Math.max(highlight, weight);
     });
 
-    // At full focus, unrelated geometry rests at 24% opacity.
-    // During a hover change both old/new systems remain readable while they cross-fade.
-    opacity *= 1 - maxFocus * .76 + match * .76;
+    // Strong focus mode: unrelated systems fall almost completely away while the
+    // selected construction system stays fully legible.
+    opacity *= 1 - maxFocus * .92 + highlight * .92;
   }
 
   if (
@@ -301,32 +312,31 @@ export function updatePart(mesh, build, focusWeights, xray, demolition) {
   ) {
     mesh.position.x += Math.sign(d.basePosition.x || 1) * demolition * .62;
     mesh.position.y += demolition * .20;
-    opacity *= 1 - demolition * .32;
+    opacity *= 1 - demolition * .14;
   }
 
   if (Array.isArray(mesh.material)) {
     mesh.material.forEach((mat) => { mat.opacity = opacity; });
   } else if (mesh.material) {
     mesh.material.opacity = opacity;
+
+    if (d.baseColor && mesh.material.color) {
+      mesh.material.color.copy(d.baseColor).lerp(FOCUS_TINT, highlight * .24);
+    }
+
+    if (mesh.material.emissive) {
+      mesh.material.emissive.setHex(highlight > .01 ? FOCUS_EMISSIVE : 0);
+      mesh.material.emissiveIntensity = .72 * highlight;
+    }
   }
 
   mesh.children.forEach((child) => {
     if (child.material?.isLineBasicMaterial) {
-      child.material.opacity = (child.userData.baseOpacity ?? .14) * opacity;
+      const baseOpacity = child.userData.baseOpacity ?? .14;
+      child.material.opacity = Math.min(1, baseOpacity * opacity * (1 + highlight * 3.4));
+      if (child.userData.baseColor) {
+        child.material.color.copy(child.userData.baseColor).lerp(FOCUS_TINT, highlight * .92);
+      }
     }
   });
-
-  if (mesh.material?.emissive) {
-    let highlight = 0;
-    Object.entries(focusWeights || {}).forEach(([key, weight]) => {
-      if (key !== "demolition" && d.tags.includes(key)) highlight = Math.max(highlight, weight);
-      if (key === "shell" && (
-        d.tags.includes("shell") ||
-        d.tags.includes("concrete") ||
-        d.tags.includes("masonry")
-      )) highlight = Math.max(highlight, weight);
-    });
-    mesh.material.emissive.setHex(highlight > .01 ? 0x302200 : 0);
-    mesh.material.emissiveIntensity = .22 * highlight;
-  }
 }
