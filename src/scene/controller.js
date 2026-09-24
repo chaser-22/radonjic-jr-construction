@@ -55,8 +55,7 @@ export function createHouseScene(layer, canvas) {
     canvas,
     antialias: quality.name !== "phone",
     alpha: true,
-    premultipliedAlpha: true,
-    powerPreference: quality.name === "high" ? "high-performance" : "default"
+    premultipliedAlpha: true
   });
 
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, quality.dpr));
