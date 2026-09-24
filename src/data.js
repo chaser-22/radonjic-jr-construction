@@ -25,8 +25,8 @@ export const projects = [
     number: "03",
     title: "Zidanje",
     category: "Zidovi",
-    image: "https://images.pexels.com/photos/35281188/pexels-photo-35281188.jpeg",
-    position: "center 48%",
+    image: "https://images.pexels.com/photos/30081237/pexels-photo-30081237.jpeg",
+    position: "center 50%",
     fallback: "https://images.pexels.com/photos/9784169/pexels-photo-9784169.jpeg",
     text: "Nosivi i pregradni zidovi, otvori i priprema za naredne faze objekta."
   },
@@ -34,8 +34,8 @@ export const projects = [
     number: "04",
     title: "Krovovi",
     category: "Krov",
-    image: "https://images.pexels.com/photos/38749917/pexels-photo-38749917/free-photo-of-roof-construction-worker-in-action-against-clear-sky.jpeg",
-    position: "center 42%",
+    image: "https://images.pexels.com/photos/31771166/pexels-photo-31771166.jpeg",
+    position: "center 46%",
     fallback: "https://images.pexels.com/photos/9784169/pexels-photo-9784169.jpeg",
     text: "Krovna konstrukcija, izolacija, letvanje i završno pokrivanje."
   }
