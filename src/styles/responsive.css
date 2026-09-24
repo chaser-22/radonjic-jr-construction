@@ -168,8 +168,8 @@
   }
 
   .hero {
-    min-height: max(132svh, 780px);
-    min-height: max(132dvh, 780px);
+    min-height: max(122svh, 720px);
+    min-height: max(122dvh, 720px);
   }
 
   .hero-grid {
@@ -844,5 +844,64 @@
   .project-image img,
   .hero-content {
     transform: none !important;
+  }
+}
+
+
+@media (min-width: 761px) and (max-width: 900px) {
+  :root { --shell: calc(100vw - 40px); }
+
+  .hero-content {
+    width: min(620px, 72vw);
+  }
+
+  .about-layout,
+  .work-intro,
+  .values-layout,
+  .contact-layout,
+  .structure-layout {
+    grid-template-columns: 1fr;
+    gap: 38px;
+  }
+
+  .structure-layout {
+    grid-template-areas:
+      "heading"
+      "stage"
+      "phases";
+  }
+
+  .stage-spacer {
+    height: min(48svh, 440px);
+    min-height: 340px;
+  }
+
+  .project,
+  .project:nth-child(even) {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+
+  .project:nth-child(even) .project-image,
+  .project:nth-child(even) .project-copy {
+    order: initial;
+  }
+
+  .project-image {
+    height: auto;
+    aspect-ratio: 16 / 10;
+  }
+
+  .project-image img {
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .process-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .contact {
+    min-height: auto;
   }
 }
