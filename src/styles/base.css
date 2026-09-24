@@ -280,3 +280,31 @@ a, button { -webkit-tap-highlight-color: transparent; }
   width: 16px;
   height: 16px;
 }
+
+
+/* V22 premium architectural loader */
+.site-loader {
+  isolation: isolate;
+}
+.loader-inner {
+  position: relative;
+}
+.loader-inner::before {
+  content: "";
+  position: absolute;
+  left: -36px;
+  top: -36px;
+  width: 1px;
+  height: 150px;
+  background: linear-gradient(to bottom, transparent, rgba(242,182,0,.46), transparent);
+}
+.loader-name {
+  font-family: var(--sans);
+}
+.loader-meta,
+.loader-row {
+  font-family: var(--mono);
+}
+.site-ready .house-canvas {
+  transition-duration: .48s;
+}

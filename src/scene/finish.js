@@ -52,8 +52,8 @@ function addGable(ctx, group, z, depth, materialRef, start, end, kind) {
 }
 
 function addRoofTiles(ctx) {
-  const rows = ctx.low ? 6 : 10;
-  const cols = ctx.low ? 8 : 12;
+  const rows = ctx.quality.roofRows || (ctx.low ? 7 : 12);
+  const cols = ctx.quality.roofCols || (ctx.low ? 10 : 16);
   const total = rows * cols * 2;
   const tileLength = ROOF.slope / rows * 1.08;
   const tileDepth = ROOF.depth / cols * 1.08;
@@ -72,6 +72,7 @@ function addRoofTiles(ctx) {
   mesh.receiveShadow = true;
 
   const dummy = new THREE.Object3D();
+  const entries = [];
   let index = 0;
 
   for (const side of [-1, 1]) {
@@ -97,14 +98,21 @@ function addRoofTiles(ctx) {
         dummy.rotation.set(0, 0, rotation);
         dummy.scale.set(.98, 1, .98);
         dummy.updateMatrix();
-        mesh.setMatrixAt(index++, dummy.matrix);
+        mesh.setMatrixAt(index, dummy.matrix);
+        entries.push({
+          position: dummy.position.clone(),
+          rotation: dummy.rotation.clone(),
+          scale: dummy.scale.clone(),
+          start: .755 + t * .155 + (side > 0 ? .008 : 0)
+        });
+        index += 1;
       }
     }
   }
 
   mesh.instanceMatrix.needsUpdate = true;
   ctx.groups.roof.add(mesh);
-  return { mesh, material, geometry };
+  return { mesh, material, geometry, entries, dummy };
 }
 
 export function addFinish(ctx, xs, zs) {
@@ -170,7 +178,13 @@ export function addFinish(ctx, xs, zs) {
   outline(leftPanel,0x111414,.13);
   outline(rightPanel,0x111414,.13);
 
-  // Ridge, gutters and downpipes make the roof read as a real build rather than two floating slabs.
+  // Fascia boards, ridge and rainwater goods make the roof read like a real European residential build.
+  [-ROOF.halfRun, ROOF.halfRun].forEach((x, i) => {
+    box(ctx,"roofFrame",[.12,.24,ROOF.depth+.04],[x,ROOF.eaveY-.11,0],m.timber,.72+i*.004,.82+i*.004,{
+      axis:"z",tags:["roof","shell"]
+    });
+  });
+
   box(ctx,"roof",[.20,.16,ROOF.depth+.10],[0,ROOF.ridgeY+.055,0],m.steel,.79,.87,{
     axis:"z",tags:["roof"]
   });
@@ -236,8 +250,9 @@ export function addFinish(ctx, xs, zs) {
   ];
 
   windows.forEach(([x,y,z,w,h],i)=>{
-    const pane=box(ctx,"glass",[w,h,.06],[x,y,z],m.glass,.86+i*.008,.95+i*.005,{
-      tags:["shell"],kind:"glass",castShadow:false
+    // Recess the glass behind the facade plane and add a sill/reveal for realistic depth.
+    const pane=box(ctx,"glass",[w,h,.045],[x,y,z-.085],m.glass,.86+i*.008,.95+i*.005,{
+      tags:["shell"],kind:"glass",castShadow:false,reveal:"fade"
     });
     pane.material=m.glass.clone();
 
@@ -247,11 +262,12 @@ export function addFinish(ctx, xs, zs) {
     box(ctx,"details",[fw,.05,.08],[x,y-fh/2,1.77],m.dark,.86,.95,{axis:"x",tags:["shell"]});
     box(ctx,"details",[.05,fh,.08],[x-fw/2,y,1.77],m.dark,.86,.95,{tags:["shell"]});
     box(ctx,"details",[.05,fh,.08],[x+fw/2,y,1.77],m.dark,.86,.95,{tags:["shell"]});
+    box(ctx,"details",[fw+.10,.055,.20],[x,y-fh/2-.055,1.72],m.plasterDark,.87,.96,{axis:"x",tags:["shell"],reveal:"x"});
   });
 
   // Small attic window centered in the gable.
-  const attic=box(ctx,"glass",[.74,.62,.045],[0,4.43,1.79],m.glass,.88,.96,{
-    tags:["shell"],kind:"glass",castShadow:false
+  const attic=box(ctx,"glass",[.74,.62,.04],[0,4.43,1.71],m.glass,.88,.96,{
+    tags:["shell"],kind:"glass",castShadow:false,reveal:"fade"
   });
   attic.material=m.glass.clone();
   box(ctx,"details",[.86,.045,.075],[0,4.76,1.82],m.dark,.89,.97,{axis:"x",tags:["shell"]});
@@ -259,8 +275,10 @@ export function addFinish(ctx, xs, zs) {
   box(ctx,"details",[.045,.70,.075],[-.43,4.43,1.82],m.dark,.89,.97,{tags:["shell"]});
   box(ctx,"details",[.045,.70,.075],[.43,4.43,1.82],m.dark,.89,.97,{tags:["shell"]});
 
-  box(ctx,"details",[.82,1.86,.08],[.02,.38,1.75],m.timber,.87,.96,{tags:["shell"]});
+  box(ctx,"details",[.82,1.86,.08],[.02,.38,1.75],m.timber,.87,.96,{tags:["shell"],reveal:"fade"});
+  box(ctx,"details",[.70,1.68,.045],[.02,.39,1.70],m.dark,.89,.97,{tags:["shell"],reveal:"fade"});
   box(ctx,"details",[1.42,.11,.82],[.02,1.46,1.86],m.dark,.89,.97,{axis:"z",tags:["shell"]});
+  box(ctx,"details",[1.54,.09,.12],[.02,1.42,2.22],m.steel,.90,.98,{axis:"x",tags:["shell"]});
 
   box(ctx,"details",[3.26,.16,.72],[0,2.13,1.76],m.concrete,.76,.84,{
     axis:"x",tags:["concrete","shell"]
@@ -417,6 +435,7 @@ export function addFinish(ctx, xs, zs) {
     ghostFillMat,
     roofTiles:roofTiles.mesh,
     roofTileMaterial:roofTiles.material,
-    roofTileGeometry:roofTiles.geometry
+    roofTileGeometry:roofTiles.geometry,
+    roofTileData:roofTiles
   };
 }

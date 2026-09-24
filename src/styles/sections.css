@@ -632,3 +632,18 @@
   font-size: 10px;
   letter-spacing: .12em;
 }
+
+
+/* V22 service interaction polish — match the Rušenje motion cadence. */
+.service-row strong,
+.service-row > span,
+.service-row i,
+.service-row p {
+  transition: color .34s var(--ease), opacity .34s var(--ease);
+}
+.service-row {
+  transition:
+    padding .34s var(--ease),
+    background .34s var(--ease),
+    border-color .34s var(--ease);
+}

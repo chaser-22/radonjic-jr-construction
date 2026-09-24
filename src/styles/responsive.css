@@ -1004,3 +1004,16 @@
     height: 14px;
   }
 }
+
+
+@media (max-width: 760px) {
+  .loader-inner::before {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-loader {
+    transition: none !important;
+  }
+}

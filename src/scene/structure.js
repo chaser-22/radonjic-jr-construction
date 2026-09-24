@@ -26,15 +26,22 @@ export function addStructure(ctx) {
   const xs=[-2.35,0,2.35];
   const zs=[-1.35,1.35];
 
-  xs.forEach((x,xi)=>zs.forEach((z,zi)=>
+  xs.forEach((x,xi)=>zs.forEach((z,zi)=>{
     [-.07,.07].forEach((ox)=>[-.07,.07].forEach((oz)=>
       cylinder(ctx,"temporary",.018,3.6,[x+ox,.02,z+oz],m.rebar,.07+xi*.004+zi*.002,.16,{
         tags:["foundation","concrete","shell"],
         fadeStart:.30,
         fadeEnd:.42
       })
-    ))
-  ));
+    ));
+    if (!ctx.low) {
+      for (let y=-1.15;y<1.55;y+=.34) {
+        box(ctx,"temporary",[.19,.018,.19],[x,y,z],m.rebar,.085,.17,{
+          axis:"all",tags:["foundation","concrete","shell"],fadeStart:.30,fadeEnd:.42,castShadow:false
+        });
+      }
+    }
+  }));
 
   outline(
     box(ctx,"foundation",[5.82,.24,3.95],[0,-1.07,0],m.concrete,.12,.21,{
@@ -70,6 +77,9 @@ export function addStructure(ctx) {
     0x55534f,
     .13
   );
+  // Visible slab edge gives the floor plate real thickness from oblique camera angles.
+  box(ctx,"concrete",[5.58,.34,.16],[0,2.04,1.78],m.concreteDark,.36,.45,{axis:"x",tags:["concrete","shell"]});
+  box(ctx,"concrete",[5.58,.34,.16],[0,2.04,-1.78],m.concreteDark,.365,.455,{axis:"x",tags:["concrete","shell"]});
 
   [-1.95,0,1.95].forEach((x,xi)=>[-1.12,1.12].forEach((z,zi)=>
     box(ctx,"concrete",[.25,1.74,.25],[x,2.98,z],m.concrete,.39+xi*.006+zi*.003,.50+xi*.006+zi*.003,{
