@@ -7,28 +7,32 @@ export const projects = [
     number: "01",
     title: "Gruba gradnja",
     category: "Konstrukcija",
-    image: "https://images.pexels.com/photos/36833961/pexels-photo-36833961.jpeg?auto=compress&cs=tinysrgb&w=2400",
+    image: "https://images.unsplash.com/photo-1772381617907-548a1b6ccca3?auto=format&fit=crop&q=82&w=2400",
+    position: "center 48%",
     text: "Temelji, ploče, zidovi i kompletna nosiva konstrukcija objekta."
   },
   {
     number: "02",
     title: "Temelji i beton",
     category: "Betonski radovi",
-    image: "https://images.pexels.com/photos/18283441/pexels-photo-18283441.jpeg?auto=compress&cs=tinysrgb&w=2400",
+    image: "https://images.unsplash.com/photo-1743130940792-7b0fd1d56e06?auto=format&fit=crop&q=82&w=2400",
+    position: "center 58%",
     text: "Priprema, armiranje i betoniranje sa urednom geometrijom i jasnim fazama rada."
   },
   {
     number: "03",
     title: "Zidanje",
     category: "Zidovi",
-    image: "https://images.pexels.com/photos/35281188/pexels-photo-35281188.jpeg?auto=compress&cs=tinysrgb&w=2400",
+    image: "https://images.unsplash.com/photo-1755290315362-6bc203937fd7?auto=format&fit=crop&q=82&w=2400",
+    position: "center 48%",
     text: "Nosivi i pregradni zidovi, otvori i priprema za naredne faze objekta."
   },
   {
     number: "04",
     title: "Krovovi",
     category: "Krov",
-    image: "https://images.pexels.com/photos/38749917/pexels-photo-38749917.jpeg?auto=compress&cs=tinysrgb&w=2400",
+    image: "https://images.unsplash.com/photo-1763665814485-a0a1b6f51ed7?auto=format&fit=crop&q=82&w=2400",
+    position: "center 44%",
     text: "Krovna konstrukcija, izolacija, letvanje i završno pokrivanje."
   }
 ];

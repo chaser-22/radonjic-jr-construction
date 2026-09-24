@@ -533,3 +533,55 @@
   position: relative;
   z-index: 24;
 }
+
+
+/* V18 — lighter, architectural motion cues. */
+.header-cta .ui-arrow,
+.button .ui-arrow,
+.phone-link .ui-arrow {
+  transition: transform .2s var(--ease);
+}
+.header-cta:hover .ui-arrow,
+.header-cta:focus-visible .ui-arrow,
+.button-primary:hover .ui-arrow,
+.button-primary:focus-visible .ui-arrow,
+.phone-link:hover .ui-arrow,
+.phone-link:focus-visible .ui-arrow {
+  transform: translate(2px, -2px);
+}
+.button-secondary:hover .ui-arrow-down,
+.button-secondary:focus-visible .ui-arrow-down {
+  transform: translateY(2px);
+}
+
+.project-copy i,
+.service-row i,
+.values-copy a span,
+.contact-links a span {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+.project-copy i .ui-arrow,
+.service-row i .ui-arrow,
+.values-copy a .ui-arrow,
+.contact-links a .ui-arrow {
+  width: 15px;
+  height: 15px;
+}
+.project-copy i,
+.service-row i {
+  opacity: .72;
+}
+.project:hover .project-copy i,
+.service-row:hover i,
+.service-row:focus-visible i,
+.service-row.is-active i {
+  opacity: 1;
+}
+.project-image img {
+  transition: transform .65s var(--ease), filter .3s ease;
+}
+.project:hover .project-image img {
+  filter: saturate(.90) contrast(1.04);
+}

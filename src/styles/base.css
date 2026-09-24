@@ -262,3 +262,21 @@ h1, h2, h3, p { overflow-wrap: break-word; }
 /* Mobile viewport and tap behavior */
 html { -webkit-text-size-adjust: 100%; }
 a, button { -webkit-tap-highlight-color: transparent; }
+
+
+/* V18 — consistent professional action arrows (never emoji glyphs). */
+.ui-arrow {
+  width: 17px;
+  height: 17px;
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.65;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  overflow: visible;
+}
+.ui-arrow-down {
+  width: 16px;
+  height: 16px;
+}
