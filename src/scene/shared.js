@@ -8,7 +8,7 @@ export const smooth = (a, b, v) => {
 };
 
 const BOX = new THREE.BoxGeometry(1, 1, 1);
-const CYL = new THREE.CylinderGeometry(1, 1, 1, 12);
+const CYL = new THREE.CylinderGeometry(1, 1, 1, 16);
 
 export function canUseWebGL() {
   try {
@@ -27,108 +27,146 @@ export function canUseWebGL() {
   }
 }
 
-function texture(kind) {
+function seededNoise(seed) {
+  let state = seed >>> 0;
+  return () => {
+    state = (state * 1664525 + 1013904223) >>> 0;
+    return state / 4294967296;
+  };
+}
+
+function makeTexture(kind, size) {
   const c = document.createElement("canvas");
-  c.width = c.height = 256;
+  c.width = c.height = size;
   const x = c.getContext("2d");
+  const rand = seededNoise(kind.split("").reduce((a, ch) => a + ch.charCodeAt(0), 0) * 9973);
+  const s = size / 256;
 
   if (kind === "concrete") {
-    x.fillStyle = "#bbb7ad";
-    x.fillRect(0, 0, 256, 256);
-    for (let i = 0; i < 2200; i++) {
-      const v = 135 + Math.floor(Math.random() * 75);
-      x.fillStyle = `rgba(${v},${v},${v},${.02 + Math.random() * .05})`;
-      x.fillRect(Math.random()*256, Math.random()*256, 1 + Math.random()*2, 1 + Math.random()*2);
+    x.fillStyle = "#b9b6ae";
+    x.fillRect(0, 0, size, size);
+    for (let i = 0; i < size * 10; i++) {
+      const v = 112 + Math.floor(rand() * 102);
+      const alpha = .018 + rand() * .065;
+      const r = (.55 + rand() * 1.7) * s;
+      x.fillStyle = `rgba(${v},${v},${v},${alpha})`;
+      x.fillRect(rand() * size, rand() * size, r, r);
+    }
+    x.strokeStyle = "rgba(70,72,68,.055)";
+    x.lineWidth = Math.max(1, s);
+    for (let i = 0; i < 9; i++) {
+      x.beginPath();
+      const y = rand() * size;
+      x.moveTo(0, y);
+      x.bezierCurveTo(size*.28, y+rand()*8*s, size*.72, y-rand()*8*s, size, y+rand()*5*s);
+      x.stroke();
     }
   } else if (kind === "brick") {
-    x.fillStyle = "#9b5a3c";
-    x.fillRect(0, 0, 256, 256);
-    x.strokeStyle = "rgba(235,215,190,.42)";
-    x.lineWidth = 2;
-    for (let y = 0; y <= 256; y += 32) {
-      x.beginPath();
-      x.moveTo(0, y);
-      x.lineTo(256, y);
-      x.stroke();
-      const off = (y/32)%2 ? 32 : 0;
-      for (let xx = -64 + off; xx <= 256; xx += 64) {
-        x.beginPath();
-        x.moveTo(xx, y);
-        x.lineTo(xx, y + 32);
-        x.stroke();
+    x.fillStyle = "#98573b";
+    x.fillRect(0, 0, size, size);
+    const course = 32 * s;
+    const brick = 64 * s;
+    x.strokeStyle = "rgba(226,211,192,.56)";
+    x.lineWidth = Math.max(1.2, 1.8*s);
+    for (let y = 0; y <= size; y += course) {
+      x.beginPath(); x.moveTo(0, y); x.lineTo(size, y); x.stroke();
+      const off = (Math.round(y/course) % 2) ? brick/2 : 0;
+      for (let xx = -brick + off; xx <= size; xx += brick) {
+        x.beginPath(); x.moveTo(xx, y); x.lineTo(xx, y + course); x.stroke();
       }
     }
-  } else if (kind === "roof") {
-    x.fillStyle = "#252927";
-    x.fillRect(0, 0, 256, 256);
-    x.strokeStyle = "rgba(255,255,255,.09)";
-    x.lineWidth = 1;
-    for (let y = 0; y < 256; y += 24) {
-      x.beginPath();
-      x.moveTo(0, y);
-      x.lineTo(256, y);
-      x.stroke();
+    for (let i=0;i<size*3;i++) {
+      x.fillStyle = `rgba(62,35,27,${.018+rand()*.045})`;
+      x.fillRect(rand()*size,rand()*size,(1+rand()*3)*s,(1+rand()*2)*s);
     }
-    for (let xx = 0; xx < 256; xx += 42) {
-      x.beginPath();
-      x.moveTo(xx, 0);
-      x.lineTo(xx, 256);
-      x.stroke();
+  } else if (kind === "roof") {
+    x.fillStyle = "#292d2b";
+    x.fillRect(0, 0, size, size);
+    x.strokeStyle = "rgba(255,255,255,.10)";
+    x.lineWidth = Math.max(1, s);
+    for (let y = 0; y < size; y += 22*s) {
+      x.beginPath(); x.moveTo(0,y); x.lineTo(size,y); x.stroke();
+    }
+    for (let xx = 0; xx < size; xx += 38*s) {
+      x.beginPath(); x.moveTo(xx,0); x.lineTo(xx,size); x.stroke();
+    }
+    for (let i=0;i<size;i++) {
+      const v=28+Math.floor(rand()*25);
+      x.fillStyle=`rgba(${v},${v+3},${v+2},.05)`;
+      x.fillRect(rand()*size,rand()*size,(1+rand()*4)*s,(1+rand()*2)*s);
+    }
+  } else if (kind === "wood") {
+    x.fillStyle = "#73543a";
+    x.fillRect(0,0,size,size);
+    for(let i=0;i<42;i++){
+      const y=(i/42)*size + (rand()-.5)*3*s;
+      x.strokeStyle=`rgba(${74+Math.floor(rand()*50)},${47+Math.floor(rand()*32)},${28+Math.floor(rand()*25)},.18)`;
+      x.lineWidth=Math.max(.7,1.1*s);
+      x.beginPath(); x.moveTo(0,y); x.bezierCurveTo(size*.3,y+rand()*4*s,size*.7,y-rand()*4*s,size,y+rand()*3*s); x.stroke();
     }
   } else {
-    x.fillStyle = "#e0ddd4";
-    x.fillRect(0, 0, 256, 256);
-    for (let i = 0; i < 800; i++) {
-      x.fillStyle = `rgba(60,60,55,${Math.random()*.035})`;
-      x.fillRect(Math.random()*256, Math.random()*256, 1, 1);
+    x.fillStyle = "#dfdcd3";
+    x.fillRect(0, 0, size, size);
+    for (let i = 0; i < size * 4; i++) {
+      const tone=50+Math.floor(rand()*45);
+      x.fillStyle = `rgba(${tone},${tone},${tone-3},${rand()*.028})`;
+      x.fillRect(rand()*size, rand()*size, Math.max(1,s), Math.max(1,s));
     }
   }
 
   const t = new THREE.CanvasTexture(c);
   t.colorSpace = THREE.SRGBColorSpace;
   t.wrapS = t.wrapT = THREE.RepeatWrapping;
-  t.repeat.set(kind === "roof" ? 4 : 2.5, kind === "roof" ? 3 : 2.5);
+  const repeat = kind === "roof" ? [4.8, 3.4] : kind === "wood" ? [1.2, 5] : [2.8, 2.8];
+  t.repeat.set(...repeat);
+  t.anisotropy = 4;
   return t;
 }
 
-const material = (color, roughness, metalness=0, map=null) =>
+const material = (color, roughness, metalness=0, map=null, extra={}) =>
   new THREE.MeshStandardMaterial({
     color,
     roughness,
     metalness,
     map,
     transparent: true,
-    opacity: 1
+    opacity: 1,
+    ...extra
   });
 
-export function createBuildContext(world, low) {
+export function createBuildContext(world, quality={}) {
+  const textureSize = quality.textureSize || 256;
   const textures = {
-    concrete: texture("concrete"),
-    brick: texture("brick"),
-    roof: texture("roof"),
-    plaster: texture("plaster")
+    concrete: makeTexture("concrete", textureSize),
+    brick: makeTexture("brick", textureSize),
+    roof: makeTexture("roof", textureSize),
+    plaster: makeTexture("plaster", textureSize),
+    wood: makeTexture("wood", textureSize)
   };
 
   const m = {
-    concrete: material(0xc3bfb5,.88,.02,textures.concrete),
-    concreteDark: material(0x79766e,.92,.01,textures.concrete),
-    brick: material(0x9b5b3d,.92,0,textures.brick),
-    plaster: material(0xe3dfd5,.86,.01,textures.plaster),
-    plasterDark: material(0xa7a49c,.88,.01,textures.plaster),
-    steel: material(0x3c4140,.46,.68),
-    rebar: material(0x5a3d33,.55,.48),
-    timber: material(0x75583d,.78,.02),
-    roof: material(0x252a29,.72,.12,textures.roof),
-    yellow: material(0xf2b600,.5,.18),
-    dark: material(0x181b1a,.62,.32)
+    concrete: material(0xc5c1b8,.91,.015,textures.concrete),
+    concreteDark: material(0x7d7a73,.94,.01,textures.concrete),
+    brick: material(0xa15c3c,.93,0,textures.brick),
+    plaster: material(0xe3e0d7,.89,.005,textures.plaster),
+    plasterDark: material(0xa4a198,.91,.005,textures.plaster),
+    steel: material(0x3a403f,.34,.72,null,{envMapIntensity:.7}),
+    rebar: material(0x604035,.52,.54),
+    timber: material(0x76563a,.80,.015,textures.wood),
+    roof: material(0x292e2c,.76,.10,textures.roof),
+    yellow: material(0xf2b600,.48,.16),
+    dark: material(0x171a19,.50,.38)
   };
 
   m.glass = new THREE.MeshPhysicalMaterial({
-    color: 0x8ca0a6,
-    roughness: .16,
-    transmission: low ? 0 : .16,
+    color: 0xb8c0bd,
+    roughness: .11,
+    metalness: 0,
+    transmission: quality.transmission ? .32 : 0,
+    thickness: .08,
+    ior: 1.46,
     transparent: true,
-    opacity: low ? .62 : .72,
+    opacity: quality.transmission ? .56 : .68,
     depthWrite: false
   });
 
@@ -138,7 +176,7 @@ export function createBuildContext(world, low) {
   );
   Object.values(groups).forEach((group) => world.add(group));
 
-  return { world, low, textures, m, groups, parts:[] };
+  return { world, low: quality.name === "phone" || quality.name === "low", quality, textures, m, groups, parts:[] };
 }
 
 export function registerPart(ctx, group, mesh, start, end, o={}) {
@@ -147,7 +185,7 @@ export function registerPart(ctx, group, mesh, start, end, o={}) {
     mesh.material.opacity = o.opacity ?? mesh.material.opacity ?? 1;
   }
 
-  mesh.castShadow = o.castShadow ?? true;
+  mesh.castShadow = o.castShadow ?? ctx.quality.shadows ?? true;
   mesh.receiveShadow = o.receiveShadow ?? true;
 
   mesh.userData = {
@@ -156,7 +194,7 @@ export function registerPart(ctx, group, mesh, start, end, o={}) {
     baseScale: mesh.scale.clone(),
     start,
     end,
-    axis: o.axis || "y",
+    reveal: o.reveal || o.axis || "y",
     kind: o.kind || "structure",
     tags: o.tags || [],
     fadeStart: o.fadeStart ?? null,
@@ -182,23 +220,23 @@ export function cylinder(ctx, group, radius, height, pos, materialRef, start, en
   mesh.position.set(...pos);
   mesh.scale.set(radius, height, radius);
   if (o.rotation) mesh.rotation.set(...o.rotation);
-  return registerPart(ctx, group, mesh, start, end, { ...o, axis:o.axis || "y" });
+  return registerPart(ctx, group, mesh, start, end, { ...o, reveal:o.reveal || o.axis || "y" });
 }
 
-export function outline(mesh, color=0x4b4a45, opacity=.16) {
+export function outline(mesh, color=0x4b4a45, opacity=.14) {
   const line = new THREE.LineSegments(
     new THREE.EdgesGeometry(BOX),
-    new THREE.LineBasicMaterial({ color, transparent:true, opacity })
+    new THREE.LineBasicMaterial({ color, transparent:true, opacity, toneMapped:false })
   );
   line.userData.baseOpacity = opacity;
   mesh.add(line);
   return line;
 }
 
-export function outlineGeometry(mesh, geometry, color=0x4b4a45, opacity=.16) {
+export function outlineGeometry(mesh, geometry, color=0x4b4a45, opacity=.14) {
   const line = new THREE.LineSegments(
     new THREE.EdgesGeometry(geometry),
-    new THREE.LineBasicMaterial({ color, transparent:true, opacity })
+    new THREE.LineBasicMaterial({ color, transparent:true, opacity, toneMapped:false })
   );
   line.userData.baseOpacity = opacity;
   mesh.add(line);
@@ -215,13 +253,19 @@ export function updatePart(mesh, build, focus, xray, demolition) {
   mesh.scale.copy(d.baseScale);
 
   const f = Math.max(.001, amount);
-  if (d.axis === "x") {
+  if (d.reveal === "x") {
     mesh.scale.x = d.baseScale.x * f;
-  } else if (d.axis === "z") {
+  } else if (d.reveal === "z") {
     mesh.scale.z = d.baseScale.z * f;
-  } else if (d.axis === "all") {
-    mesh.scale.multiplyScalar(f);
+  } else if (d.reveal === "all") {
+    mesh.scale.multiplyScalar(.82 + f * .18);
+  } else if (d.reveal === "fade") {
+    // Keep final geometry stable; opacity carries the assembly.
+  } else if (d.reveal === "drop") {
+    mesh.scale.y = d.baseScale.y * f;
+    mesh.position.y = d.basePosition.y + d.baseScale.y * (1 - f) * .5;
   } else {
+    // Structural members grow from their bearing point, like a real erection sequence.
     mesh.scale.y = d.baseScale.y * f;
     mesh.position.y = d.basePosition.y - d.baseScale.y * (1 - f) * .5;
   }
@@ -229,26 +273,26 @@ export function updatePart(mesh, build, focus, xray, demolition) {
   let opacity = amount * d.opacity;
 
   if (xray > .02 && ["facade","glass","plinth"].includes(d.kind)) {
-    opacity *= 1 - xray * .84;
+    opacity *= 1 - xray * .86;
   }
 
   if (focus && focus !== "shell" && focus !== "demolition") {
-    opacity *= d.tags.includes(focus) ? 1 : .18;
+    opacity *= d.tags.includes(focus) ? 1 : .24;
   } else if (focus === "shell") {
     opacity *= (
       d.tags.includes("shell") ||
       d.tags.includes("concrete") ||
       d.tags.includes("masonry")
-    ) ? 1 : .28;
+    ) ? 1 : .34;
   }
 
   if (
     demolition > 0 &&
     (d.tags.includes("masonry") || ["facade","glass"].includes(d.kind))
   ) {
-    mesh.position.x += Math.sign(d.basePosition.x || 1) * demolition * .55;
-    mesh.position.y += demolition * .18;
-    opacity *= 1 - demolition * .35;
+    mesh.position.x += Math.sign(d.basePosition.x || 1) * demolition * .62;
+    mesh.position.y += demolition * .20;
+    opacity *= 1 - demolition * .32;
   }
 
   if (Array.isArray(mesh.material)) {
@@ -259,13 +303,13 @@ export function updatePart(mesh, build, focus, xray, demolition) {
 
   mesh.children.forEach((child) => {
     if (child.material?.isLineBasicMaterial) {
-      child.material.opacity = (child.userData.baseOpacity ?? .16) * opacity;
+      child.material.opacity = (child.userData.baseOpacity ?? .14) * opacity;
     }
   });
 
   if (mesh.material?.emissive) {
     const highlighted = focus && d.tags.includes(focus);
-    mesh.material.emissive.setHex(highlighted ? 0x4a3300 : 0);
-    mesh.material.emissiveIntensity = highlighted ? .32 : 0;
+    mesh.material.emissive.setHex(highlighted ? 0x302200 : 0);
+    mesh.material.emissiveIntensity = highlighted ? .22 : 0;
   }
 }
