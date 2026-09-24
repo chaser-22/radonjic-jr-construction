@@ -53,7 +53,7 @@
   .about-layout { grid-template-columns: minmax(0, 1fr) minmax(300px, .82fr); }
   .work-intro { grid-template-columns: minmax(0, 1fr) minmax(300px, .82fr); }
   .values-layout { grid-template-columns: minmax(0, 1fr) minmax(280px, .72fr); }
-  .contact-layout { grid-template-columns: minmax(0, 1fr) minmax(340px, .9fr); }
+  .contact-layout { grid-template-columns: minmax(0, 1fr) minmax(340px, .82fr); }
 
   .section-heading h2,
   .work-intro h2,
@@ -1302,5 +1302,32 @@
   .service-stage {
     height: 58svh;
     min-height: 210px;
+  }
+}
+
+
+/* V28 — contact stays composed between phone and wide desktop breakpoints. */
+@media (min-width: 761px) and (max-width: 900px) {
+  .contact {
+    min-height: auto;
+    padding: 112px 0 104px;
+  }
+
+  .contact-layout {
+    grid-template-columns: 1fr;
+    gap: 42px;
+  }
+
+  .contact-copy {
+    max-width: 620px;
+  }
+
+  .contact-panel {
+    width: min(100%, 620px);
+    justify-self: start;
+  }
+
+  .phone-link {
+    font-size: clamp(28px, 5vw, 38px);
   }
 }

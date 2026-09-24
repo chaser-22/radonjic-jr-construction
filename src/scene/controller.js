@@ -156,7 +156,7 @@ export function createHouseScene(layer, canvas) {
     ["services", "#usluge", 2.95, -.18, .70, -.56, .82, .08, 11.55, 1.36, 33],
     ["values", "#vrijednosti", -3.95, -.56, .34, .30, .03, 0, 12.8, 1.15, 34.5],
     ["process", "#proces", 4.15, -.60, .30, -.18, .03, 0, 12.8, 1.12, 34.5],
-    ["contact", "#kontakt", -3.65, -.42, .40, .12, .05, 0, 12.5, 1.16, 34]
+    ["contact", "#kontakt", -3.65, -.42, .40, .12, 0, 0, 12.5, 1.16, 34]
   ];
 
   const tabletAnchors = [
@@ -167,7 +167,7 @@ export function createHouseScene(layer, canvas) {
     ["services", "#usluge", 1.34, -.34, .61, -.48, .72, .06, 11.9, 1.32, 35],
     ["values", "#vrijednosti", -2.55, -.72, .28, .24, .01, 0, 13.0, 1.06, 36],
     ["process", "#proces", 2.65, -.72, .26, -.14, .01, 0, 13.0, 1.06, 36],
-    ["contact", "#kontakt", -2.34, -.74, .30, .10, .01, 0, 12.9, 1.08, 36]
+    ["contact", "#kontakt", -2.34, -.74, .30, .10, 0, 0, 12.9, 1.08, 36]
   ];
 
   const phoneAnchors = [
