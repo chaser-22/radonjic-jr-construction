@@ -110,7 +110,14 @@ app.innerHTML = `
         ${projects.map((project) => `
           <article class="project reveal">
             <div class="project-image">
-              <img src="${project.image}" alt="${project.title} — ilustrativna fotografija gradilišta" loading="lazy" decoding="async" />
+              <img
+                src="${project.image.replace("w=2400", "w=1200")}"
+                srcset="${project.image.replace("w=2400", "w=640")} 640w, ${project.image.replace("w=2400", "w=960")} 960w, ${project.image.replace("w=2400", "w=1400")} 1400w, ${project.image} 2400w"
+                sizes="(max-width: 760px) calc(100vw - 24px), (max-width: 1180px) calc(100vw - 48px), 70vw"
+                alt="${project.title} — ilustrativna fotografija gradilišta"
+                loading="lazy"
+                decoding="async"
+              />
               <span>${project.number}</span>
             </div>
             <div class="project-copy">
@@ -260,7 +267,7 @@ function updateScrollState() {
 
   header.classList.toggle("is-scrolled", window.scrollY > 20);
 
-  if (!reducedMotion) {
+  if (!reducedMotion && window.innerWidth > 760) {
     document.querySelectorAll(".project").forEach((project) => {
       const rect = project.getBoundingClientRect();
       if (rect.bottom < 0 || rect.top > window.innerHeight) return;

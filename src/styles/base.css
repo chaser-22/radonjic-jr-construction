@@ -20,6 +20,7 @@
 html { scroll-behavior: smooth; background: var(--ink); }
 body {
   margin: 0;
+  min-width: 320px;
   background: var(--ink);
   color: var(--text);
   font-family: var(--sans);
@@ -232,3 +233,8 @@ h1, h2, h3, p { overflow-wrap: break-word; }
 .contact-layout > * {
   min-width: 0;
 }
+
+
+/* Mobile viewport and tap behavior */
+html { -webkit-text-size-adjust: 100%; }
+a, button { -webkit-tap-highlight-color: transparent; }
