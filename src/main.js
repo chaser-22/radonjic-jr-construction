@@ -9,6 +9,27 @@ const whatsapp = `https://wa.me/${PHONE.replace("+", "")}`;
 const arrowIcon = `<svg class="ui-arrow" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 15 15 5"/><path d="M8 5h7v7"/></svg>`;
 const downIcon = `<svg class="ui-arrow ui-arrow-down" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4v11"/><path d="m6 11 4 4 4-4"/></svg>`;
 const app = document.querySelector("#app");
+const siteLoader = document.querySelector("#site-loader");
+const loaderStatus = document.querySelector("[data-loader-status]");
+const loaderValue = document.querySelector("[data-loader-value]");
+let loaderProgress = 8;
+
+function setLoader(progress, status) {
+  loaderProgress = Math.max(loaderProgress, Math.min(100, progress));
+  siteLoader?.style.setProperty("--loader-progress", `${loaderProgress}%`);
+  if (loaderValue) loaderValue.textContent = `${String(Math.round(loaderProgress)).padStart(3, "0")}%`;
+  if (loaderStatus && status) loaderStatus.textContent = status;
+}
+
+function finishLoader() {
+  setLoader(100, "SPREMNO");
+  clearTimeout(window.__RJ_LOADER_TIMEOUT__);
+  const delay = reducedMotion ? 40 : 260;
+  window.setTimeout(() => {
+    siteLoader?.classList.add("loader-out");
+    document.documentElement.classList.add("site-ready");
+  }, delay);
+}
 
 app.innerHTML = `
   <div class="house-layer" data-house-layer aria-hidden="true">
@@ -232,6 +253,7 @@ app.innerHTML = `
 
 const clamp01 = (value) => Math.max(0, Math.min(1, value));
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+setLoader(24, "UČITAVANJE MODELA");
 
 const houseLayer = document.querySelector("[data-house-layer]");
 let houseScene = null;
@@ -242,19 +264,25 @@ if (canUseWebGL()) {
     houseLayer.classList.remove("three-failed");
     houseLayer.classList.add("three-ready");
     houseLayer.dataset.threeState = "ready";
+    setLoader(72, "KONSTRUKCIJA");
   } catch (error) {
     houseLayer.classList.remove("three-ready");
     houseLayer.classList.add("three-failed");
     houseLayer.dataset.threeState = "failed";
+    setLoader(72, "KONSTRUKCIJA");
     console.error("Three.js initialization failed", error);
   }
 } else {
   document.documentElement.classList.add("no-webgl");
   houseLayer.dataset.threeState = "unsupported";
+  setLoader(72, "KONSTRUKCIJA");
 }
 
 document.querySelectorAll(".project-image img").forEach((image) => {
-  image.addEventListener("load", () => image.closest(".project-image")?.classList.add("is-loaded"), { once: true });
+  image.addEventListener("load", () => {
+    image.closest(".project-image")?.classList.add("is-loaded");
+    houseScene?.refreshLayout();
+  }, { once: true });
   image.addEventListener("error", () => {
     const fallback = image.dataset.fallback;
     if (fallback && image.src !== fallback) {
@@ -265,6 +293,22 @@ document.querySelectorAll(".project-image img").forEach((image) => {
     }
   });
 });
+
+const readiness = [
+  document.fonts?.ready || Promise.resolve(),
+  houseScene?.ready || Promise.resolve()
+];
+
+Promise.race([
+  Promise.allSettled(readiness),
+  new Promise((resolve) => setTimeout(resolve, 2600))
+]).then(() => {
+  setLoader(92, "FINALNA PROVJERA");
+  houseScene?.refreshLayout();
+  requestAnimationFrame(() => finishLoader());
+});
+
+document.fonts?.ready?.then(() => houseScene?.refreshLayout());
 
 const hero = document.querySelector(".hero");
 const buildPercent = document.querySelector("[data-build-percent]");
