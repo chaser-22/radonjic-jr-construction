@@ -199,9 +199,18 @@ app.innerHTML = `
   </main>
 
   <div class="mobile-contact" aria-label="Brzi kontakt">
-    <a href="tel:${PHONE}">Pozovi</a>
-    <a href="${whatsapp}" target="_blank" rel="noreferrer">WhatsApp</a>
-    <a href="mailto:${EMAIL}">Email</a>
+    <a class="quick-contact quick-contact-call" href="tel:${PHONE}">
+      <span class="quick-contact-icon" aria-hidden="true">↗</span>
+      <span>Pozovi</span>
+    </a>
+    <a class="quick-contact" href="${whatsapp}" target="_blank" rel="noreferrer">
+      <span class="quick-contact-icon" aria-hidden="true">◌</span>
+      <span>WhatsApp</span>
+    </a>
+    <a class="quick-contact" href="mailto:${EMAIL}">
+      <span class="quick-contact-icon" aria-hidden="true">—</span>
+      <span>Email</span>
+    </a>
   </div>
 `;
 
