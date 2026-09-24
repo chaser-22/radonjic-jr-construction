@@ -4,7 +4,9 @@ import { addStructure } from "./structure.js";
 import { addFinish } from "./finish.js";
 
 export function createHouseScene(layer, canvas) {
-  const low = window.innerWidth < 820 || (navigator.deviceMemory && navigator.deviceMemory <= 4);
+  const initialPhone = window.innerWidth <= 760;
+  const initialTablet = window.innerWidth > 760 && window.innerWidth <= 1024;
+  const low = window.innerWidth < 1024 || (navigator.deviceMemory && navigator.deviceMemory <= 4);
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const renderer = new THREE.WebGLRenderer({
@@ -13,7 +15,7 @@ export function createHouseScene(layer, canvas) {
     alpha: true,
     premultipliedAlpha: true
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, low ? 1.15 : 1.5));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, initialPhone ? 1 : initialTablet ? 1.2 : low ? 1.25 : 1.5));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.12;
@@ -22,8 +24,8 @@ export function createHouseScene(layer, canvas) {
   renderer.shadowMap.type = THREE.PCFShadowMap;
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 70);
-  camera.position.set(0, 2.6, 11.8);
+  const camera = new THREE.PerspectiveCamera(initialPhone ? 38 : initialTablet ? 36 : 34, 1, 0.1, 70);
+  camera.position.set(0, initialPhone ? 2.45 : 2.6, initialPhone ? 12.6 : initialTablet ? 12.1 : 11.8);
 
   scene.add(new THREE.HemisphereLight(0xfff4df, 0x303634, 2.35));
 
@@ -70,10 +72,11 @@ export function createHouseScene(layer, canvas) {
   const target = { ...state, buildTarget: 0 };
 
   let last = performance.now();
+  let lastIdleDraw = 0;
   let destroyed = false;
   let failed = false;
 
-  const anchors = [
+  const desktopAnchors = [
     ["hero", ".hero", 3.05, -0.24, 0.92, -0.43, 1, 0],
     ["about", "#o-nama", 4.10, -0.58, 0.44, 0.16, 0.08, 0],
     ["structure", "#konstrukcija", 3.05, -0.14, 0.72, 0.52, 0.82, 0.88],
@@ -82,24 +85,71 @@ export function createHouseScene(layer, canvas) {
     ["values", "#vrijednosti", -3.85, -0.56, 0.36, 0.38, 0.04, 0],
     ["process", "#proces", 4.10, -0.62, 0.32, -0.22, 0.04, 0],
     ["contact", "#kontakt", -3.55, -0.42, 0.44, 0.18, 0.08, 0]
-  ]
-    .map(([name, sel, x, y, scale, rotation, opacity, xray]) => ({
-      name,
-      el: document.querySelector(sel),
-      x,
-      y,
-      scale,
-      rotation,
-      opacity,
-      xray
-    }))
-    .filter((anchor) => anchor.el);
+  ];
+
+  const tabletAnchors = [
+    ["hero", ".hero", 1.45, -0.62, 0.74, -0.38, 0.92, 0],
+    ["about", "#o-nama", 2.70, -0.70, 0.42, 0.10, 0.04, 0],
+    ["structure", "#konstrukcija", 1.35, -0.34, 0.64, 0.48, 0.76, 0.78],
+    ["work", "#radovi", 2.80, -0.72, 0.30, 0.88, 0.02, 0],
+    ["services", "#usluge", 1.35, -0.36, 0.60, -0.48, 0.70, 0.08],
+    ["values", "#vrijednosti", -2.50, -0.72, 0.30, 0.30, 0.02, 0],
+    ["process", "#proces", 2.60, -0.72, 0.28, -0.18, 0.02, 0],
+    ["contact", "#kontakt", -2.30, -0.74, 0.32, 0.12, 0.02, 0]
+  ];
+
+  const phoneAnchors = [
+    ["hero", ".hero", 0.28, -1.18, 0.58, -0.34, 0.88, 0],
+    ["about", "#o-nama", 0.00, -1.18, 0.42, 0.08, 0.00, 0],
+    ["structure", "#konstrukcija", 0.24, -0.46, 0.58, 0.44, 0.72, 0.72],
+    ["work", "#radovi", 0.00, -1.05, 0.36, 0.80, 0.00, 0],
+    ["services", "#usluge", 0.18, -0.54, 0.54, -0.44, 0.66, 0.06],
+    ["values", "#vrijednosti", 0.00, -1.02, 0.32, 0.24, 0.00, 0],
+    ["process", "#proces", 0.00, -1.04, 0.30, -0.16, 0.00, 0],
+    ["contact", "#kontakt", 0.00, -1.10, 0.30, 0.08, 0.00, 0]
+  ];
+
+  const mapAnchors = (source) =>
+    source
+      .map(([name, sel, x, y, scale, rotation, opacity, xray]) => ({
+        name,
+        el: document.querySelector(sel),
+        x,
+        y,
+        scale,
+        rotation,
+        opacity,
+        xray
+      }))
+      .filter((anchor) => anchor.el);
+
+  const mappedDesktopAnchors = mapAnchors(desktopAnchors);
+  const mappedTabletAnchors = mapAnchors(tabletAnchors);
+  const mappedPhoneAnchors = mapAnchors(phoneAnchors);
+
+  const currentLayout = () =>
+    window.innerWidth <= 760 ? "phone" : window.innerWidth <= 1024 ? "tablet" : "desktop";
+
+  const getAnchors = () => {
+    const layout = currentLayout();
+    return layout === "phone"
+      ? mappedPhoneAnchors
+      : layout === "tablet"
+        ? mappedTabletAnchors
+        : mappedDesktopAnchors;
+  };
 
   const resize = () => {
     const width = Math.max(1, window.innerWidth);
     const height = Math.max(1, window.innerHeight);
+    const layout = currentLayout();
+    const phone = layout === "phone";
+    const tablet = layout === "tablet";
+
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, phone ? 1 : tablet ? 1.2 : low ? 1.25 : 1.5));
     renderer.setSize(width, height, false);
     camera.aspect = width / height;
+    camera.fov = phone ? 38 : tablet ? 36 : 34;
     camera.updateProjectionMatrix();
   };
 
@@ -109,6 +159,7 @@ export function createHouseScene(layer, canvas) {
   function updateFromScroll(build) {
     target.buildTarget = build;
 
+    const anchors = getAnchors();
     const center = window.scrollY + window.innerHeight * 0.52;
     const offsets = anchors.map(offset);
     let index = 0;
@@ -120,14 +171,11 @@ export function createHouseScene(layer, canvas) {
     const nextOffset = offsets[Math.min(index + 1, offsets.length - 1)];
     const span = Math.max(1, nextOffset - offsets[index]);
     const t = index === anchors.length - 1 ? 0 : smooth(0, 1, (center - offsets[index]) / span);
-    const mobile = window.innerWidth < 900;
-    const mobileX = (x) => (x >= 0 ? 0.65 : -0.65);
-
-    target.x = lerp(mobile ? mobileX(a.x) : a.x, mobile ? mobileX(b.x) : b.x, t);
-    target.y = lerp(a.y, b.y, t) + (mobile ? -0.2 : 0);
-    target.scale = lerp(a.scale, b.scale, t) * (mobile ? 0.82 : 1);
+    target.x = lerp(a.x, b.x, t);
+    target.y = lerp(a.y, b.y, t);
+    target.scale = lerp(a.scale, b.scale, t);
     target.rotation = lerp(a.rotation, b.rotation, t);
-    target.opacity = lerp(a.opacity, b.opacity, t) * (mobile ? 0.72 : 1);
+    target.opacity = lerp(a.opacity, b.opacity, t);
     target.xray = lerp(a.xray, b.xray, t);
     target.section = a.name;
   }
@@ -171,6 +219,13 @@ export function createHouseScene(layer, canvas) {
     state.pointerY = THREE.MathUtils.damp(state.pointerY, target.pointerY, 4, dt);
     state.section = target.section;
     state.focus = target.section === "services" ? target.focus : null;
+
+    layer.style.opacity = String(state.opacity);
+    if (currentLayout() === "phone" && target.opacity <= .001 && state.opacity < .015) {
+      if (safeNow - lastIdleDraw < 250) return;
+      lastIdleDraw = safeNow;
+    }
+
     state.demolition = THREE.MathUtils.damp(
       state.demolition,
       state.focus === "demolition" ? 1 : 0,
@@ -257,12 +312,16 @@ export function createHouseScene(layer, canvas) {
     world.rotation.y = state.rotation + state.pointerX * 0.025;
     world.rotation.x = -state.pointerY * 0.012;
 
-    camera.position.x = state.pointerX * 0.16;
-    camera.position.y = 2.6 - state.pointerY * 0.08;
-    camera.lookAt(0, 1.15, 0);
+    const layout = currentLayout();
+    const phone = layout === "phone";
+    const tablet = layout === "tablet";
+
+    camera.position.x = phone ? 0 : state.pointerX * 0.16;
+    camera.position.y = (phone ? 2.45 : 2.6) - state.pointerY * 0.08;
+    camera.position.z = phone ? 12.6 : tablet ? 12.1 : 11.8;
+    camera.lookAt(0, phone ? 1.05 : 1.15, 0);
 
     extra.grid.rotation.y = safeNow * 0.00001;
-    layer.style.opacity = String(state.opacity);
 
     renderer.render(scene, camera);
 
