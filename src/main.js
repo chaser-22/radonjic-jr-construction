@@ -424,8 +424,10 @@ function activateService(button) {
   houseScene?.setService(button.dataset.service);
 }
 
+const coarsePointer = window.matchMedia("(hover: none), (pointer: coarse)").matches;
 serviceButtons.forEach((button) => {
-  ["mouseenter", "focus", "click"].forEach((eventName) => {
+  const events = coarsePointer ? ["focus", "click"] : ["mouseenter", "focus", "click"];
+  events.forEach((eventName) => {
     button.addEventListener(eventName, () => activateService(button));
   });
 });
