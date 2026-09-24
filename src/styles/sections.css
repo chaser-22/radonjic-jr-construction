@@ -647,3 +647,25 @@
     background .34s var(--ease),
     border-color .34s var(--ease);
 }
+
+
+/* V27 — stronger service selection cue, matched to the higher-contrast 3D focus. */
+.service-row.is-active strong,
+.service-row:hover strong,
+.service-row:focus-visible strong {
+  color: var(--yellow);
+}
+.service-row.is-active > span,
+.service-row:hover > span,
+.service-row:focus-visible > span {
+  color: #f7f5ef;
+  opacity: 1;
+}
+.service-row.is-active p {
+  color: #d9ddd5;
+}
+.service-row.is-active i,
+.service-row:hover i,
+.service-row:focus-visible i {
+  color: var(--yellow);
+}

@@ -115,6 +115,8 @@ export function createHouseScene(layer, canvas) {
   const ctx = createBuildContext(world, quality);
   const { xs, zs } = addStructure(ctx);
   const extra = addFinish(ctx, xs, zs);
+  const roofTileBaseColor = extra.roofTileMaterial.color.clone();
+  const serviceTint = new THREE.Color(0xf2b600);
 
   const state = {
     build: 0,
@@ -350,10 +352,13 @@ export function createHouseScene(layer, canvas) {
     const tileBuild = smooth(.76, .94, state.build);
     const maxServiceFocus = Math.max(0, ...Object.values(serviceWeights));
     const roofMatch = Math.max(serviceWeights.roof || 0, serviceWeights.shell || 0);
-    const roofFocusFactor = 1 - maxServiceFocus * .84 + roofMatch * .84;
+    const roofFocusFactor = 1 - maxServiceFocus * .92 + roofMatch * .92;
     let tileOpacity = tileBuild * roofFocusFactor;
     if (state.xray > .02) tileOpacity *= 1 - state.xray * .30;
     extra.roofTileMaterial.opacity = tileOpacity;
+    extra.roofTileMaterial.color.copy(roofTileBaseColor).lerp(serviceTint, roofMatch * .24);
+    extra.roofTileMaterial.emissive.setHex(roofMatch > .01 ? 0x6b4d00 : 0);
+    extra.roofTileMaterial.emissiveIntensity = .72 * roofMatch;
     extra.roofTiles.visible = tileOpacity > .002;
     updateRoofInstances(state.build);
 
