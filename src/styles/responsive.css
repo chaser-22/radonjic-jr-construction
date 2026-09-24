@@ -983,3 +983,21 @@
     min-height: auto;
   }
 }
+
+
+@media (max-width: 760px) {
+  .header-cta .ui-arrow,
+  .button .ui-arrow,
+  .phone-link .ui-arrow {
+    width: 15px;
+    height: 15px;
+  }
+
+  .project-copy i .ui-arrow,
+  .service-row i .ui-arrow,
+  .values-copy a .ui-arrow,
+  .contact-links a .ui-arrow {
+    width: 14px;
+    height: 14px;
+  }
+}

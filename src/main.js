@@ -6,6 +6,8 @@ import { createHouseScene } from "./scene/controller.js";
 import { DISPLAY_PHONE, EMAIL, PHONE, projects, services } from "./data.js";
 
 const whatsapp = `https://wa.me/${PHONE.replace("+", "")}`;
+const arrowIcon = `<svg class="ui-arrow" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 15 15 5"/><path d="M8 5h7v7"/></svg>`;
+const downIcon = `<svg class="ui-arrow ui-arrow-down" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4v11"/><path d="m6 11 4 4 4-4"/></svg>`;
 const app = document.querySelector("#app");
 
 app.innerHTML = `
@@ -39,7 +41,7 @@ app.innerHTML = `
     </nav>
 
     <a class="header-cta" href="tel:${PHONE}">
-      <span>Pozovite nas</span><i aria-hidden="true">↗</i>
+      <span>Pozovite nas</span><i aria-hidden="true">${arrowIcon}</i>
     </a>
   </header>
 
@@ -51,8 +53,8 @@ app.innerHTML = `
         <h1><span>OD TEMELJA</span><em>DO KROVA.</em></h1>
         <p class="hero-intro">Gradimo jasno, pouzdano i bez komplikacija — od prvog iskopa do završnog krova.</p>
         <div class="hero-actions">
-          <a class="button button-primary" href="tel:${PHONE}">Pozovite nas <span>↗</span></a>
-          <a class="button button-secondary" href="#radovi">Pogledajte radove <span>↓</span></a>
+          <a class="button button-primary" href="tel:${PHONE}">Pozovite nas <span>${arrowIcon}</span></a>
+          <a class="button button-secondary" href="#radovi">Pogledajte radove <span>${downIcon}</span></a>
         </div>
       </div>
 
@@ -114,6 +116,7 @@ app.innerHTML = `
                 src="${project.image.replace("w=2400", "w=1200")}"
                 srcset="${project.image.replace("w=2400", "w=640")} 640w, ${project.image.replace("w=2400", "w=960")} 960w, ${project.image.replace("w=2400", "w=1400")} 1400w, ${project.image} 2400w"
                 sizes="(max-width: 760px) calc(100vw - 24px), (max-width: 1180px) calc(100vw - 48px), 70vw"
+                style="object-position:${project.position || "center"}"
                 alt="${project.title} — ilustrativna fotografija gradilišta"
                 loading="lazy"
                 decoding="async"
@@ -123,13 +126,13 @@ app.innerHTML = `
             <div class="project-copy">
               <p>${project.category}</p>
               <h3>${project.title}</h3>
-              <div><span>${project.text}</span><i aria-hidden="true">↗</i></div>
+              <div><span>${project.text}</span><i aria-hidden="true">${arrowIcon}</i></div>
             </div>
           </article>
         `).join("")}
       </div>
 
-      <p class="photo-disclaimer shell">Privremene HD fotografije za prototip. Prije javnog lansiranja zamijenićemo ih originalnim fotografijama vaših projekata.</p>
+      <p class="photo-disclaimer shell">Profesionalne ilustrativne fotografije gradilišta. Zamijenićemo ih originalnim RADONJIC JR fotografijama kada budu spremne.</p>
     </section>
 
     <section class="services dark-section" id="usluge" data-house-section="services" data-header="dark">
@@ -146,7 +149,7 @@ app.innerHTML = `
               <span>${service.code}</span>
               <strong>${service.title}</strong>
               <p>${service.text}</p>
-              <i aria-hidden="true">↗</i>
+              <i aria-hidden="true">${arrowIcon}</i>
             </button>
           `).join("")}
         </div>
@@ -161,7 +164,7 @@ app.innerHTML = `
         <h2>JASAN DOGOVOR.<br>UREDAN RAD.<br>DOBAR REZULTAT.</h2>
         <div class="values-copy">
           <p>Najvažnije je da znate šta se radi, kojim redom i gdje smo u procesu.</p>
-          <a href="tel:${PHONE}">Razgovarajmo o projektu <span>↗</span></a>
+          <a href="tel:${PHONE}">Razgovarajmo o projektu <span>${arrowIcon}</span></a>
         </div>
       </div>
     </section>
@@ -187,10 +190,10 @@ app.innerHTML = `
           <p>Najbrže je da se čujemo. Recite nam šta planirate i gdje se projekat nalazi.</p>
         </div>
         <div class="contact-panel reveal">
-          <a class="phone-link" href="tel:${PHONE}">${DISPLAY_PHONE}<span>↗</span></a>
+          <a class="phone-link" href="tel:${PHONE}">${DISPLAY_PHONE}<span>${arrowIcon}</span></a>
           <div class="contact-links">
-            <a href="${whatsapp}" target="_blank" rel="noreferrer">WhatsApp <span>↗</span></a>
-            <a href="mailto:${EMAIL}">Email <span>↗</span></a>
+            <a href="${whatsapp}" target="_blank" rel="noreferrer">WhatsApp <span>${arrowIcon}</span></a>
+            <a href="mailto:${EMAIL}">Email <span>${arrowIcon}</span></a>
           </div>
           <p>${EMAIL}</p>
         </div>
