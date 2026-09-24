@@ -250,6 +250,9 @@ export function createHouseScene(layer, canvas) {
     prep: -.52
   };
 
+  const serviceKeys = Object.keys(serviceLook);
+  const serviceWeights = Object.fromEntries(serviceKeys.map((key) => [key, 0]));
+
   const setService = (key) => { target.focus = key; };
   const clearService = () => { target.focus = null; };
 
@@ -300,20 +303,28 @@ export function createHouseScene(layer, canvas) {
     state.section = target.section;
     state.focus = target.section === "services" ? target.focus : null;
 
+    // Every service now cross-fades at the same pace as the Rušenje animation.
+    // Old focus decays while the new focus rises, avoiding hard opacity/camera snaps.
+    serviceKeys.forEach((key) => {
+      serviceWeights[key] = THREE.MathUtils.damp(
+        serviceWeights[key],
+        state.focus === key ? 1 : 0,
+        reduced ? 100 : 5.2,
+        dt
+      );
+    });
+
     layer.style.opacity = String(state.opacity);
     if (target.opacity <= .001 && state.opacity < .012) {
       if (safeNow - lastIdleDraw < 280) return;
       lastIdleDraw = safeNow;
     }
 
-    state.demolition = THREE.MathUtils.damp(
-      state.demolition,
-      state.focus === "demolition" ? 1 : 0,
-      5.2,
-      dt
-    );
+    state.demolition = serviceWeights.demolition;
 
-    ctx.parts.forEach((part) => updatePart(part, state.build, state.focus, state.xray, state.demolition));
+    ctx.parts.forEach((part) =>
+      updatePart(part, state.build, serviceWeights, state.xray, state.demolition)
+    );
 
     const ghost = 1 - smooth(.05, .86, state.build);
     extra.ghostMat.opacity = .045 + ghost * .38 + state.xray * .12;
@@ -321,8 +332,10 @@ export function createHouseScene(layer, canvas) {
     extra.ghostFillMat.opacity = .008 + ghost * .035;
 
     const tileBuild = smooth(.76, .94, state.build);
-    let tileOpacity = tileBuild;
-    if (state.focus && !["roof","shell"].includes(state.focus)) tileOpacity *= .16;
+    const maxServiceFocus = Math.max(0, ...Object.values(serviceWeights));
+    const roofMatch = Math.max(serviceWeights.roof || 0, serviceWeights.shell || 0);
+    const roofFocusFactor = 1 - maxServiceFocus * .84 + roofMatch * .84;
+    let tileOpacity = tileBuild * roofFocusFactor;
     if (state.xray > .02) tileOpacity *= 1 - state.xray * .30;
     extra.roofTileMaterial.opacity = tileOpacity;
     extra.roofTiles.visible = tileOpacity > .002;
@@ -335,17 +348,18 @@ export function createHouseScene(layer, canvas) {
     extra.pivot.rotation.y = -.42 + smooth(.15,.76,state.build) * .92;
 
     const explode = state.xray;
-    ctx.groups.facade.position.x = THREE.MathUtils.damp(ctx.groups.facade.position.x, explode * .68, 5, dt);
-    ctx.groups.glass.position.x = THREE.MathUtils.damp(ctx.groups.glass.position.x, explode * 1.00, 5, dt);
-    ctx.groups.masonry.position.x = THREE.MathUtils.damp(ctx.groups.masonry.position.x, -explode * .34, 5, dt);
-    ctx.groups.roof.position.y = THREE.MathUtils.damp(ctx.groups.roof.position.y, explode * .42, 5, dt);
-    ctx.groups.roofFrame.position.y = THREE.MathUtils.damp(ctx.groups.roofFrame.position.y, explode * .20, 5, dt);
+    const demolition = state.demolition;
+    const facadeX = lerp(explode * .68, .88, demolition);
+    const glassX = lerp(explode * 1.00, .96, demolition);
+    const masonryX = lerp(-explode * .34, -.78, demolition);
+    const roofY = lerp(explode * .42, .52, demolition);
+    const roofFrameY = lerp(explode * .20, .30, demolition);
 
-    if (state.focus === "demolition") {
-      ctx.groups.masonry.position.x = THREE.MathUtils.damp(ctx.groups.masonry.position.x, -.78, 5, dt);
-      ctx.groups.facade.position.x = THREE.MathUtils.damp(ctx.groups.facade.position.x, .88, 5, dt);
-      ctx.groups.roof.position.y = THREE.MathUtils.damp(ctx.groups.roof.position.y, .52, 5, dt);
-    }
+    ctx.groups.facade.position.x = THREE.MathUtils.damp(ctx.groups.facade.position.x, facadeX, 5.2, dt);
+    ctx.groups.glass.position.x = THREE.MathUtils.damp(ctx.groups.glass.position.x, glassX, 5.2, dt);
+    ctx.groups.masonry.position.x = THREE.MathUtils.damp(ctx.groups.masonry.position.x, masonryX, 5.2, dt);
+    ctx.groups.roof.position.y = THREE.MathUtils.damp(ctx.groups.roof.position.y, roofY, 5.2, dt);
+    ctx.groups.roofFrame.position.y = THREE.MathUtils.damp(ctx.groups.roofFrame.position.y, roofFrameY, 5.2, dt);
 
     world.position.set(
       state.x + state.pointerX * .07,
@@ -358,7 +372,12 @@ export function createHouseScene(layer, canvas) {
 
     const layout = currentLayout();
     const phone = layout === "phone";
-    const serviceOffset = state.focus ? (serviceLook[state.focus] || 0) : 0;
+    const serviceWeightTotal = serviceKeys.reduce((sum, key) => sum + serviceWeights[key], 0);
+    const serviceOffsetRaw = serviceKeys.reduce(
+      (sum, key) => sum + serviceLook[key] * serviceWeights[key],
+      0
+    );
+    const serviceOffset = serviceOffsetRaw / Math.max(1, serviceWeightTotal);
 
     camera.position.x = phone ? 0 : state.pointerX * .13;
     camera.position.y = (phone ? 2.42 : 2.62) - state.pointerY * .06;

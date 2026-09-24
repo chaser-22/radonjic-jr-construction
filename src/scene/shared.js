@@ -243,7 +243,7 @@ export function outlineGeometry(mesh, geometry, color=0x4b4a45, opacity=.14) {
   return line;
 }
 
-export function updatePart(mesh, build, focus, xray, demolition) {
+export function updatePart(mesh, build, focusWeights, xray, demolition) {
   const d = mesh.userData;
   let amount = smooth(d.start, d.end, build);
   if (d.fadeStart !== null) amount *= 1 - smooth(d.fadeStart, d.fadeEnd, build);
@@ -276,14 +276,23 @@ export function updatePart(mesh, build, focus, xray, demolition) {
     opacity *= 1 - xray * .86;
   }
 
-  if (focus && focus !== "shell" && focus !== "demolition") {
-    opacity *= d.tags.includes(focus) ? 1 : .24;
-  } else if (focus === "shell") {
-    opacity *= (
-      d.tags.includes("shell") ||
-      d.tags.includes("concrete") ||
-      d.tags.includes("masonry")
-    ) ? 1 : .34;
+  const weights = focusWeights || {};
+  const focusValues = Object.values(weights);
+  const maxFocus = focusValues.length ? Math.max(0, ...focusValues) : 0;
+
+  if (maxFocus > .001) {
+    let match = 0;
+    Object.entries(weights).forEach(([key, weight]) => {
+      if (weight <= .001 || key === "demolition") return;
+      const eligible = key === "shell"
+        ? d.tags.includes("shell") || d.tags.includes("concrete") || d.tags.includes("masonry")
+        : d.tags.includes(key);
+      if (eligible) match = Math.max(match, weight);
+    });
+
+    // At full focus, unrelated geometry rests at 24% opacity.
+    // During a hover change both old/new systems remain readable while they cross-fade.
+    opacity *= 1 - maxFocus * .76 + match * .76;
   }
 
   if (
@@ -308,8 +317,16 @@ export function updatePart(mesh, build, focus, xray, demolition) {
   });
 
   if (mesh.material?.emissive) {
-    const highlighted = focus && d.tags.includes(focus);
-    mesh.material.emissive.setHex(highlighted ? 0x302200 : 0);
-    mesh.material.emissiveIntensity = highlighted ? .22 : 0;
+    let highlight = 0;
+    Object.entries(focusWeights || {}).forEach(([key, weight]) => {
+      if (key !== "demolition" && d.tags.includes(key)) highlight = Math.max(highlight, weight);
+      if (key === "shell" && (
+        d.tags.includes("shell") ||
+        d.tags.includes("concrete") ||
+        d.tags.includes("masonry")
+      )) highlight = Math.max(highlight, weight);
+    });
+    mesh.material.emissive.setHex(highlight > .01 ? 0x302200 : 0);
+    mesh.material.emissiveIntensity = .22 * highlight;
   }
 }
