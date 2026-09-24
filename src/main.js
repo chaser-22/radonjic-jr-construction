@@ -12,7 +12,19 @@ const app = document.querySelector("#app");
 const siteLoader = document.querySelector("#site-loader");
 const loaderStatus = document.querySelector("[data-loader-status]");
 const loaderValue = document.querySelector("[data-loader-value]");
-let loaderProgress = 8;
+const LOADER_DURATION = 4000;
+const loaderStartedAt = window.__RJ_LOADER_STARTED_AT__ ?? performance.now();
+const loaderPhases = [
+  [0, "PRIPREMA TERENA"],
+  [.22, "TEMELJI"],
+  [.45, "KONSTRUKCIJA"],
+  [.68, "ZIDOVI"],
+  [.84, "KROV"],
+  [.97, "SPREMNO"]
+];
+let loaderProgress = 0;
+let loaderClockFrame = 0;
+let loaderFinished = false;
 
 function setLoader(progress, status) {
   loaderProgress = Math.max(loaderProgress, Math.min(100, progress));
@@ -21,15 +33,41 @@ function setLoader(progress, status) {
   if (loaderStatus && status) loaderStatus.textContent = status;
 }
 
+function setLoaderStatus(status) {
+  if (loaderStatus && status) loaderStatus.textContent = status;
+}
+
+function updateLoaderClock(now = performance.now()) {
+  if (loaderFinished) return;
+  const elapsed = Math.max(0, now - loaderStartedAt);
+  const ratio = Math.min(1, elapsed / LOADER_DURATION);
+  let status = loaderPhases[0][1];
+  loaderPhases.forEach(([at, label]) => {
+    if (ratio >= at) status = label;
+  });
+  setLoader(Math.min(99, ratio * 100), status);
+  if (ratio < 1) loaderClockFrame = requestAnimationFrame(updateLoaderClock);
+}
+
 function finishLoader() {
+  if (loaderFinished) return;
+  loaderFinished = true;
+  cancelAnimationFrame(loaderClockFrame);
   setLoader(100, "SPREMNO");
   clearTimeout(window.__RJ_LOADER_TIMEOUT__);
-  const delay = reducedMotion ? 40 : 260;
   window.setTimeout(() => {
     siteLoader?.classList.add("loader-out");
+    document.documentElement.classList.remove("is-loading");
     document.documentElement.classList.add("site-ready");
-  }, delay);
+  }, 40);
 }
+
+function finishLoaderAtFourSeconds() {
+  const remaining = Math.max(0, LOADER_DURATION - (performance.now() - loaderStartedAt));
+  window.setTimeout(finishLoader, remaining);
+}
+
+loaderClockFrame = requestAnimationFrame(updateLoaderClock);
 
 app.innerHTML = `
   <div class="house-layer" data-house-layer aria-hidden="true">
@@ -253,7 +291,7 @@ app.innerHTML = `
 
 const clamp01 = (value) => Math.max(0, Math.min(1, value));
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-setLoader(24, "UČITAVANJE MODELA");
+setLoaderStatus("PRIPREMA TERENA");
 
 const houseLayer = document.querySelector("[data-house-layer]");
 let houseScene = null;
@@ -264,18 +302,18 @@ if (canUseWebGL()) {
     houseLayer.classList.remove("three-failed");
     houseLayer.classList.add("three-ready");
     houseLayer.dataset.threeState = "ready";
-    setLoader(72, "KONSTRUKCIJA");
+    setLoaderStatus("KONSTRUKCIJA");
   } catch (error) {
     houseLayer.classList.remove("three-ready");
     houseLayer.classList.add("three-failed");
     houseLayer.dataset.threeState = "failed";
-    setLoader(72, "KONSTRUKCIJA");
+    setLoaderStatus("KONSTRUKCIJA");
     console.error("Three.js initialization failed", error);
   }
 } else {
   document.documentElement.classList.add("no-webgl");
   houseLayer.dataset.threeState = "unsupported";
-  setLoader(72, "KONSTRUKCIJA");
+  setLoaderStatus("KONSTRUKCIJA");
 }
 
 document.querySelectorAll(".project-image img").forEach((image) => {
@@ -301,11 +339,10 @@ const readiness = [
 
 Promise.race([
   Promise.allSettled(readiness),
-  new Promise((resolve) => setTimeout(resolve, 2600))
+  new Promise((resolve) => setTimeout(resolve, 3200))
 ]).then(() => {
-  setLoader(92, "FINALNA PROVJERA");
   houseScene?.refreshLayout();
-  requestAnimationFrame(() => finishLoader());
+  finishLoaderAtFourSeconds();
 });
 
 document.fonts?.ready?.then(() => houseScene?.refreshLayout());
