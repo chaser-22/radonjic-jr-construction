@@ -417,25 +417,29 @@
   border-left: 1px solid rgba(255,255,255,.10);
 }
 .email-address {
-  min-height: 48px;
-  margin: 10px 0 0;
-  padding: 0 14px;
+  min-height: 54px;
+  margin: 8px 0 0;
+  padding: 0 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-top: 1px solid rgba(255,255,255,.10);
-  color: #f0f1ec;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 14px;
+  background: rgba(255,255,255,.035);
+  color: #f7f5ef;
   font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 650;
   letter-spacing: .01em;
   text-align: center;
   overflow-wrap: anywhere;
-  transition: color .2s;
+  transition: color .2s, border-color .2s, background .2s;
 }
 .email-address:hover,
 .email-address:focus-visible {
   color: var(--yellow);
+  border-color: rgba(242,182,0,.30);
+  background: rgba(242,182,0,.04);
 }
 
 .reveal {
@@ -614,11 +618,8 @@
     #d8d3c8;
 }
 .project-image img {
-  opacity: 0;
-  transition: opacity .28s ease, transform .65s var(--ease), filter .3s ease;
-}
-.project-image.is-loaded img {
   opacity: 1;
+  transition: transform .65s var(--ease), filter .3s ease;
 }
 .project-image.is-image-fallback::after {
   content: "FOTOGRAFIJA PROJEKTA";

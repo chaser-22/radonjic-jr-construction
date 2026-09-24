@@ -641,10 +641,10 @@
   }
 
   .email-address {
-    min-height: 48px;
+    min-height: 52px;
     margin-top: 8px;
-    padding-inline: 8px;
-    font-size: 11px;
+    padding-inline: 10px;
+    font-size: 12px;
     text-align: center;
   }
 
