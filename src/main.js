@@ -199,9 +199,24 @@ app.innerHTML = `
   </main>
 
   <div class="mobile-contact" aria-label="Brzi kontakt">
-    <a href="tel:${PHONE}">Pozovi</a>
-    <a href="${whatsapp}" target="_blank" rel="noreferrer">WhatsApp</a>
-    <a href="mailto:${EMAIL}">Email</a>
+    <a class="quick-contact quick-contact-call" href="tel:${PHONE}">
+      <span class="quick-contact-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M6.6 3.8 9 3.2l2 5-1.8 1.4a14.5 14.5 0 0 0 5.2 5.2L15.8 13l5 2-.6 2.4c-.3 1.2-1.4 2-2.6 2C10.4 19.4 4.6 13.6 4.6 6.4c0-1.2.8-2.3 2-2.6Z"/></svg>
+      </span>
+      <span>Pozovi</span>
+    </a>
+    <a class="quick-contact" href="${whatsapp}" target="_blank" rel="noreferrer">
+      <span class="quick-contact-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M12 4.5a7.5 7.5 0 0 0-6.4 11.4L4.8 20l4.2-.8A7.5 7.5 0 1 0 12 4.5Z"/><path d="M9.1 9.1c.5 2.2 2 3.7 4.2 4.4"/></svg>
+      </span>
+      <span>WhatsApp</span>
+    </a>
+    <a class="quick-contact" href="mailto:${EMAIL}">
+      <span class="quick-contact-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M4.5 6.5h15v11h-15z"/><path d="m5 7 7 5.2L19 7"/></svg>
+      </span>
+      <span>Email</span>
+    </a>
   </div>
 `;
 
