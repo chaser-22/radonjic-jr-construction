@@ -7,32 +7,36 @@ export const projects = [
     number: "01",
     title: "Gruba gradnja",
     category: "Konstrukcija",
-    image: "https://images.unsplash.com/photo-1772381617907-548a1b6ccca3?auto=format&fit=crop&q=82&w=2400",
+    image: "https://images.pexels.com/photos/14546924/pexels-photo-14546924.jpeg",
     position: "center 48%",
+    fallback: "https://images.pexels.com/photos/9784169/pexels-photo-9784169.jpeg",
     text: "Temelji, ploče, zidovi i kompletna nosiva konstrukcija objekta."
   },
   {
     number: "02",
     title: "Temelji i beton",
     category: "Betonski radovi",
-    image: "https://images.unsplash.com/photo-1743130940792-7b0fd1d56e06?auto=format&fit=crop&q=82&w=2400",
-    position: "center 58%",
+    image: "https://images.pexels.com/photos/26107201/pexels-photo-26107201/free-photo-of-man-working-at-construction-site.jpeg",
+    position: "center 56%",
+    fallback: "https://images.pexels.com/photos/9784169/pexels-photo-9784169.jpeg",
     text: "Priprema, armiranje i betoniranje sa urednom geometrijom i jasnim fazama rada."
   },
   {
     number: "03",
     title: "Zidanje",
     category: "Zidovi",
-    image: "https://images.unsplash.com/photo-1755290315362-6bc203937fd7?auto=format&fit=crop&q=82&w=2400",
+    image: "https://images.pexels.com/photos/35281188/pexels-photo-35281188.jpeg",
     position: "center 48%",
+    fallback: "https://images.pexels.com/photos/9784169/pexels-photo-9784169.jpeg",
     text: "Nosivi i pregradni zidovi, otvori i priprema za naredne faze objekta."
   },
   {
     number: "04",
     title: "Krovovi",
     category: "Krov",
-    image: "https://images.unsplash.com/photo-1763665814485-a0a1b6f51ed7?auto=format&fit=crop&q=82&w=2400",
-    position: "center 44%",
+    image: "https://images.pexels.com/photos/38749917/pexels-photo-38749917/free-photo-of-roof-construction-worker-in-action-against-clear-sky.jpeg",
+    position: "center 42%",
+    fallback: "https://images.pexels.com/photos/9784169/pexels-photo-9784169.jpeg",
     text: "Krovna konstrukcija, izolacija, letvanje i završno pokrivanje."
   }
 ];

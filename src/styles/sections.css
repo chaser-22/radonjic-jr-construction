@@ -416,7 +416,31 @@
   padding-left: 14px;
   border-left: 1px solid rgba(255,255,255,.10);
 }
-.contact-panel > p { margin: 16px 4px 2px; color: #a9ada5; font-family: var(--mono); font-size: 10px; overflow-wrap: anywhere; }
+.email-address {
+  min-height: 54px;
+  margin: 8px 0 0;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 14px;
+  background: rgba(255,255,255,.035);
+  color: #f7f5ef;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: .01em;
+  text-align: center;
+  overflow-wrap: anywhere;
+  transition: color .2s, border-color .2s, background .2s;
+}
+.email-address:hover,
+.email-address:focus-visible {
+  color: var(--yellow);
+  border-color: rgba(242,182,0,.30);
+  background: rgba(242,182,0,.04);
+}
 
 .reveal {
   opacity: 1;
@@ -584,4 +608,27 @@
 }
 .project:hover .project-image img {
   filter: saturate(.90) contrast(1.04);
+}
+
+
+/* V19 — project imagery must always read as intentional, even while loading. */
+.project-image {
+  background:
+    linear-gradient(135deg, rgba(20,21,18,.08), rgba(20,21,18,.02)),
+    #d8d3c8;
+}
+.project-image img {
+  opacity: 1;
+  transition: transform .65s var(--ease), filter .3s ease;
+}
+.project-image.is-image-fallback::after {
+  content: "FOTOGRAFIJA PROJEKTA";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #5f625b;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .12em;
 }

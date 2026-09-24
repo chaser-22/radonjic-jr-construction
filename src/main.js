@@ -109,16 +109,20 @@ app.innerHTML = `
       </div>
 
       <div class="project-editorial shell">
-        ${projects.map((project) => `
+        ${projects.map((project, index) => {
+          const image = (width) => `${project.image}?auto=compress&cs=tinysrgb&w=${width}`;
+          return `
           <article class="project reveal">
             <div class="project-image">
               <img
-                src="${project.image.replace("w=2400", "w=1200")}"
-                srcset="${project.image.replace("w=2400", "w=640")} 640w, ${project.image.replace("w=2400", "w=960")} 960w, ${project.image.replace("w=2400", "w=1400")} 1400w, ${project.image} 2400w"
+                src="${image(1200)}"
+                srcset="${image(640)} 640w, ${image(960)} 960w, ${image(1400)} 1400w, ${image(2000)} 2000w"
                 sizes="(max-width: 760px) calc(100vw - 24px), (max-width: 1180px) calc(100vw - 48px), 70vw"
+                data-fallback="${project.fallback}?auto=compress&cs=tinysrgb&w=1200"
                 style="object-position:${project.position || "center"}"
                 alt="${project.title} — ilustrativna fotografija gradilišta"
-                loading="lazy"
+                loading="${index === 0 ? "eager" : "lazy"}"
+                fetchpriority="${index === 0 ? "high" : "auto"}"
                 decoding="async"
               />
               <span>${project.number}</span>
@@ -129,7 +133,8 @@ app.innerHTML = `
               <div><span>${project.text}</span><i aria-hidden="true">${arrowIcon}</i></div>
             </div>
           </article>
-        `).join("")}
+        `;
+        }).join("")}
       </div>
 
       <p class="photo-disclaimer shell">Profesionalne ilustrativne fotografije gradilišta. Zamijenićemo ih originalnim RADONJIC JR fotografijama kada budu spremne.</p>
@@ -195,7 +200,7 @@ app.innerHTML = `
             <a href="${whatsapp}" target="_blank" rel="noreferrer">WhatsApp <span>${arrowIcon}</span></a>
             <a href="mailto:${EMAIL}">Email <span>${arrowIcon}</span></a>
           </div>
-          <p>${EMAIL}</p>
+          <a class="email-address" href="mailto:${EMAIL}">${EMAIL}</a>
         </div>
       </div>
     </section>
@@ -245,6 +250,19 @@ if (canUseWebGL()) {
   document.documentElement.classList.add("no-webgl");
   houseLayer.dataset.threeState = "unsupported";
 }
+
+document.querySelectorAll(".project-image img").forEach((image) => {
+  image.addEventListener("load", () => image.closest(".project-image")?.classList.add("is-loaded"), { once: true });
+  image.addEventListener("error", () => {
+    const fallback = image.dataset.fallback;
+    if (fallback && image.src !== fallback) {
+      image.removeAttribute("srcset");
+      image.src = fallback;
+    } else {
+      image.closest(".project-image")?.classList.add("is-image-fallback");
+    }
+  });
+});
 
 const hero = document.querySelector(".hero");
 const buildPercent = document.querySelector("[data-build-percent]");
