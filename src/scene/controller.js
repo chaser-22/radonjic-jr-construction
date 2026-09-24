@@ -10,14 +10,16 @@ function chooseQuality() {
   const constrained = memory <= 4 || cores <= 4;
 
   if (width <= 760) {
+    const phoneConstrained = memory <= 4 || cores <= 4 || width <= 340;
     return {
       name: "phone",
-      dpr: 1.05,
-      textureSize: 192,
+      constrained: phoneConstrained,
+      dpr: phoneConstrained ? .95 : 1.15,
+      textureSize: phoneConstrained ? 128 : 192,
       shadows: false,
       shadowSize: 0,
-      roofRows: 7,
-      roofCols: 10,
+      roofRows: phoneConstrained ? 6 : 8,
+      roofCols: phoneConstrained ? 8 : 11,
       transmission: false
     };
   }
@@ -92,11 +94,18 @@ export function createHouseScene(layer, canvas) {
   fill.position.set(-8, 5, -7);
   scene.add(fill);
 
-  const rim = new THREE.DirectionalLight(0xdfe7df, .42);
-  rim.position.set(1, 8, -10);
-  scene.add(rim);
+  if (quality.name !== "phone") {
+    const rim = new THREE.DirectionalLight(0xdfe7df, .42);
+    rim.position.set(1, 8, -10);
+    scene.add(rim);
+  }
 
-  const warm = new THREE.PointLight(0xf2b600, quality.name === "high" ? 2.8 : 1.8, 12, 2);
+  const warm = new THREE.PointLight(
+    0xf2b600,
+    quality.name === "high" ? 2.8 : quality.name === "phone" ? .95 : 1.8,
+    quality.name === "phone" ? 9 : 12,
+    2
+  );
   warm.position.set(-4.5, .9, 4.8);
   scene.add(warm);
 
@@ -127,7 +136,9 @@ export function createHouseScene(layer, canvas) {
   const target = { ...state, buildTarget: reduced ? 1 : 0 };
 
   let last = performance.now();
+  let lastPresented = 0;
   let lastIdleDraw = 0;
+  let lastCameraFov = camera.fov;
   let destroyed = false;
   let failed = false;
   let layoutRevision = 0;
@@ -289,6 +300,11 @@ export function createHouseScene(layer, canvas) {
 
   function updateFrame(now) {
     const safeNow = Number.isFinite(now) ? now : performance.now();
+
+    // Phones target ~45fps: visually smooth for scroll/camera motion while reducing heat and battery use.
+    if (quality.name === "phone" && safeNow - lastPresented < 1000 / 45) return;
+    lastPresented = safeNow;
+
     const dt = Math.min(.05, Math.max(.001, (safeNow - last) / 1000));
     last = safeNow;
     const damping = reduced ? 100 : 5.4;
@@ -383,12 +399,15 @@ export function createHouseScene(layer, canvas) {
     camera.position.y = (phone ? 2.42 : 2.62) - state.pointerY * .06;
     camera.position.z = state.cameraZ;
     camera.fov = state.fov;
-    camera.updateProjectionMatrix();
+    if (Math.abs(camera.fov - lastCameraFov) > .01) {
+      camera.updateProjectionMatrix();
+      lastCameraFov = camera.fov;
+    }
 
     cameraTarget.set(phone ? 0 : state.pointerX * .02, state.lookY + serviceOffset, 0);
     camera.lookAt(cameraTarget);
 
-    extra.grid.rotation.y = safeNow * .000006;
+    if (!phone) extra.grid.rotation.y = safeNow * .000006;
 
     renderer.render(scene, camera);
 

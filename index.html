@@ -42,11 +42,11 @@
     @keyframes rj-draw{to{stroke-dashoffset:0}}
     @media(max-width:760px){
       #site-loader:before{background-size:auto,48px 48px,48px 48px}
-      #site-loader .loader-core{width:calc(100vw - 32px);gap:16px}
-      #site-loader .loader-mark{width:46px;height:46px;font-size:15px}
-      #site-loader .loader-build{height:min(40vh,320px);min-height:230px}
-      #site-loader .loader-house{width:110%;max-width:520px}
-      #site-loader .loader-progress{width:min(340px,82vw)}
+      #site-loader .loader-core{width:calc(100vw - 28px - env(safe-area-inset-left) - env(safe-area-inset-right));gap:14px}
+      #site-loader .loader-mark{width:44px;height:44px;font-size:14px}
+      #site-loader .loader-build{height:min(38dvh,300px);min-height:220px}
+      #site-loader .loader-house{width:106%;max-width:500px}
+      #site-loader .loader-progress{width:min(330px,80vw)}
     }
     @media(orientation:landscape) and (max-height:560px){
       #site-loader .loader-core{gap:10px}

@@ -9,6 +9,7 @@ const whatsapp = `https://wa.me/${PHONE.replace("+", "")}`;
 const arrowIcon = `<svg class="ui-arrow" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 15 15 5"/><path d="M8 5h7v7"/></svg>`;
 const downIcon = `<svg class="ui-arrow ui-arrow-down" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4v11"/><path d="m6 11 4 4 4-4"/></svg>`;
 const app = document.querySelector("#app");
+const isPhoneViewport = window.matchMedia("(max-width: 760px)").matches;
 const siteLoader = document.querySelector("#site-loader");
 const loaderValue = document.querySelector("[data-loader-value]");
 const LOADER_DURATION = 5000;
@@ -164,8 +165,10 @@ app.innerHTML = `
                 data-fallback="${project.fallback}?auto=compress&cs=tinysrgb&w=1200"
                 style="object-position:${project.position || "center"}"
                 alt="${project.title} — ilustrativna fotografija gradilišta"
-                loading="${index === 0 ? "eager" : "lazy"}"
-                fetchpriority="${index === 0 ? "high" : "auto"}"
+                width="1200"
+                height="1500"
+                loading="${!isPhoneViewport && index === 0 ? "eager" : "lazy"}"
+                fetchpriority="${!isPhoneViewport && index === 0 ? "high" : "auto"}"
                 decoding="async"
               />
               <span>${project.number}</span>
