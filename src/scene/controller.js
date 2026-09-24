@@ -14,12 +14,12 @@ function chooseQuality() {
     return {
       name: "phone",
       constrained: phoneConstrained,
-      dpr: phoneConstrained ? .95 : 1.15,
+      dpr: phoneConstrained ? .90 : 1.08,
       textureSize: phoneConstrained ? 128 : 192,
       shadows: false,
       shadowSize: 0,
-      roofRows: phoneConstrained ? 6 : 8,
-      roofCols: phoneConstrained ? 8 : 11,
+      roofRows: phoneConstrained ? 6 : 7,
+      roofCols: phoneConstrained ? 8 : 10,
       transmission: false
     };
   }
@@ -221,7 +221,7 @@ export function createHouseScene(layer, canvas) {
     const width = Math.max(1, window.innerWidth);
     const height = Math.max(1, window.innerHeight);
     const layout = currentLayout();
-    const cap = layout === "phone" ? 1.05 : layout === "tablet" ? Math.min(1.25, quality.dpr) : quality.dpr;
+    const cap = layout === "phone" ? quality.dpr : layout === "tablet" ? Math.min(1.25, quality.dpr) : quality.dpr;
 
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, cap));
     renderer.setSize(width, height, false);
@@ -303,8 +303,9 @@ export function createHouseScene(layer, canvas) {
   function updateFrame(now) {
     const safeNow = Number.isFinite(now) ? now : performance.now();
 
-    // Phones target ~45fps: visually smooth for scroll/camera motion while reducing heat and battery use.
-    if (quality.name === "phone" && safeNow - lastPresented < 1000 / 45) return;
+    // Adaptive phone frame cap keeps interaction fluid without unnecessary heat/battery drain.
+    const phoneFps = quality.constrained ? 36 : 45;
+    if (quality.name === "phone" && safeNow - lastPresented < 1000 / phoneFps) return;
     lastPresented = safeNow;
 
     const dt = Math.min(.05, Math.max(.001, (safeNow - last) / 1000));
