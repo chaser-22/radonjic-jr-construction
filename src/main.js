@@ -110,7 +110,9 @@ app.innerHTML = `
 
       <div class="project-editorial shell">
         ${projects.map((project, index) => {
-          const image = (width) => `${project.image}?auto=compress&cs=tinysrgb&w=${width}`;
+          const image = (width) => project.provider === "unsplash"
+            ? `${project.image}?auto=format&fit=crop&q=82&w=${width}`
+            : `${project.image}?auto=compress&cs=tinysrgb&w=${width}`;
           return `
           <article class="project reveal">
             <div class="project-image">
