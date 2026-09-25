@@ -13,12 +13,23 @@ const app = document.querySelector("#app");
 const isPhoneViewport = window.matchMedia("(max-width: 760px)").matches;
 const siteLoader = document.querySelector("#site-loader");
 const loaderValue = document.querySelector("[data-loader-value]");
+const loaderPhase = document.querySelector("[data-loader-phase]");
 const LOADER_DURATION = 5000;
 const loaderStartedAt = window.__RJ_LOADER_STARTED_AT__ ?? performance.now();
 let loaderProgress = 0;
 let loaderClockFrame = 0;
 let loaderFinished = false;
 let loaderHouse3d = null;
+
+const loaderPhases = [
+  [0, "PRIPREMA"],
+  [10, "TEMELJI"],
+  [22, "ARMATURA"],
+  [38, "KONSTRUKCIJA"],
+  [52, "ZIDANJE"],
+  [70, "KROV"],
+  [90, "ZAVRŠNO"]
+];
 
 try {
   loaderHouse3d = createLoaderHouse(document.querySelector("[data-loader-three]"));
@@ -32,6 +43,13 @@ function setLoader(progress) {
   siteLoader?.style.setProperty("--loader-progress", `${loaderProgress}%`);
   loaderHouse3d?.setProgress(loaderProgress / 100);
   if (loaderValue) loaderValue.textContent = `${String(Math.round(loaderProgress)).padStart(3, "0")}%`;
+  if (loaderPhase) {
+    let phase = loaderPhases[0][1];
+    loaderPhases.forEach(([at, label]) => {
+      if (loaderProgress >= at) phase = label;
+    });
+    loaderPhase.textContent = phase;
+  }
 }
 
 function updateLoaderClock(now = performance.now()) {
