@@ -12,6 +12,18 @@ const CYL = new THREE.CylinderGeometry(1, 1, 1, 16);
 const FOCUS_TINT = new THREE.Color(0xf2b600);
 const FOCUS_EMISSIVE = 0x6b4d00;
 
+const FOCUS_BITS = {
+  shell: 1 << 0,
+  foundation: 1 << 1,
+  concrete: 1 << 2,
+  masonry: 1 << 3,
+  roof: 1 << 4,
+  fence: 1 << 5,
+  plinth: 1 << 6,
+  demolition: 1 << 7,
+  prep: 1 << 8
+};
+
 export function canUseWebGL() {
   try {
     const canvas = document.createElement("canvas");
@@ -190,6 +202,20 @@ export function registerPart(ctx, group, mesh, start, end, o={}) {
   mesh.castShadow = o.castShadow ?? ctx.quality.shadows ?? true;
   mesh.receiveShadow = o.receiveShadow ?? true;
 
+  const tags = o.tags || [];
+  const kind = o.kind || "structure";
+  let focusMask = 0;
+
+  if (tags.includes("shell") || tags.includes("concrete") || tags.includes("masonry")) focusMask |= FOCUS_BITS.shell;
+  if (tags.includes("foundation")) focusMask |= FOCUS_BITS.foundation;
+  if (tags.includes("concrete")) focusMask |= FOCUS_BITS.concrete;
+  if (tags.includes("masonry")) focusMask |= FOCUS_BITS.masonry;
+  if (tags.includes("roof")) focusMask |= FOCUS_BITS.roof;
+  if (tags.includes("fence")) focusMask |= FOCUS_BITS.fence;
+  if (tags.includes("plinth")) focusMask |= FOCUS_BITS.plinth;
+  if (tags.includes("prep")) focusMask |= FOCUS_BITS.prep;
+  if (tags.includes("masonry") || kind === "facade" || kind === "glass") focusMask |= FOCUS_BITS.demolition;
+
   mesh.userData = {
     ...mesh.userData,
     basePosition: mesh.position.clone(),
@@ -197,14 +223,18 @@ export function registerPart(ctx, group, mesh, start, end, o={}) {
     start,
     end,
     reveal: o.reveal || o.axis || "y",
-    kind: o.kind || "structure",
-    tags: o.tags || [],
+    kind,
+    tags,
+    focusMask,
+    xrayFade: kind === "facade" || kind === "glass" || kind === "plinth",
+    demolitionPart: !!(focusMask & FOCUS_BITS.demolition),
     fadeStart: o.fadeStart ?? null,
     fadeEnd: o.fadeEnd ?? null,
     opacity: o.opacity ?? 1,
     baseColor: !Array.isArray(mesh.material) && mesh.material?.color
       ? mesh.material.color.clone()
-      : null
+      : null,
+    outlines: []
   };
 
   ctx.groups[group].add(mesh);
@@ -236,6 +266,7 @@ export function outline(mesh, color=0x4b4a45, opacity=.14) {
   line.userData.baseOpacity = opacity;
   line.userData.baseColor = new THREE.Color(color);
   mesh.add(line);
+  (mesh.userData.outlines || (mesh.userData.outlines = [])).push(line);
   return line;
 }
 
@@ -247,6 +278,7 @@ export function outlineGeometry(mesh, geometry, color=0x4b4a45, opacity=.14) {
   line.userData.baseOpacity = opacity;
   line.userData.baseColor = new THREE.Color(color);
   mesh.add(line);
+  (mesh.userData.outlines || (mesh.userData.outlines = [])).push(line);
   return line;
 }
 
@@ -272,51 +304,65 @@ export function updatePart(mesh, build, focusWeights, xray, demolition) {
     mesh.scale.y = d.baseScale.y * f;
     mesh.position.y = d.basePosition.y + d.baseScale.y * (1 - f) * .5;
   } else {
-    // Structural members grow from their bearing point, like a real erection sequence.
     mesh.scale.y = d.baseScale.y * f;
     mesh.position.y = d.basePosition.y - d.baseScale.y * (1 - f) * .5;
   }
 
   let opacity = amount * d.opacity;
 
-  if (xray > .02 && ["facade","glass","plinth"].includes(d.kind)) {
+  if (xray > .02 && d.xrayFade) {
     opacity *= 1 - xray * .86;
   }
 
   const weights = focusWeights || {};
-  const focusValues = Object.values(weights);
-  const maxFocus = focusValues.length ? Math.max(0, ...focusValues) : 0;
+  const shell = weights.shell || 0;
+  const foundation = weights.foundation || 0;
+  const concrete = weights.concrete || 0;
+  const masonry = weights.masonry || 0;
+  const roof = weights.roof || 0;
+  const fence = weights.fence || 0;
+  const plinth = weights.plinth || 0;
+  const demolitionWeight = weights.demolition || 0;
+  const prep = weights.prep || 0;
+
+  const maxFocus = Math.max(
+    shell,
+    foundation,
+    concrete,
+    masonry,
+    roof,
+    fence,
+    plinth,
+    demolitionWeight,
+    prep
+  );
+
   let highlight = 0;
+  const mask = d.focusMask || 0;
+  if (mask & FOCUS_BITS.shell) highlight = Math.max(highlight, shell);
+  if (mask & FOCUS_BITS.foundation) highlight = Math.max(highlight, foundation);
+  if (mask & FOCUS_BITS.concrete) highlight = Math.max(highlight, concrete);
+  if (mask & FOCUS_BITS.masonry) highlight = Math.max(highlight, masonry);
+  if (mask & FOCUS_BITS.roof) highlight = Math.max(highlight, roof);
+  if (mask & FOCUS_BITS.fence) highlight = Math.max(highlight, fence);
+  if (mask & FOCUS_BITS.plinth) highlight = Math.max(highlight, plinth);
+  if (mask & FOCUS_BITS.demolition) highlight = Math.max(highlight, demolitionWeight);
+  if (mask & FOCUS_BITS.prep) highlight = Math.max(highlight, prep);
 
   if (maxFocus > .001) {
-    Object.entries(weights).forEach(([key, weight]) => {
-      if (weight <= .001) return;
-
-      const eligible = key === "shell"
-        ? d.tags.includes("shell") || d.tags.includes("concrete") || d.tags.includes("masonry")
-        : key === "demolition"
-          ? d.tags.includes("masonry") || ["facade","glass"].includes(d.kind)
-          : d.tags.includes(key);
-
-      if (eligible) highlight = Math.max(highlight, weight);
-    });
-
-    // Strong focus mode: unrelated systems fall almost completely away while the
-    // selected construction system stays fully legible.
     opacity *= 1 - maxFocus * .92 + highlight * .92;
   }
 
-  if (
-    demolition > 0 &&
-    (d.tags.includes("masonry") || ["facade","glass"].includes(d.kind))
-  ) {
+  if (demolition > 0 && d.demolitionPart) {
     mesh.position.x += Math.sign(d.basePosition.x || 1) * demolition * .62;
     mesh.position.y += demolition * .20;
     opacity *= 1 - demolition * .14;
   }
 
   if (Array.isArray(mesh.material)) {
-    mesh.material.forEach((mat) => { mat.opacity = opacity; });
+    for (let i = 0; i < mesh.material.length; i += 1) {
+      mesh.material[i].opacity = opacity;
+    }
   } else if (mesh.material) {
     mesh.material.opacity = opacity;
 
@@ -330,13 +376,13 @@ export function updatePart(mesh, build, focusWeights, xray, demolition) {
     }
   }
 
-  mesh.children.forEach((child) => {
-    if (child.material?.isLineBasicMaterial) {
-      const baseOpacity = child.userData.baseOpacity ?? .14;
-      child.material.opacity = Math.min(1, baseOpacity * opacity * (1 + highlight * 3.4));
-      if (child.userData.baseColor) {
-        child.material.color.copy(child.userData.baseColor).lerp(FOCUS_TINT, highlight * .92);
-      }
+  const outlines = d.outlines;
+  for (let i = 0; i < outlines.length; i += 1) {
+    const child = outlines[i];
+    const baseOpacity = child.userData.baseOpacity ?? .14;
+    child.material.opacity = Math.min(1, baseOpacity * opacity * (1 + highlight * 3.4));
+    if (child.userData.baseColor) {
+      child.material.color.copy(child.userData.baseColor).lerp(FOCUS_TINT, highlight * .92);
     }
-  });
+  }
 }
