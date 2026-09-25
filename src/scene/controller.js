@@ -328,12 +328,16 @@ export function createHouseScene(layer, canvas) {
   };
 
   const playIntro = () => {
-    if (reduced || intro.played || destroyed || failed) return;
+    if (destroyed || failed) return;
+
+    last = performance.now();
+    forceDraw = true;
+    renderer.setAnimationLoop(render);
+
+    if (reduced || intro.played) return;
     intro.played = true;
     intro.active = true;
-    intro.start = performance.now();
-    last = intro.start;
-    forceDraw = true;
+    intro.start = last;
   };
 
   const pointer = (event) => {
@@ -645,20 +649,23 @@ export function createHouseScene(layer, canvas) {
     resize();
     last = performance.now();
     forceDraw = true;
-    try {
-      updateFrame(last);
+
+    if (!document.documentElement.classList.contains("is-loading") && !document.hidden) {
       renderer.setAnimationLoop(render);
-    } catch (error) {
-      fail(error);
     }
   };
 
   const onVisibility = () => {
     if (destroyed || failed) return;
-    if (document.hidden) renderer.setAnimationLoop(null);
-    else {
-      last = performance.now();
-      forceDraw = true;
+
+    if (document.hidden) {
+      renderer.setAnimationLoop(null);
+      return;
+    }
+
+    last = performance.now();
+    forceDraw = true;
+    if (!document.documentElement.classList.contains("is-loading")) {
       renderer.setAnimationLoop(render);
     }
   };
@@ -669,8 +676,7 @@ export function createHouseScene(layer, canvas) {
   Object.values(mapped).flat().forEach((anchor) => resizeObserver?.observe(anchor.el));
 
   resize();
-  updateFrame(performance.now());
-  layer.dataset.threeState = "rendered";
+  layer.dataset.threeState = "ready";
   layer.dataset.threeQuality = quality.name;
 
   window.addEventListener("resize", scheduleResize, { passive: true });
@@ -680,7 +686,10 @@ export function createHouseScene(layer, canvas) {
   canvas.addEventListener("webglcontextlost", onContextLost);
   canvas.addEventListener("webglcontextrestored", onContextRestored);
   document.addEventListener("visibilitychange", onVisibility);
-  renderer.setAnimationLoop(render);
+
+  if (!document.documentElement.classList.contains("is-loading")) {
+    renderer.setAnimationLoop(render);
+  }
 
   return {
     quality: quality.name,
