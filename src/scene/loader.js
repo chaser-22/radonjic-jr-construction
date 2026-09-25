@@ -316,6 +316,7 @@ export function createLoaderHouse(canvas) {
   let targetProgress = 0;
   let progress = 0;
   let destroyed = false;
+  let paused = false;
   let frame = 0;
   let last = performance.now();
 
@@ -390,7 +391,7 @@ export function createLoaderHouse(canvas) {
   };
 
   const render = (now) => {
-    if (destroyed) return;
+    if (destroyed || paused) return;
 
     const dt = Math.min(1 / 30, Math.max(.001, (now - last) / 1000));
     last = now;
@@ -435,6 +436,14 @@ export function createLoaderHouse(canvas) {
     },
     complete() {
       targetProgress = 1;
+      progress = 1;
+    },
+    freeze() {
+      if (destroyed || paused) return;
+      targetProgress = 1;
+      progress = 1;
+      paused = true;
+      cancelAnimationFrame(frame);
     },
     destroy() {
       if (destroyed) return;
