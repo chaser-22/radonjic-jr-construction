@@ -32,14 +32,14 @@
     #site-loader .loader-house .frame,#site-loader .loader-house .detail{fill:none;stroke:#e7e8e2;stroke-width:1.45;vector-effect:non-scaling-stroke;stroke-dasharray:1;stroke-dashoffset:1}
     #site-loader .loader-house .accent{stroke:#f2b600}
     #site-loader .loader-house .ghost{stroke:rgba(255,255,255,.10);stroke-width:.65;stroke-dashoffset:0}
-    #site-loader .loader-house .ground{animation:rj-draw .52s .25s forwards}
-    #site-loader .loader-house .foundation{animation:rj-draw .68s .68s forwards}
-    #site-loader .loader-house .column{animation:rj-draw .72s 1.28s forwards}
-    #site-loader .loader-house .beam{animation:rj-draw .62s 1.92s forwards}
-    #site-loader .loader-house .wall{animation:rj-draw .78s 2.42s forwards}
-    #site-loader .loader-house .upper{animation:rj-draw .68s 3.08s forwards}
-    #site-loader .loader-house .roof{animation:rj-draw .82s 3.55s forwards}
-    #site-loader .loader-house .detail{animation:rj-draw .56s 4.18s forwards}
+    #site-loader .loader-house .ground{animation:rj-draw .40s .15s forwards}
+    #site-loader .loader-house .foundation{animation:rj-draw .50s .50s forwards}
+    #site-loader .loader-house .column{animation:rj-draw .56s .92s forwards}
+    #site-loader .loader-house .beam{animation:rj-draw .48s 1.42s forwards}
+    #site-loader .loader-house .wall{animation:rj-draw .60s 1.82s forwards}
+    #site-loader .loader-house .upper{animation:rj-draw .52s 2.30s forwards}
+    #site-loader .loader-house .roof{animation:rj-draw .65s 2.68s forwards}
+    #site-loader .loader-house .detail{animation:rj-draw .42s 3.20s forwards}
     #site-loader .loader-progress{width:min(470px,84vw);display:grid;gap:9px}
     #site-loader .loader-progress-head{display:flex;align-items:center;justify-content:space-between;gap:18px;font-family:"IBM Plex Mono",monospace;font-size:9px;font-weight:600;letter-spacing:.13em;text-transform:uppercase}
     #site-loader .loader-phase{color:#c9ccc5;transition:color .2s ease}
@@ -120,7 +120,8 @@
       if (el) el.classList.add("loader-timeout");
       document.documentElement.classList.remove("is-loading");
       document.documentElement.classList.add("site-ready");
-    }, 5800);
+      document.documentElement.classList.add("site-entered");
+    }, 4800);
   </script>
   <a class="skip-link" href="#main">Preskoči na sadržaj</a>
   <div id="app"></div>

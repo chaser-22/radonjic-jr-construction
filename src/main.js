@@ -14,7 +14,7 @@ const isPhoneViewport = window.matchMedia("(max-width: 760px)").matches;
 const siteLoader = document.querySelector("#site-loader");
 const loaderValue = document.querySelector("[data-loader-value]");
 const loaderPhase = document.querySelector("[data-loader-phase]");
-const LOADER_DURATION = 5000;
+const LOADER_DURATION = 4000;
 const loaderStartedAt = window.__RJ_LOADER_STARTED_AT__ ?? performance.now();
 let loaderProgress = 0;
 let loaderClockFrame = 0;
@@ -23,12 +23,12 @@ let loaderHouse3d = null;
 
 const loaderPhases = [
   [0, "PRIPREMA"],
-  [10, "TEMELJI"],
-  [22, "ARMATURA"],
-  [38, "KONSTRUKCIJA"],
-  [52, "ZIDANJE"],
-  [70, "KROV"],
-  [90, "ZAVRŠNO"]
+  [8, "TEMELJI"],
+  [18, "ARMATURA"],
+  [32, "KONSTRUKCIJA"],
+  [48, "ZIDANJE"],
+  [66, "KROV"],
+  [86, "ZAVRŠNO"]
 ];
 
 try {
@@ -72,6 +72,14 @@ function finishLoader() {
     document.documentElement.classList.remove("is-loading");
     document.documentElement.classList.add("site-ready");
     houseScene?.playIntro();
+
+    window.setTimeout(() => {
+      document.documentElement.classList.add("site-entered");
+      window.setTimeout(() => {
+        document.documentElement.classList.add("site-settled");
+      }, 1450);
+    }, 90);
+
     window.setTimeout(() => {
       loaderHouse3d?.destroy();
       loaderHouse3d = null;
@@ -79,7 +87,7 @@ function finishLoader() {
   }, 60);
 }
 
-function finishLoaderAtFiveSeconds() {
+function finishLoaderAtFourSeconds() {
   const remaining = Math.max(0, LOADER_DURATION - (performance.now() - loaderStartedAt));
   window.setTimeout(finishLoader, remaining);
 }
@@ -228,7 +236,7 @@ app.innerHTML = `
       </div>
 
       <div class="shell services-layout">
-        <div class="service-picker">
+        <div class="service-picker reveal">
           <p class="service-tip"><span aria-hidden="true"></span>Klikni me</p>
           <div class="service-list" role="list">
           ${services.map((service, index) => `
@@ -364,7 +372,7 @@ Promise.race([
   new Promise((resolve) => setTimeout(resolve, 3200))
 ]).then(() => {
   houseScene?.refreshLayout();
-  finishLoaderAtFiveSeconds();
+  finishLoaderAtFourSeconds();
 });
 
 document.fonts?.ready?.then(() => houseScene?.refreshLayout());

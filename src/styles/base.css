@@ -308,3 +308,182 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .site-ready .house-canvas {
   transition-duration: .48s;
 }
+
+
+/* V35 — coordinated entrance after the four-second construction loader. */
+.site-header,
+.site-header .brand,
+.site-header .desktop-nav,
+.site-header .header-cta,
+.hero-grid,
+.hero-content > .micro-label,
+.hero h1 > span,
+.hero h1 > em,
+.hero-intro,
+.hero-actions .button,
+.build-status,
+.scroll-cue,
+.mobile-contact {
+  will-change: transform, opacity;
+}
+
+html:not(.site-entered) .site-header {
+  opacity: 0;
+  transform: translateY(-18px);
+}
+
+.site-header {
+  transition:
+    opacity .62s var(--ease),
+    transform .72s var(--ease),
+    color .25s ease;
+}
+
+html:not(.site-entered) .site-header .brand,
+html:not(.site-entered) .site-header .desktop-nav,
+html:not(.site-entered) .site-header .header-cta {
+  opacity: 0;
+  transform: translateY(-10px) scale(.97);
+}
+
+.site-header .brand,
+.site-header .desktop-nav,
+.site-header .header-cta {
+  transition:
+    opacity .56s var(--ease),
+    transform .62s var(--ease),
+    background .25s,
+    border-color .25s,
+    color .25s;
+}
+
+.site-entered .site-header .brand { transition-delay: .02s, .02s, 0s, 0s, 0s; }
+.site-entered .site-header .desktop-nav { transition-delay: .10s, .10s, 0s, 0s, 0s; }
+.site-entered .site-header .header-cta { transition-delay: .16s, .16s, 0s, 0s, 0s; }
+
+html:not(.site-entered) .hero-grid {
+  opacity: 0;
+  transform: scale(1.035);
+}
+
+.hero-grid {
+  transition: opacity .9s ease .08s, transform 1.1s var(--ease) .08s;
+  transform-origin: 62% 42%;
+}
+
+html:not(.site-entered) .hero-content > .micro-label,
+html:not(.site-entered) .hero h1 > span,
+html:not(.site-entered) .hero h1 > em,
+html:not(.site-entered) .hero-intro,
+html:not(.site-entered) .hero-actions .button {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+.hero-content > .micro-label {
+  transition: opacity .48s ease .14s, transform .66s var(--ease) .14s;
+}
+
+.hero h1 > span {
+  transition: opacity .58s ease .20s, transform .78s var(--ease) .20s;
+}
+
+.hero h1 > em {
+  transition: opacity .58s ease .28s, transform .82s var(--ease) .28s;
+}
+
+.hero-intro {
+  transition: opacity .56s ease .39s, transform .72s var(--ease) .39s;
+}
+
+.hero-actions .button:first-child {
+  transition:
+    opacity .50s ease .48s,
+    transform .68s var(--ease) .48s,
+    background .2s,
+    border-color .2s;
+}
+
+.hero-actions .button:nth-child(2) {
+  transition:
+    opacity .50s ease .56s,
+    transform .68s var(--ease) .56s,
+    background .2s,
+    border-color .2s;
+}
+
+html:not(.site-entered) .build-status,
+html:not(.site-entered) .scroll-cue {
+  opacity: 0;
+  transform: translateY(14px);
+}
+
+.build-status {
+  transition: opacity .55s ease .62s, transform .68s var(--ease) .62s;
+}
+
+.scroll-cue {
+  transition: opacity .55s ease .72s, transform .68s var(--ease) .72s;
+}
+
+html:not(.site-entered) .mobile-contact {
+  opacity: 0;
+  transform: translateY(22px) scale(.98);
+}
+
+.mobile-contact {
+  transition: opacity .52s ease .68s, transform .68s var(--ease) .68s;
+}
+
+
+
+.site-settled .site-header,
+.site-settled .site-header .brand,
+.site-settled .site-header .desktop-nav,
+.site-settled .site-header .header-cta,
+.site-settled .hero-grid,
+.site-settled .hero-content > .micro-label,
+.site-settled .hero h1 > span,
+.site-settled .hero h1 > em,
+.site-settled .hero-intro,
+.site-settled .hero-actions .button,
+.site-settled .build-status,
+.site-settled .scroll-cue,
+.site-settled .mobile-contact {
+  will-change: auto;
+}
+
+.site-settled .site-header .brand,
+.site-settled .site-header .desktop-nav,
+.site-settled .site-header .header-cta,
+.site-settled .hero-content > .micro-label,
+.site-settled .hero h1 > span,
+.site-settled .hero h1 > em,
+.site-settled .hero-intro,
+.site-settled .hero-actions .button,
+.site-settled .build-status,
+.site-settled .scroll-cue,
+.site-settled .mobile-contact {
+  transition-delay: 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header,
+  .site-header .brand,
+  .site-header .desktop-nav,
+  .site-header .header-cta,
+  .hero-grid,
+  .hero-content > .micro-label,
+  .hero h1 > span,
+  .hero h1 > em,
+  .hero-intro,
+  .hero-actions .button,
+  .build-status,
+  .scroll-cue,
+  .mobile-contact {
+    transition-delay: 0s !important;
+    transition-duration: .01ms !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
