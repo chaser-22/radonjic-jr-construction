@@ -1916,3 +1916,116 @@
     width: 100%;
   }
 }
+
+
+/* V31 — phone service selector sits above a dedicated 3D viewing stage. */
+@media (max-width: 760px) {
+  .services-layout {
+    gap: 16px;
+  }
+
+  .service-picker {
+    position: relative;
+    z-index: 26;
+    display: grid;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 18px;
+    background: rgba(16,17,15,.96);
+    box-shadow: 0 14px 32px rgba(0,0,0,.18);
+  }
+
+  .service-tip {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--yellow);
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .10em;
+    text-transform: uppercase;
+  }
+
+  .service-tip span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--yellow);
+    box-shadow: 0 0 0 0 rgba(242,182,0,.34);
+    animation: service-cue-pulse 1.6s ease-out infinite;
+  }
+
+  .service-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .service-row,
+  .service-row:last-child {
+    min-width: 0;
+    min-height: 74px;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 6px;
+    align-content: start;
+    align-items: start;
+    padding: 9px 8px;
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 13px;
+    background: rgba(255,255,255,.025);
+    transition: transform .18s var(--ease), border-color .18s, background .18s;
+  }
+
+  .service-row > span {
+    padding: 0;
+    color: #92978f;
+    font-size: 8px;
+    line-height: 1;
+  }
+
+  .service-row strong {
+    align-self: start;
+    color: #f4f2ec;
+    font-size: clamp(11px, 3.1vw, 13px);
+    line-height: 1.16;
+    letter-spacing: -.025em;
+  }
+
+  .service-row p,
+  .service-row i {
+    display: none;
+  }
+
+  .service-row:hover,
+  .service-row:focus-visible,
+  .service-row.is-active {
+    padding: 9px 8px;
+    border-color: rgba(242,182,0,.66);
+    background: rgba(242,182,0,.10);
+    transform: translateY(-1px);
+  }
+
+  .service-row.is-active > span,
+  .service-row.is-active strong,
+  .service-row:focus-visible > span,
+  .service-row:focus-visible strong {
+    color: var(--yellow);
+  }
+
+  .service-stage {
+    order: initial;
+    height: clamp(300px, 43dvh, 390px);
+    min-height: 300px;
+    margin-top: 2px;
+  }
+}
+
+@keyframes service-cue-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(242,182,0,.34); }
+  70% { box-shadow: 0 0 0 7px rgba(242,182,0,0); }
+  100% { box-shadow: 0 0 0 0 rgba(242,182,0,0); }
+}
