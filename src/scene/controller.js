@@ -419,6 +419,7 @@ export function createHouseScene(layer, canvas) {
     mesh.instanceMatrix.needsUpdate = true;
   }
 
+  // Motion follows the display refresh rate; quality scaling never lowers the phone's crisp DPR.
   function updateFrame(now) {
     const safeNow = Number.isFinite(now) ? now : performance.now();
     const rawDt = Math.max(.001, (safeNow - last) / 1000);
