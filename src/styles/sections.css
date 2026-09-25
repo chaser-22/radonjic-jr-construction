@@ -720,7 +720,7 @@
 /* V35 — section content rises and fades in as it enters the viewport. */
 .reveal {
   opacity: 0;
-  transform: translateY(30px);
+  transform: translate3d(0, 30px, 0);
   transition:
     opacity .68s ease,
     transform .82s var(--ease);
@@ -736,7 +736,7 @@
 .trust-row span,
 .service-picker.reveal .service-row {
   opacity: 0;
-  transform: translateY(14px);
+  transform: translate3d(0, 14px, 0);
   transition:
     opacity .46s ease,
     transform .62s var(--ease),
@@ -787,7 +787,6 @@
   opacity: 0;
   transform: translate3d(0, 22px, 0) scale(.994);
   transition: opacity .62s ease, transform .86s var(--ease);
-  will-change: transform, opacity;
 }
 
 .project.reveal.is-visible .project-image {
@@ -799,7 +798,6 @@
   opacity: 0;
   transform: translate3d(0, 18px, 0);
   transition: opacity .58s ease .10s, transform .72s var(--ease) .10s;
-  will-change: transform, opacity;
 }
 
 .project.reveal.is-visible .project-copy {
@@ -807,10 +805,6 @@
   transform: translate3d(0, 0, 0);
 }
 
-.project.reveal.is-visible .project-image,
-.project.reveal.is-visible .project-copy {
-  will-change: auto;
-}
 
 @media (prefers-reduced-motion: reduce) {
   .reveal,
