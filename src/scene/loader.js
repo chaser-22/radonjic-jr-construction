@@ -56,6 +56,8 @@ export function createLoaderHouse(canvas) {
 
   const BOX = new THREE.BoxGeometry(1, 1, 1);
   const CYL = new THREE.CylinderGeometry(1, 1, 1, 10);
+  const BOX_EDGES = new THREE.EdgesGeometry(BOX);
+  const CYL_EDGES = new THREE.EdgesGeometry(CYL);
   const yellow = new THREE.Color(0xf2b600);
 
   const makeMat = (color, roughness, metalness = 0, extra = {}) =>
@@ -100,8 +102,9 @@ export function createLoaderHouse(canvas) {
     };
 
     if (options.edges !== false) {
+      const edgeGeometry = geometry === BOX ? BOX_EDGES : geometry === CYL ? CYL_EDGES : new THREE.EdgesGeometry(geometry);
       const edges = new THREE.LineSegments(
-        new THREE.EdgesGeometry(geometry),
+        edgeGeometry,
         new THREE.LineBasicMaterial({
           color: options.accent ? yellow : 0xe9eae4,
           transparent: true,
@@ -110,9 +113,12 @@ export function createLoaderHouse(canvas) {
         })
       );
       edges.userData.baseOpacity = options.accent ? .82 : .18;
+      mesh.userData.edge = edges;
       mesh.add(edges);
     }
 
+    mesh.userData.lastAmount = -1;
+    mesh.userData.lastPulse = -1;
     world.add(mesh);
     parts.push(mesh);
     return mesh;
@@ -313,19 +319,45 @@ export function createLoaderHouse(canvas) {
   let frame = 0;
   let last = performance.now();
 
+  let resizeFrame = 0;
+  let lastWidth = 0;
+  let lastHeight = 0;
+
   const resize = () => {
+    resizeFrame = 0;
     const rect = canvas.getBoundingClientRect();
     const width = Math.max(1, Math.round(rect.width));
     const height = Math.max(1, Math.round(rect.height));
+
+    if (width === lastWidth && height === lastHeight) return;
+
     renderer.setSize(width, height, false);
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
+    lastWidth = width;
+    lastHeight = height;
+  };
+
+  const scheduleResize = () => {
+    if (resizeFrame) return;
+    resizeFrame = requestAnimationFrame(resize);
   };
 
   const animatePart = (mesh, value) => {
     const data = mesh.userData;
     let amount = smooth(data.start, data.end, value);
     if (data.fadeStart !== null) amount *= 1 - smooth(data.fadeStart, data.fadeEnd, value);
+
+    const localPulse = Math.sin(Math.PI * smooth(data.start, Math.min(1, data.end + .07), value));
+    if (
+      Math.abs(amount - data.lastAmount) < .00045 &&
+      Math.abs(localPulse - data.lastPulse) < .00045
+    ) {
+      return;
+    }
+
+    data.lastAmount = amount;
+    data.lastPulse = localPulse;
 
     mesh.visible = amount > .002;
     mesh.position.copy(data.basePosition);
@@ -344,7 +376,6 @@ export function createLoaderHouse(canvas) {
       mesh.position.y = data.basePosition.y - data.baseScale.y * (1 - f) * .5;
     }
 
-    const localPulse = Math.sin(Math.PI * smooth(data.start, Math.min(1, data.end + .07), value));
     mesh.material.opacity = amount;
 
     if (mesh.material.emissive) {
@@ -352,19 +383,18 @@ export function createLoaderHouse(canvas) {
       mesh.material.emissiveIntensity = data.accent ? localPulse * .75 : 0;
     }
 
-    mesh.children.forEach((child) => {
-      if (child.material) {
-        child.material.opacity = (child.userData.baseOpacity || .18) * amount * (1 + localPulse * .55);
-      }
-    });
+    const edge = data.edge;
+    if (edge) {
+      edge.material.opacity = (edge.userData.baseOpacity || .18) * amount * (1 + localPulse * .55);
+    }
   };
 
   const render = (now) => {
     if (destroyed) return;
 
-    const dt = Math.min(.05, Math.max(.001, (now - last) / 1000));
+    const dt = Math.min(1 / 30, Math.max(.001, (now - last) / 1000));
     last = now;
-    progress = THREE.MathUtils.damp(progress, targetProgress, 9.2, dt);
+    progress = THREE.MathUtils.damp(progress, targetProgress, 12.5, dt);
 
     parts.forEach((part) => animatePart(part, progress));
 
@@ -395,7 +425,8 @@ export function createLoaderHouse(canvas) {
   };
 
   resize();
-  window.addEventListener("resize", resize, { passive: true });
+  window.addEventListener("resize", scheduleResize, { passive: true });
+  window.visualViewport?.addEventListener("resize", scheduleResize, { passive: true });
   frame = requestAnimationFrame(render);
 
   return {
@@ -409,19 +440,21 @@ export function createLoaderHouse(canvas) {
       if (destroyed) return;
       destroyed = true;
       cancelAnimationFrame(frame);
-      window.removeEventListener("resize", resize);
+      if (resizeFrame) cancelAnimationFrame(resizeFrame);
+      window.removeEventListener("resize", scheduleResize);
+      window.visualViewport?.removeEventListener("resize", scheduleResize);
 
-      parts.forEach((mesh) => {
+      for (let i = 0; i < parts.length; i += 1) {
+        const mesh = parts[i];
         mesh.material.dispose();
-        mesh.children.forEach((child) => {
-          child.geometry?.dispose();
-          child.material?.dispose();
-        });
-      });
+        mesh.userData.edge?.material?.dispose();
+      }
 
       grid.geometry.dispose();
       gridMaterials.forEach((material) => material.dispose());
       materials.forEach((material) => material.dispose());
+      BOX_EDGES.dispose();
+      CYL_EDGES.dispose();
       BOX.dispose();
       CYL.dispose();
       renderer.dispose();
