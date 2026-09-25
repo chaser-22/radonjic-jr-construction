@@ -68,6 +68,7 @@ function finishLoader() {
   loaderHouse3d?.complete();
   clearTimeout(window.__RJ_LOADER_TIMEOUT__);
   window.setTimeout(() => {
+    loaderHouse3d?.freeze();
     siteLoader?.classList.add("loader-out");
     document.documentElement.classList.remove("is-loading");
     document.documentElement.classList.add("site-ready");
