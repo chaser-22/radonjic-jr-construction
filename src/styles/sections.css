@@ -733,8 +733,7 @@
 
 .phase-list.reveal article,
 .process-grid.reveal article,
-.trust-row span,
-.service-picker.reveal .service-row {
+.trust-row span {
   opacity: 0;
   transform: translate3d(0, 14px, 0);
   transition:
@@ -746,36 +745,25 @@
 
 .phase-list.reveal.is-visible article,
 .process-grid.reveal.is-visible article,
-.about-copy.reveal.is-visible .trust-row span,
-.service-picker.reveal.is-visible .service-row {
+.about-copy.reveal.is-visible .trust-row span {
   opacity: 1;
   transform: none;
 }
 
 .phase-list.reveal.is-visible article:nth-child(1),
 .process-grid.reveal.is-visible article:nth-child(1),
-.about-copy.reveal.is-visible .trust-row span:nth-child(1),
-.service-picker.reveal.is-visible .service-row:nth-child(1) { transition-delay: .08s; }
+.about-copy.reveal.is-visible .trust-row span:nth-child(1) { transition-delay: .08s; }
 
 .phase-list.reveal.is-visible article:nth-child(2),
 .process-grid.reveal.is-visible article:nth-child(2),
-.about-copy.reveal.is-visible .trust-row span:nth-child(2),
-.service-picker.reveal.is-visible .service-row:nth-child(2) { transition-delay: .14s; }
+.about-copy.reveal.is-visible .trust-row span:nth-child(2) { transition-delay: .14s; }
 
 .phase-list.reveal.is-visible article:nth-child(3),
 .process-grid.reveal.is-visible article:nth-child(3),
-.about-copy.reveal.is-visible .trust-row span:nth-child(3),
-.service-picker.reveal.is-visible .service-row:nth-child(3) { transition-delay: .20s; }
+.about-copy.reveal.is-visible .trust-row span:nth-child(3) { transition-delay: .20s; }
 
 .process-grid.reveal.is-visible article:nth-child(4),
-.about-copy.reveal.is-visible .trust-row span:nth-child(4),
-.service-picker.reveal.is-visible .service-row:nth-child(4) { transition-delay: .26s; }
-
-.service-picker.reveal.is-visible .service-row:nth-child(5) { transition-delay: .30s; }
-.service-picker.reveal.is-visible .service-row:nth-child(6) { transition-delay: .34s; }
-.service-picker.reveal.is-visible .service-row:nth-child(7) { transition-delay: .38s; }
-.service-picker.reveal.is-visible .service-row:nth-child(8) { transition-delay: .42s; }
-.service-picker.reveal.is-visible .service-row:nth-child(9) { transition-delay: .46s; }
+.about-copy.reveal.is-visible .trust-row span:nth-child(4) { transition-delay: .26s; }
 
 .project.reveal {
   opacity: 1;
@@ -811,7 +799,6 @@
   .phase-list.reveal article,
   .process-grid.reveal article,
   .trust-row span,
-  .service-picker.reveal .service-row,
   .project.reveal .project-copy {
     opacity: 1 !important;
     transform: none !important;
