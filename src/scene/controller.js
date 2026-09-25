@@ -153,6 +153,8 @@ export function createHouseScene(layer, canvas) {
   let lastLayerOpacity = -1;
   let destroyed = false;
   let failed = false;
+  let loopRunning = false;
+  let idleFrames = 0;
   let layoutRevision = 0;
   let resizeFrame = 0;
   let lastWidth = 0;
@@ -223,6 +225,30 @@ export function createHouseScene(layer, canvas) {
 
   const getAnchors = () => mapped[currentLayout()];
 
+  const sleepRenderer = () => {
+    if (!loopRunning) return;
+    renderer.setAnimationLoop(null);
+    loopRunning = false;
+  };
+
+  const wakeRenderer = () => {
+    forceDraw = true;
+    if (
+      loopRunning ||
+      destroyed ||
+      failed ||
+      document.hidden ||
+      document.documentElement.classList.contains("is-loading")
+    ) {
+      return;
+    }
+
+    last = performance.now();
+    idleFrames = 0;
+    loopRunning = true;
+    renderer.setAnimationLoop(render);
+  };
+
   const refreshLayout = () => {
     layoutRevision += 1;
     offsetCache.clear();
@@ -262,6 +288,7 @@ export function createHouseScene(layer, canvas) {
     }
 
     refreshLayout();
+    wakeRenderer();
   };
 
   const scheduleResize = () => {
@@ -292,7 +319,7 @@ export function createHouseScene(layer, canvas) {
       target[key] = lerp(a[key], b[key], t);
     }
     target.section = a.name;
-    forceDraw = true;
+    wakeRenderer();
   }
 
   const serviceLook = {
@@ -318,21 +345,19 @@ export function createHouseScene(layer, canvas) {
   const setService = (key) => {
     if (target.focus === key) return;
     target.focus = key;
-    forceDraw = true;
+    wakeRenderer();
   };
 
   const clearService = () => {
     if (target.focus === null) return;
     target.focus = null;
-    forceDraw = true;
+    wakeRenderer();
   };
 
   const playIntro = () => {
     if (destroyed || failed) return;
 
-    last = performance.now();
-    forceDraw = true;
-    renderer.setAnimationLoop(render);
+    wakeRenderer();
 
     if (reduced || intro.played) return;
     intro.played = true;
@@ -347,13 +372,13 @@ export function createHouseScene(layer, canvas) {
     if (Math.abs(nextX - target.pointerX) < .002 && Math.abs(nextY - target.pointerY) < .002) return;
     target.pointerX = nextX;
     target.pointerY = nextY;
-    forceDraw = true;
+    wakeRenderer();
   };
 
   function fail(error) {
     if (failed || destroyed) return;
     failed = true;
-    renderer.setAnimationLoop(null);
+    sleepRenderer();
     layer.classList.remove("three-ready");
     layer.classList.add("three-failed");
     layer.dataset.threeState = "failed";
@@ -492,8 +517,14 @@ export function createHouseScene(layer, canvas) {
     const motionActive = stateMoving || serviceMoving || groupMoving || modelDirty || intro.active;
 
     if (fullyHidden && !requestedDraw && safeNow - lastIdleDraw < 160) return;
-    if (!motionActive && !requestedDraw && safeNow - lastIdleDraw < 500) return;
 
+    if (!motionActive && !requestedDraw) {
+      idleFrames += 1;
+      if (idleFrames >= 2) sleepRenderer();
+      return;
+    }
+
+    idleFrames = 0;
     forceDraw = false;
     lastIdleDraw = safeNow;
 
@@ -635,7 +666,7 @@ export function createHouseScene(layer, canvas) {
 
   const onContextLost = (event) => {
     event.preventDefault();
-    renderer.setAnimationLoop(null);
+    sleepRenderer();
     layer.classList.remove("three-ready");
     layer.classList.add("three-failed");
     layer.dataset.threeState = "context-lost";
@@ -651,24 +682,18 @@ export function createHouseScene(layer, canvas) {
     last = performance.now();
     forceDraw = true;
 
-    if (!document.documentElement.classList.contains("is-loading") && !document.hidden) {
-      renderer.setAnimationLoop(render);
-    }
+    wakeRenderer();
   };
 
   const onVisibility = () => {
     if (destroyed || failed) return;
 
     if (document.hidden) {
-      renderer.setAnimationLoop(null);
+      sleepRenderer();
       return;
     }
 
-    last = performance.now();
-    forceDraw = true;
-    if (!document.documentElement.classList.contains("is-loading")) {
-      renderer.setAnimationLoop(render);
-    }
+    wakeRenderer();
   };
 
   const resizeObserver = "ResizeObserver" in window
@@ -689,7 +714,7 @@ export function createHouseScene(layer, canvas) {
   document.addEventListener("visibilitychange", onVisibility);
 
   if (!document.documentElement.classList.contains("is-loading")) {
-    renderer.setAnimationLoop(render);
+    wakeRenderer();
   }
 
   return {
@@ -702,7 +727,7 @@ export function createHouseScene(layer, canvas) {
     playIntro,
     destroy() {
       destroyed = true;
-      renderer.setAnimationLoop(null);
+      sleepRenderer();
       resizeObserver?.disconnect();
       if (resizeFrame) cancelAnimationFrame(resizeFrame);
       window.removeEventListener("resize", scheduleResize);
