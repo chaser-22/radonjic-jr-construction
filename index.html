@@ -23,7 +23,10 @@
     #site-loader .loader-mark{width:50px;height:50px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.52);font-weight:900;font-size:16px;letter-spacing:-.08em;position:relative;opacity:.82}
     #site-loader .loader-mark:after{content:"";position:absolute;width:7px;height:7px;right:-4px;bottom:-4px;background:#f2b600}
     #site-loader .loader-build{position:relative;width:100%;height:min(46vh,390px);min-height:260px;display:grid;place-items:center}
+    #site-loader .loader-three{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity .24s ease}
+    #site-loader.loader-three-ready .loader-three{opacity:1}
     #site-loader .loader-house{width:min(100%,570px);overflow:visible;filter:drop-shadow(0 16px 40px rgba(0,0,0,.20));transform:translateY(0) scale(1);opacity:1;transition:transform .42s cubic-bezier(.2,.72,.18,1),opacity .28s ease}
+    #site-loader.loader-three-ready .loader-house{opacity:0}
     #site-loader.loader-out .loader-house{transform:translateY(-10px) scale(.94);opacity:0}
     #site-loader .loader-house .frame,#site-loader .loader-house .detail{fill:none;stroke:#e7e8e2;stroke-width:1.45;vector-effect:non-scaling-stroke;stroke-dasharray:1;stroke-dashoffset:1}
     #site-loader .loader-house .accent{stroke:#f2b600}
@@ -67,6 +70,7 @@
     <div class="loader-core">
       <div class="loader-mark">RJ</div>
       <div class="loader-build" aria-hidden="true">
+        <canvas class="loader-three" data-loader-three></canvas>
         <svg class="loader-house" viewBox="0 0 640 390" role="presentation">
           <path class="frame ghost" pathLength="1" d="M80 330H560M112 330V344M528 330V344M170 108V330M470 108V330M320 34V330"/>
           <path class="frame accent ground" pathLength="1" d="M96 330H544"/>
