@@ -194,7 +194,9 @@ app.innerHTML = `
       </div>
 
       <div class="shell services-layout">
-        <div class="service-list" role="list">
+        <div class="service-picker">
+          <p class="service-tip"><span aria-hidden="true"></span>Klikni me</p>
+          <div class="service-list" role="list">
           ${services.map((service, index) => `
             <button class="service-row ${index === 0 ? "is-active" : ""}" type="button" data-service="${service.key}" data-service-code="${service.code}" aria-pressed="${index === 0 ? "true" : "false"}">
               <span>${service.code}</span>
@@ -203,6 +205,7 @@ app.innerHTML = `
               <i aria-hidden="true">${arrowIcon}</i>
             </button>
           `).join("")}
+          </div>
         </div>
 
         <div class="service-stage" aria-hidden="true"></div>
