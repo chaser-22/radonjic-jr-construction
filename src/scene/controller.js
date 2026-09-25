@@ -357,6 +357,22 @@ export function createHouseScene(layer, canvas) {
   const playIntro = () => {
     if (destroyed || failed) return;
 
+    if (!intro.played) {
+      state.build = target.buildTarget;
+      for (let i = 0; i < motionKeys.length; i += 1) {
+        const key = motionKeys[i];
+        state[key] = target[key];
+      }
+      state.pointerX = target.pointerX;
+      state.pointerY = target.pointerY;
+      state.section = target.section;
+      state.focus = target.section === "services" ? target.focus : null;
+      lastModelBuild = -1;
+      lastModelXray = -1;
+      lastModelDemolition = -1;
+      lastModelSection = "";
+    }
+
     wakeRenderer();
 
     if (reduced || intro.played) return;
