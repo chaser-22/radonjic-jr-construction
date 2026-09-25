@@ -2029,3 +2029,50 @@
   70% { box-shadow: 0 0 0 7px rgba(242,182,0,0); }
   100% { box-shadow: 0 0 0 0 rgba(242,182,0,0); }
 }
+
+
+/* V33 — keep phone CTAs out of the 3D house viewing area. */
+@media (max-width: 760px) {
+  .hero-actions {
+    width: 100%;
+    max-width: 430px;
+    margin-top: 20px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .hero-actions .button {
+    min-width: 0;
+    min-height: 50px;
+    padding: 6px 6px 6px 13px;
+    gap: 7px;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  .hero-actions .button > span {
+    width: 34px;
+    height: 34px;
+  }
+
+  .hero-intro {
+    margin-top: 18px;
+  }
+
+  .hero {
+    min-height: max(128svh, 760px);
+    min-height: max(128dvh, 760px);
+  }
+}
+
+@media (max-width: 360px) {
+  .hero-actions .button {
+    padding-left: 10px;
+    font-size: 9.4px;
+  }
+
+  .hero-actions .button > span {
+    width: 31px;
+    height: 31px;
+  }
+}
