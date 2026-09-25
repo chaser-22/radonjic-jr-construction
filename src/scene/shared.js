@@ -235,7 +235,9 @@ export function registerPart(ctx, group, mesh, start, end, o={}) {
     baseColor: !Array.isArray(mesh.material) && mesh.material?.color
       ? mesh.material.color.clone()
       : null,
-    outlines: []
+    outlines: [],
+    lastBuild: -1,
+    lastDemolition: -1
   };
 
   ctx.groups[group].add(mesh);
@@ -289,24 +291,39 @@ export function updatePart(mesh, build, focusWeights, xray, demolition) {
   if (d.fadeStart !== null) amount *= 1 - smooth(d.fadeStart, d.fadeEnd, build);
 
   mesh.visible = amount > .002;
-  mesh.position.copy(d.basePosition);
-  mesh.scale.copy(d.baseScale);
 
-  const f = Math.max(.001, amount);
-  if (d.reveal === "x") {
-    mesh.scale.x = d.baseScale.x * f;
-  } else if (d.reveal === "z") {
-    mesh.scale.z = d.baseScale.z * f;
-  } else if (d.reveal === "all") {
-    mesh.scale.multiplyScalar(.82 + f * .18);
-  } else if (d.reveal === "fade") {
-    // Keep final geometry stable; opacity carries the assembly.
-  } else if (d.reveal === "drop") {
-    mesh.scale.y = d.baseScale.y * f;
-    mesh.position.y = d.basePosition.y + d.baseScale.y * (1 - f) * .5;
-  } else {
-    mesh.scale.y = d.baseScale.y * f;
-    mesh.position.y = d.basePosition.y - d.baseScale.y * (1 - f) * .5;
+  const transformDirty =
+    Math.abs(build - d.lastBuild) > .00045 ||
+    Math.abs(demolition - d.lastDemolition) > .00045;
+
+  if (transformDirty) {
+    mesh.position.copy(d.basePosition);
+    mesh.scale.copy(d.baseScale);
+
+    const f = Math.max(.001, amount);
+    if (d.reveal === "x") {
+      mesh.scale.x = d.baseScale.x * f;
+    } else if (d.reveal === "z") {
+      mesh.scale.z = d.baseScale.z * f;
+    } else if (d.reveal === "all") {
+      mesh.scale.multiplyScalar(.82 + f * .18);
+    } else if (d.reveal === "fade") {
+      // Keep final geometry stable; opacity carries the assembly.
+    } else if (d.reveal === "drop") {
+      mesh.scale.y = d.baseScale.y * f;
+      mesh.position.y = d.basePosition.y + d.baseScale.y * (1 - f) * .5;
+    } else {
+      mesh.scale.y = d.baseScale.y * f;
+      mesh.position.y = d.basePosition.y - d.baseScale.y * (1 - f) * .5;
+    }
+
+    if (demolition > 0 && d.demolitionPart) {
+      mesh.position.x += Math.sign(d.basePosition.x || 1) * demolition * .62;
+      mesh.position.y += demolition * .20;
+    }
+
+    d.lastBuild = build;
+    d.lastDemolition = demolition;
   }
 
   let opacity = amount * d.opacity;
@@ -355,8 +372,6 @@ export function updatePart(mesh, build, focusWeights, xray, demolition) {
   }
 
   if (demolition > 0 && d.demolitionPart) {
-    mesh.position.x += Math.sign(d.basePosition.x || 1) * demolition * .62;
-    mesh.position.y += demolition * .20;
     opacity *= 1 - demolition * .14;
   }
 
