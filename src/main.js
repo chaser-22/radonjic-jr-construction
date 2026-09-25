@@ -3,6 +3,7 @@ import "./styles/sections.css";
 import "./styles/responsive.css";
 import { canUseWebGL } from "./scene/shared.js";
 import { createHouseScene } from "./scene/controller.js";
+import { createLoaderHouse } from "./scene/loader.js";
 import { DISPLAY_PHONE, EMAIL, PHONE, projects, services } from "./data.js";
 
 const whatsapp = `https://wa.me/${PHONE.replace("+", "")}`;
@@ -17,10 +18,19 @@ const loaderStartedAt = window.__RJ_LOADER_STARTED_AT__ ?? performance.now();
 let loaderProgress = 0;
 let loaderClockFrame = 0;
 let loaderFinished = false;
+let loaderHouse3d = null;
+
+try {
+  loaderHouse3d = createLoaderHouse(document.querySelector("[data-loader-three]"));
+  if (loaderHouse3d) siteLoader?.classList.add("loader-three-ready");
+} catch (error) {
+  console.warn("3D loader unavailable; using SVG fallback.", error);
+}
 
 function setLoader(progress) {
   loaderProgress = Math.max(loaderProgress, Math.min(100, progress));
   siteLoader?.style.setProperty("--loader-progress", `${loaderProgress}%`);
+  loaderHouse3d?.setProgress(loaderProgress / 100);
   if (loaderValue) loaderValue.textContent = `${String(Math.round(loaderProgress)).padStart(3, "0")}%`;
 }
 
@@ -37,12 +47,17 @@ function finishLoader() {
   loaderFinished = true;
   cancelAnimationFrame(loaderClockFrame);
   setLoader(100);
+  loaderHouse3d?.complete();
   clearTimeout(window.__RJ_LOADER_TIMEOUT__);
   window.setTimeout(() => {
     siteLoader?.classList.add("loader-out");
     document.documentElement.classList.remove("is-loading");
     document.documentElement.classList.add("site-ready");
     houseScene?.playIntro();
+    window.setTimeout(() => {
+      loaderHouse3d?.destroy();
+      loaderHouse3d = null;
+    }, 520);
   }, 60);
 }
 
