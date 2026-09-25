@@ -75,6 +75,9 @@ function finishLoader() {
 
     window.setTimeout(() => {
       document.documentElement.classList.add("site-entered");
+      window.setTimeout(() => {
+        document.documentElement.classList.add("site-settled");
+      }, 1450);
     }, 90);
 
     window.setTimeout(() => {
