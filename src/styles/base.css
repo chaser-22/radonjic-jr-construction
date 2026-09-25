@@ -435,6 +435,38 @@ html:not(.site-entered) .mobile-contact {
   transition: opacity .52s ease .68s, transform .68s var(--ease) .68s;
 }
 
+
+
+.site-settled .site-header,
+.site-settled .site-header .brand,
+.site-settled .site-header .desktop-nav,
+.site-settled .site-header .header-cta,
+.site-settled .hero-grid,
+.site-settled .hero-content > .micro-label,
+.site-settled .hero h1 > span,
+.site-settled .hero h1 > em,
+.site-settled .hero-intro,
+.site-settled .hero-actions .button,
+.site-settled .build-status,
+.site-settled .scroll-cue,
+.site-settled .mobile-contact {
+  will-change: auto;
+}
+
+.site-settled .site-header .brand,
+.site-settled .site-header .desktop-nav,
+.site-settled .site-header .header-cta,
+.site-settled .hero-content > .micro-label,
+.site-settled .hero h1 > span,
+.site-settled .hero h1 > em,
+.site-settled .hero-intro,
+.site-settled .hero-actions .button,
+.site-settled .build-status,
+.site-settled .scroll-cue,
+.site-settled .mobile-contact {
+  transition-delay: 0s;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .site-header,
   .site-header .brand,
