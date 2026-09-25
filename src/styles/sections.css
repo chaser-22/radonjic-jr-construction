@@ -636,7 +636,7 @@
   opacity: 1;
 }
 .project-image img {
-  transition: transform .65s var(--ease), filter .3s ease;
+  transition: filter .24s ease;
 }
 .project:hover .project-image img {
   filter: saturate(.90) contrast(1.04);
@@ -651,7 +651,7 @@
 }
 .project-image img {
   opacity: 1;
-  transition: transform .65s var(--ease), filter .3s ease;
+  transition: filter .24s ease;
 }
 .project-image.is-image-fallback::after {
   content: "FOTOGRAFIJA PROJEKTA";
@@ -777,24 +777,39 @@
 .service-picker.reveal.is-visible .service-row:nth-child(8) { transition-delay: .42s; }
 .service-picker.reveal.is-visible .service-row:nth-child(9) { transition-delay: .46s; }
 
+.project.reveal {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
 .project.reveal .project-image {
-  clip-path: inset(0 0 10% 0);
-  transition: clip-path .9s var(--ease);
+  opacity: 0;
+  transform: translate3d(0, 22px, 0) scale(.994);
+  transition: opacity .62s ease, transform .86s var(--ease);
+  will-change: transform, opacity;
 }
 
 .project.reveal.is-visible .project-image {
-  clip-path: inset(0);
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
 }
 
 .project.reveal .project-copy {
   opacity: 0;
-  transform: translateY(18px);
-  transition: opacity .58s ease .12s, transform .72s var(--ease) .12s;
+  transform: translate3d(0, 18px, 0);
+  transition: opacity .58s ease .10s, transform .72s var(--ease) .10s;
+  will-change: transform, opacity;
 }
 
 .project.reveal.is-visible .project-copy {
   opacity: 1;
-  transform: none;
+  transform: translate3d(0, 0, 0);
+}
+
+.project.reveal.is-visible .project-image,
+.project.reveal.is-visible .project-copy {
+  will-change: auto;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -811,7 +826,8 @@
   }
 
   .project.reveal .project-image {
-    clip-path: none !important;
+    opacity: 1 !important;
+    transform: none !important;
     transition: none !important;
   }
 }
