@@ -311,19 +311,19 @@ a, button { -webkit-tap-highlight-color: transparent; }
 
 
 /* V35 — coordinated entrance after the four-second construction loader. */
-.site-header,
-.site-header .brand,
-.site-header .desktop-nav,
-.site-header .header-cta,
-.hero-grid,
-.hero-content > .micro-label,
-.hero h1 > span,
-.hero h1 > em,
-.hero-intro,
-.hero-actions .button,
-.build-status,
-.scroll-cue,
-.mobile-contact {
+html.site-ready .site-header,
+html.site-ready .site-header .brand,
+html.site-ready .site-header .desktop-nav,
+html.site-ready .site-header .header-cta,
+html.site-ready .hero-grid,
+html.site-ready .hero-content > .micro-label,
+html.site-ready .hero h1 > span,
+html.site-ready .hero h1 > em,
+html.site-ready .hero-intro,
+html.site-ready .hero-actions .button,
+html.site-ready .build-status,
+html.site-ready .scroll-cue,
+html.site-ready .mobile-contact {
   will-change: transform, opacity;
 }
 
