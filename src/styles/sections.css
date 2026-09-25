@@ -636,7 +636,7 @@
   opacity: 1;
 }
 .project-image img {
-  transition: transform .65s var(--ease), filter .3s ease;
+  transition: filter .24s ease;
 }
 .project:hover .project-image img {
   filter: saturate(.90) contrast(1.04);
@@ -651,7 +651,7 @@
 }
 .project-image img {
   opacity: 1;
-  transition: transform .65s var(--ease), filter .3s ease;
+  transition: filter .24s ease;
 }
 .project-image.is-image-fallback::after {
   content: "FOTOGRAFIJA PROJEKTA";
@@ -720,7 +720,7 @@
 /* V35 — section content rises and fades in as it enters the viewport. */
 .reveal {
   opacity: 0;
-  transform: translateY(30px);
+  transform: translate3d(0, 30px, 0);
   transition:
     opacity .68s ease,
     transform .82s var(--ease);
@@ -733,10 +733,9 @@
 
 .phase-list.reveal article,
 .process-grid.reveal article,
-.trust-row span,
-.service-picker.reveal .service-row {
+.trust-row span {
   opacity: 0;
-  transform: translateY(14px);
+  transform: translate3d(0, 14px, 0);
   transition:
     opacity .46s ease,
     transform .62s var(--ease),
@@ -746,63 +745,60 @@
 
 .phase-list.reveal.is-visible article,
 .process-grid.reveal.is-visible article,
-.about-copy.reveal.is-visible .trust-row span,
-.service-picker.reveal.is-visible .service-row {
+.about-copy.reveal.is-visible .trust-row span {
   opacity: 1;
   transform: none;
 }
 
 .phase-list.reveal.is-visible article:nth-child(1),
 .process-grid.reveal.is-visible article:nth-child(1),
-.about-copy.reveal.is-visible .trust-row span:nth-child(1),
-.service-picker.reveal.is-visible .service-row:nth-child(1) { transition-delay: .08s; }
+.about-copy.reveal.is-visible .trust-row span:nth-child(1) { transition-delay: .08s; }
 
 .phase-list.reveal.is-visible article:nth-child(2),
 .process-grid.reveal.is-visible article:nth-child(2),
-.about-copy.reveal.is-visible .trust-row span:nth-child(2),
-.service-picker.reveal.is-visible .service-row:nth-child(2) { transition-delay: .14s; }
+.about-copy.reveal.is-visible .trust-row span:nth-child(2) { transition-delay: .14s; }
 
 .phase-list.reveal.is-visible article:nth-child(3),
 .process-grid.reveal.is-visible article:nth-child(3),
-.about-copy.reveal.is-visible .trust-row span:nth-child(3),
-.service-picker.reveal.is-visible .service-row:nth-child(3) { transition-delay: .20s; }
+.about-copy.reveal.is-visible .trust-row span:nth-child(3) { transition-delay: .20s; }
 
 .process-grid.reveal.is-visible article:nth-child(4),
-.about-copy.reveal.is-visible .trust-row span:nth-child(4),
-.service-picker.reveal.is-visible .service-row:nth-child(4) { transition-delay: .26s; }
+.about-copy.reveal.is-visible .trust-row span:nth-child(4) { transition-delay: .26s; }
 
-.service-picker.reveal.is-visible .service-row:nth-child(5) { transition-delay: .30s; }
-.service-picker.reveal.is-visible .service-row:nth-child(6) { transition-delay: .34s; }
-.service-picker.reveal.is-visible .service-row:nth-child(7) { transition-delay: .38s; }
-.service-picker.reveal.is-visible .service-row:nth-child(8) { transition-delay: .42s; }
-.service-picker.reveal.is-visible .service-row:nth-child(9) { transition-delay: .46s; }
+.project.reveal {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
 
 .project.reveal .project-image {
-  clip-path: inset(0 0 10% 0);
-  transition: clip-path .9s var(--ease);
+  opacity: 0;
+  transform: translate3d(0, 22px, 0) scale(.994);
+  transition: opacity .62s ease, transform .86s var(--ease);
 }
 
 .project.reveal.is-visible .project-image {
-  clip-path: inset(0);
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
 }
 
 .project.reveal .project-copy {
   opacity: 0;
-  transform: translateY(18px);
-  transition: opacity .58s ease .12s, transform .72s var(--ease) .12s;
+  transform: translate3d(0, 18px, 0);
+  transition: opacity .58s ease .10s, transform .72s var(--ease) .10s;
 }
 
 .project.reveal.is-visible .project-copy {
   opacity: 1;
-  transform: none;
+  transform: translate3d(0, 0, 0);
 }
+
 
 @media (prefers-reduced-motion: reduce) {
   .reveal,
   .phase-list.reveal article,
   .process-grid.reveal article,
   .trust-row span,
-  .service-picker.reveal .service-row,
   .project.reveal .project-copy {
     opacity: 1 !important;
     transform: none !important;
@@ -811,7 +807,8 @@
   }
 
   .project.reveal .project-image {
-    clip-path: none !important;
+    opacity: 1 !important;
+    transform: none !important;
     transition: none !important;
   }
 }

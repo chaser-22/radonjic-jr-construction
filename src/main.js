@@ -68,6 +68,7 @@ function finishLoader() {
   loaderHouse3d?.complete();
   clearTimeout(window.__RJ_LOADER_TIMEOUT__);
   window.setTimeout(() => {
+    loaderHouse3d?.freeze();
     siteLoader?.classList.add("loader-out");
     document.documentElement.classList.remove("is-loading");
     document.documentElement.classList.add("site-ready");
@@ -324,7 +325,19 @@ const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matc
 
 
 const houseLayer = document.querySelector("[data-house-layer]");
+const hero = document.querySelector(".hero");
+const buildPercent = document.querySelector("[data-build-percent]");
+const buildPhase = document.querySelector("[data-build-phase]");
+const buildBar = document.querySelector("[data-build-bar]");
+const header = document.querySelector(".site-header");
+const projectElements = [...document.querySelectorAll(".project")];
+const visibleProjects = new Set();
+
 let houseScene = null;
+let heroTop = 0;
+let heroHeight = 1;
+let viewportHeight = window.innerHeight;
+let metricsTicking = false;
 
 if (canUseWebGL()) {
   try {
@@ -350,6 +363,7 @@ document.querySelectorAll(".project-image img").forEach((image) => {
   image.addEventListener("load", () => {
     image.closest(".project-image")?.classList.add("is-loaded");
     houseScene?.refreshLayout();
+    requestScrollState();
   }, { once: true });
   image.addEventListener("error", () => {
     const fallback = image.dataset.fallback;
@@ -372,16 +386,16 @@ Promise.race([
   new Promise((resolve) => setTimeout(resolve, 3200))
 ]).then(() => {
   houseScene?.refreshLayout();
+  refreshScrollMetrics();
+  requestScrollState();
   finishLoaderAtFourSeconds();
 });
 
-document.fonts?.ready?.then(() => houseScene?.refreshLayout());
-
-const hero = document.querySelector(".hero");
-const buildPercent = document.querySelector("[data-build-percent]");
-const buildPhase = document.querySelector("[data-build-phase]");
-const buildBar = document.querySelector("[data-build-bar]");
-const header = document.querySelector(".site-header");
+document.fonts?.ready?.then(() => {
+  houseScene?.refreshLayout();
+  refreshScrollMetrics();
+  requestScrollState();
+});
 
 const phases = [
   [0.00, "PRIPREMA"],
@@ -395,34 +409,74 @@ const phases = [
 ];
 
 let ticking = false;
+let lastHeroProgress = -1;
+let lastHeroPercent = -1;
+let lastHeroPhase = "";
+let lastHeaderScrolled = null;
+
+function refreshScrollMetrics() {
+  heroTop = hero.offsetTop;
+  heroHeight = Math.max(1, hero.offsetHeight);
+  viewportHeight = Math.max(1, window.innerHeight);
+}
+
+function requestMetricsRefresh() {
+  if (metricsTicking) return;
+  metricsTicking = true;
+  requestAnimationFrame(() => {
+    metricsTicking = false;
+    refreshScrollMetrics();
+    houseScene?.refreshLayout();
+    updateScrollState();
+  });
+}
+
 function updateScrollState() {
   ticking = false;
-  const heroRect = hero.getBoundingClientRect();
-  const distance = Math.max(1, hero.offsetHeight - window.innerHeight * 0.70);
-  const progress = clamp01(-heroRect.top / distance);
+
+  const scrollY = window.scrollY;
+  const distance = Math.max(1, heroHeight - viewportHeight * .70);
+  const progress = clamp01((scrollY - heroTop) / distance);
 
   houseScene?.updateFromScroll(progress);
-  hero.style.setProperty("--hero-progress", progress.toFixed(4));
-  hero.style.setProperty("--hero-y", `${progress * -105}px`);
-  hero.style.setProperty("--hero-opacity", String(1 - progress * 0.68));
 
-  if (buildPercent) buildPercent.textContent = `${String(Math.round(progress * 100)).padStart(3, "0")}%`;
-  if (buildBar) buildBar.style.transform = `scaleX(${Math.max(0.01, progress)})`;
-  if (buildPhase) {
-    let phase = phases[0][1];
-    phases.forEach(([at, name]) => { if (progress >= at) phase = name; });
-    buildPhase.textContent = phase;
+  if (Math.abs(progress - lastHeroProgress) > .00035) {
+    hero.style.setProperty("--hero-progress", progress.toFixed(4));
+    hero.style.setProperty("--hero-y", `${progress * -105}px`);
+    hero.style.setProperty("--hero-opacity", String(1 - progress * .68));
+    if (buildBar) buildBar.style.transform = `scaleX(${Math.max(.01, progress)})`;
+    lastHeroProgress = progress;
   }
 
-  header.classList.toggle("is-scrolled", window.scrollY > 20);
+  const percent = Math.round(progress * 100);
+  if (buildPercent && percent !== lastHeroPercent) {
+    buildPercent.textContent = `${String(percent).padStart(3, "0")}%`;
+    lastHeroPercent = percent;
+  }
+
+  if (buildPhase) {
+    let phase = phases[0][1];
+    for (let i = 0; i < phases.length; i += 1) {
+      if (progress >= phases[i][0]) phase = phases[i][1];
+    }
+    if (phase !== lastHeroPhase) {
+      buildPhase.textContent = phase;
+      lastHeroPhase = phase;
+    }
+  }
+
+  const headerScrolled = scrollY > 20;
+  if (headerScrolled !== lastHeaderScrolled) {
+    header.classList.toggle("is-scrolled", headerScrolled);
+    lastHeaderScrolled = headerScrolled;
+  }
 
   if (!reducedMotion && window.innerWidth > 760) {
-    document.querySelectorAll(".project").forEach((project) => {
+    for (const project of visibleProjects) {
       const rect = project.getBoundingClientRect();
-      if (rect.bottom < 0 || rect.top > window.innerHeight) return;
-      const p = clamp01((window.innerHeight - rect.top) / (window.innerHeight + rect.height));
-      project.style.setProperty("--image-y", `${(p - 0.5) * -34}px`);
-    });
+      const p = clamp01((viewportHeight - rect.top) / (viewportHeight + rect.height));
+      project.style.setProperty("--image-y", `${(p - .5) * -34}px`);
+    }
   }
 }
 
@@ -431,8 +485,27 @@ function requestScrollState() {
   ticking = true;
   requestAnimationFrame(updateScrollState);
 }
+
+if ("IntersectionObserver" in window) {
+  const projectVisibilityObserver = new IntersectionObserver((entries) => {
+    for (let i = 0; i < entries.length; i += 1) {
+      const entry = entries[i];
+      if (entry.isIntersecting) visibleProjects.add(entry.target);
+      else visibleProjects.delete(entry.target);
+    }
+  }, { rootMargin: "24% 0px 24% 0px", threshold: 0 });
+
+  for (let i = 0; i < projectElements.length; i += 1) {
+    projectVisibilityObserver.observe(projectElements[i]);
+  }
+} else {
+  for (let i = 0; i < projectElements.length; i += 1) visibleProjects.add(projectElements[i]);
+}
+
+refreshScrollMetrics();
 window.addEventListener("scroll", requestScrollState, { passive: true });
-window.addEventListener("resize", requestScrollState, { passive: true });
+window.addEventListener("resize", requestMetricsRefresh, { passive: true });
+window.visualViewport?.addEventListener("resize", requestMetricsRefresh, { passive: true });
 updateScrollState();
 
 const revealObserver = new IntersectionObserver((entries) => {
@@ -457,13 +530,22 @@ document.querySelectorAll("[data-header]").forEach((section) => themeObserver.ob
 const serviceButtons = [...document.querySelectorAll(".service-row")];
 const serviceTitle = document.querySelector("[data-active-service-title]");
 const serviceCode = document.querySelector("[data-active-service-code]");
+let activeServiceButton = serviceButtons.find((button) => button.classList.contains("is-active")) || null;
 
 function activateService(button) {
-  serviceButtons.forEach((item) => {
+  if (button === activeServiceButton) {
+    houseScene?.setService(button.dataset.service);
+    return;
+  }
+
+  for (let i = 0; i < serviceButtons.length; i += 1) {
+    const item = serviceButtons[i];
     const active = item === button;
     item.classList.toggle("is-active", active);
     item.setAttribute("aria-pressed", String(active));
-  });
+  }
+
+  activeServiceButton = button;
   if (serviceTitle) serviceTitle.textContent = button.querySelector("strong").textContent.toUpperCase();
   if (serviceCode) serviceCode.textContent = button.dataset.serviceCode;
   houseScene?.setService(button.dataset.service);
@@ -481,8 +563,8 @@ const servicesSection = document.querySelector("#usluge");
 const serviceSectionObserver = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
     if (!entry.isIntersecting) houseScene?.clearService();
-    else if (serviceButtons[0] && !serviceButtons.some((button) => button.matches(":focus"))) {
-      const active = serviceButtons.find((button) => button.classList.contains("is-active")) || serviceButtons[0];
+    else if (serviceButtons[0] && !serviceButtons.includes(document.activeElement)) {
+      const active = activeServiceButton || serviceButtons[0];
       houseScene?.setService(active.dataset.service);
     }
   });

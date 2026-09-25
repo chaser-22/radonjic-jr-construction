@@ -3,6 +3,11 @@ import { createBuildContext, lerp, smooth, updatePart } from "./shared.js";
 import { addStructure } from "./structure.js";
 import { addFinish } from "./finish.js";
 
+const smootherStep01 = (value) => {
+  const t = Math.max(0, Math.min(1, value));
+  return t * t * t * (t * (t * 6 - 15) + 10);
+};
+
 function chooseQuality() {
   const width = window.innerWidth;
   const memory = navigator.deviceMemory || 8;
@@ -69,6 +74,8 @@ export function createHouseScene(layer, canvas) {
   renderer.setClearColor(0x000000, 0);
   renderer.shadowMap.enabled = quality.shadows;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.autoUpdate = false;
+  renderer.shadowMap.needsUpdate = quality.shadows;
 
   const scene = new THREE.Scene();
   scene.fog = new THREE.Fog(0x10110f, 18, 34);
@@ -141,19 +148,27 @@ export function createHouseScene(layer, canvas) {
   const target = { ...state, buildTarget: reduced ? 1 : 0 };
 
   let last = performance.now();
-  let lastPresented = 0;
   let lastIdleDraw = 0;
   let lastCameraFov = camera.fov;
+  let lastLayerOpacity = -1;
   let destroyed = false;
   let failed = false;
+  let loopRunning = false;
+  let idleFrames = 0;
   let layoutRevision = 0;
+  let resizeFrame = 0;
+  let lastWidth = 0;
+  let lastHeight = 0;
+  let lastPixelRatio = 0;
+  let forceDraw = true;
   const offsetCache = new Map();
   const cameraTarget = new THREE.Vector3();
+  const motionKeys = ["x","y","scale","rotation","opacity","xray","cameraZ","lookY","fov"];
   let lastTileBuild = -1;
   const intro = {
     active: false,
     played: false,
-    start: 0,
+    elapsed: 0,
     duration: quality.name === "phone" ? 1500 : 1750
   };
 
@@ -210,9 +225,34 @@ export function createHouseScene(layer, canvas) {
 
   const getAnchors = () => mapped[currentLayout()];
 
+  const sleepRenderer = () => {
+    if (!loopRunning) return;
+    renderer.setAnimationLoop(null);
+    loopRunning = false;
+  };
+
+  const wakeRenderer = () => {
+    forceDraw = true;
+    if (
+      loopRunning ||
+      destroyed ||
+      failed ||
+      document.hidden ||
+      document.documentElement.classList.contains("is-loading")
+    ) {
+      return;
+    }
+
+    last = performance.now();
+    idleFrames = 0;
+    loopRunning = true;
+    renderer.setAnimationLoop(render);
+  };
+
   const refreshLayout = () => {
     layoutRevision += 1;
     offsetCache.clear();
+    forceDraw = true;
   };
 
   const getOffsets = (anchors) => {
@@ -227,15 +267,33 @@ export function createHouseScene(layer, canvas) {
   };
 
   const resize = () => {
+    resizeFrame = 0;
     const width = Math.max(1, window.innerWidth);
     const height = Math.max(1, window.innerHeight);
     const layout = currentLayout();
     const cap = layout === "phone" ? quality.dpr : layout === "tablet" ? Math.min(1.25, quality.dpr) : quality.dpr;
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, cap);
 
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, cap));
-    renderer.setSize(width, height, false);
-    camera.aspect = width / height;
+    if (Math.abs(pixelRatio - lastPixelRatio) > .001) {
+      renderer.setPixelRatio(pixelRatio);
+      lastPixelRatio = pixelRatio;
+    }
+
+    if (width !== lastWidth || height !== lastHeight) {
+      renderer.setSize(width, height, false);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      lastWidth = width;
+      lastHeight = height;
+    }
+
     refreshLayout();
+    wakeRenderer();
+  };
+
+  const scheduleResize = () => {
+    if (resizeFrame) return;
+    resizeFrame = requestAnimationFrame(resize);
   };
 
   function updateFromScroll(build) {
@@ -252,12 +310,16 @@ export function createHouseScene(layer, canvas) {
     const b = anchors[Math.min(index + 1, anchors.length - 1)];
     const nextOffset = offsets[Math.min(index + 1, offsets.length - 1)];
     const span = Math.max(1, nextOffset - offsets[index]);
-    const t = index === anchors.length - 1 ? 0 : smooth(0, 1, (center - offsets[index]) / span);
+    const t = index === anchors.length - 1
+      ? 0
+      : smootherStep01((center - offsets[index]) / span);
 
-    ["x","y","scale","rotation","opacity","xray","cameraZ","lookY","fov"].forEach((key) => {
+    for (let i = 0; i < motionKeys.length; i += 1) {
+      const key = motionKeys[i];
       target[key] = lerp(a[key], b[key], t);
-    });
+    }
     target.section = a.name;
+    wakeRenderer();
   }
 
   const serviceLook = {
@@ -274,28 +336,65 @@ export function createHouseScene(layer, canvas) {
 
   const serviceKeys = Object.keys(serviceLook);
   const serviceWeights = Object.fromEntries(serviceKeys.map((key) => [key, 0]));
+  const lastServiceWeights = Object.fromEntries(serviceKeys.map((key) => [key, -1]));
+  let lastModelBuild = -1;
+  let lastModelXray = -1;
+  let lastModelDemolition = -1;
+  let lastModelSection = "";
 
-  const setService = (key) => { target.focus = key; };
-  const clearService = () => { target.focus = null; };
+  const setService = (key) => {
+    if (target.focus === key) return;
+    target.focus = key;
+    wakeRenderer();
+  };
+
+  const clearService = () => {
+    if (target.focus === null) return;
+    target.focus = null;
+    wakeRenderer();
+  };
 
   const playIntro = () => {
-    if (reduced || intro.played || destroyed || failed) return;
+    if (destroyed || failed) return;
+
+    if (!intro.played) {
+      state.build = target.buildTarget;
+      for (let i = 0; i < motionKeys.length; i += 1) {
+        const key = motionKeys[i];
+        state[key] = target[key];
+      }
+      state.pointerX = target.pointerX;
+      state.pointerY = target.pointerY;
+      state.section = target.section;
+      state.focus = target.section === "services" ? target.focus : null;
+      lastModelBuild = -1;
+      lastModelXray = -1;
+      lastModelDemolition = -1;
+      lastModelSection = "";
+    }
+
+    wakeRenderer();
+
+    if (reduced || intro.played) return;
     intro.played = true;
     intro.active = true;
-    intro.start = performance.now();
-    last = intro.start;
+    intro.elapsed = 0;
   };
 
   const pointer = (event) => {
     if (quality.name === "phone" || reduced) return;
-    target.pointerX = (event.clientX / Math.max(1, window.innerWidth) - .5) * 2;
-    target.pointerY = (event.clientY / Math.max(1, window.innerHeight) - .5) * 2;
+    const nextX = (event.clientX / Math.max(1, window.innerWidth) - .5) * 2;
+    const nextY = (event.clientY / Math.max(1, window.innerHeight) - .5) * 2;
+    if (Math.abs(nextX - target.pointerX) < .002 && Math.abs(nextY - target.pointerY) < .002) return;
+    target.pointerX = nextX;
+    target.pointerY = nextY;
+    wakeRenderer();
   };
 
   function fail(error) {
     if (failed || destroyed) return;
     failed = true;
-    renderer.setAnimationLoop(null);
+    sleepRenderer();
     layer.classList.remove("three-ready");
     layer.classList.add("three-failed");
     layer.dataset.threeState = "failed";
@@ -303,39 +402,52 @@ export function createHouseScene(layer, canvas) {
   }
 
   function updateRoofInstances(build) {
-    if (!extra.roofTileData || Math.abs(build - lastTileBuild) < .002) return;
+    if (!extra.roofTileData || Math.abs(build - lastTileBuild) < .001) return;
     lastTileBuild = build;
     const { mesh, entries, dummy } = extra.roofTileData;
-    entries.forEach((entry, index) => {
+
+    for (let index = 0; index < entries.length; index += 1) {
+      const entry = entries[index];
       const amount = smooth(entry.start, entry.start + .055, build);
       dummy.position.copy(entry.position);
       dummy.rotation.copy(entry.rotation);
       dummy.scale.set(entry.scale.x * Math.max(.001, amount), entry.scale.y, entry.scale.z);
       dummy.updateMatrix();
       mesh.setMatrixAt(index, dummy.matrix);
-    });
+    }
+
     mesh.instanceMatrix.needsUpdate = true;
   }
 
+  // Motion follows the display refresh rate; quality scaling never lowers the phone's crisp DPR.
   function updateFrame(now) {
     const safeNow = Number.isFinite(now) ? now : performance.now();
-
-    // Adaptive phone frame cap keeps interaction fluid without unnecessary heat/battery drain.
-    const phoneFps = quality.constrained ? 36 : 45;
-    if (quality.name === "phone" && safeNow - lastPresented < 1000 / phoneFps) return;
-    lastPresented = safeNow;
-
-    const dt = Math.min(.05, Math.max(.001, (safeNow - last) / 1000));
+    const rawDt = Math.max(.001, (safeNow - last) / 1000);
+    const dt = reduced ? 1 : Math.min(1 / 30, rawDt);
     last = safeNow;
-    const damping = reduced ? 100 : 5.4;
 
-    state.build = THREE.MathUtils.damp(state.build, target.buildTarget, reduced ? 100 : 7.8, dt);
-    ["x","y","scale","rotation","opacity","xray","cameraZ","lookY","fov"].forEach((key) => {
+    const damping = reduced ? 100 : 5.4;
+    const buildDamping = reduced ? 100 : 7.8;
+    const serviceDamping = reduced ? 100 : 5.2;
+
+    state.build = THREE.MathUtils.damp(state.build, target.buildTarget, buildDamping, dt);
+
+    let stateMoving = Math.abs(state.build - target.buildTarget) > .00045;
+    for (let i = 0; i < motionKeys.length; i += 1) {
+      const key = motionKeys[i];
       state[key] = THREE.MathUtils.damp(state[key], target[key], damping, dt);
-    });
+      if (Math.abs(state[key] - target[key]) > .00045) stateMoving = true;
+    }
 
     state.pointerX = THREE.MathUtils.damp(state.pointerX, target.pointerX, 4.3, dt);
     state.pointerY = THREE.MathUtils.damp(state.pointerY, target.pointerY, 4.3, dt);
+    if (
+      Math.abs(state.pointerX - target.pointerX) > .00045 ||
+      Math.abs(state.pointerY - target.pointerY) > .00045
+    ) {
+      stateMoving = true;
+    }
+
     state.section = target.section;
     state.focus = target.section === "services" ? target.focus : null;
 
@@ -348,7 +460,8 @@ export function createHouseScene(layer, canvas) {
     let introGlow = 0;
 
     if (intro.active) {
-      const raw = Math.max(0, Math.min(1, (safeNow - intro.start) / intro.duration));
+      intro.elapsed = Math.min(intro.duration, intro.elapsed + dt * 1000);
+      const raw = intro.elapsed / intro.duration;
       const ease = 1 - Math.pow(1 - raw, 3);
       const c1 = 1.16;
       const c3 = c1 + 1;
@@ -363,55 +476,23 @@ export function createHouseScene(layer, canvas) {
       introGlow = Math.sin(Math.PI * raw);
 
       if (raw >= 1) intro.active = false;
+      else stateMoving = true;
     }
 
-    // Every service now cross-fades at the same pace as the Rušenje animation.
-    // Old focus decays while the new focus rises, avoiding hard opacity/camera snaps.
-    serviceKeys.forEach((key) => {
+    let serviceMoving = false;
+    for (let i = 0; i < serviceKeys.length; i += 1) {
+      const key = serviceKeys[i];
+      const serviceTarget = state.focus === key ? 1 : 0;
       serviceWeights[key] = THREE.MathUtils.damp(
         serviceWeights[key],
-        state.focus === key ? 1 : 0,
-        reduced ? 100 : 5.2,
+        serviceTarget,
+        serviceDamping,
         dt
       );
-    });
-
-    layer.style.opacity = String(state.opacity * introAlpha);
-    if (target.opacity <= .001 && state.opacity < .012) {
-      if (safeNow - lastIdleDraw < 280) return;
-      lastIdleDraw = safeNow;
+      if (Math.abs(serviceWeights[key] - serviceTarget) > .00045) serviceMoving = true;
     }
 
     state.demolition = serviceWeights.demolition;
-
-    ctx.parts.forEach((part) =>
-      updatePart(part, state.build, serviceWeights, state.xray, state.demolition)
-    );
-
-    const ghost = 1 - smooth(.05, .86, state.build);
-    extra.ghostMat.opacity = .045 + ghost * .38 + state.xray * .12 + introGlow * .12;
-    extra.accent.opacity = .06 + ghost * .68 + state.xray * .16 + introGlow * .26;
-    extra.ghostFillMat.opacity = .008 + ghost * .035 + introGlow * .022;
-    warm.intensity = baseWarmIntensity * (1 + introGlow * .72);
-
-    const tileBuild = smooth(.76, .94, state.build);
-    const maxServiceFocus = Math.max(0, ...Object.values(serviceWeights));
-    const roofMatch = Math.max(serviceWeights.roof || 0, serviceWeights.shell || 0);
-    const roofFocusFactor = 1 - maxServiceFocus * .92 + roofMatch * .92;
-    let tileOpacity = tileBuild * roofFocusFactor;
-    if (state.xray > .02) tileOpacity *= 1 - state.xray * .30;
-    extra.roofTileMaterial.opacity = tileOpacity;
-    extra.roofTileMaterial.color.copy(roofTileBaseColor).lerp(serviceTint, roofMatch * .24);
-    extra.roofTileMaterial.emissive.setHex(roofMatch > .01 ? 0x6b4d00 : 0);
-    extra.roofTileMaterial.emissiveIntensity = .72 * roofMatch;
-    extra.roofTiles.visible = tileOpacity > .002;
-    updateRoofInstances(state.build);
-
-    const craneAlpha = smooth(.10,.20,state.build) * (1 - smooth(.70,.82,state.build));
-    extra.crane.visible = state.section === "hero" && craneAlpha > .01;
-    extra.yellow.opacity = craneAlpha;
-    extra.dark.opacity = craneAlpha;
-    extra.pivot.rotation.y = -.42 + smooth(.15,.76,state.build) * .92;
 
     const explode = state.xray;
     const demolition = state.demolition;
@@ -427,6 +508,100 @@ export function createHouseScene(layer, canvas) {
     ctx.groups.roof.position.y = THREE.MathUtils.damp(ctx.groups.roof.position.y, roofY, 5.2, dt);
     ctx.groups.roofFrame.position.y = THREE.MathUtils.damp(ctx.groups.roofFrame.position.y, roofFrameY, 5.2, dt);
 
+    const groupMoving =
+      Math.abs(ctx.groups.facade.position.x - facadeX) > .00045 ||
+      Math.abs(ctx.groups.glass.position.x - glassX) > .00045 ||
+      Math.abs(ctx.groups.masonry.position.x - masonryX) > .00045 ||
+      Math.abs(ctx.groups.roof.position.y - roofY) > .00045 ||
+      Math.abs(ctx.groups.roofFrame.position.y - roofFrameY) > .00045;
+
+    let modelDirty =
+      Math.abs(state.build - lastModelBuild) > .00045 ||
+      Math.abs(state.xray - lastModelXray) > .00045 ||
+      Math.abs(state.demolition - lastModelDemolition) > .00045 ||
+      state.section !== lastModelSection;
+
+    for (let i = 0; i < serviceKeys.length; i += 1) {
+      const key = serviceKeys[i];
+      if (Math.abs(serviceWeights[key] - lastServiceWeights[key]) > .00045) {
+        modelDirty = true;
+        break;
+      }
+    }
+
+    const requestedDraw = forceDraw;
+    const fullyHidden = target.opacity <= .001 && state.opacity < .012 && !intro.active;
+    const motionActive = stateMoving || serviceMoving || groupMoving || modelDirty || intro.active;
+
+    if (fullyHidden && !requestedDraw && safeNow - lastIdleDraw < 160) return;
+
+    if (!motionActive && !requestedDraw) {
+      idleFrames += 1;
+      if (idleFrames >= 2) sleepRenderer();
+      return;
+    }
+
+    idleFrames = 0;
+    forceDraw = false;
+    lastIdleDraw = safeNow;
+
+    const layerOpacity = state.opacity * introAlpha;
+    if (Math.abs(layerOpacity - lastLayerOpacity) > .0015) {
+      layer.style.opacity = String(layerOpacity);
+      lastLayerOpacity = layerOpacity;
+    }
+
+    if (modelDirty) {
+      for (let i = 0; i < ctx.parts.length; i += 1) {
+        updatePart(ctx.parts[i], state.build, serviceWeights, state.xray, state.demolition);
+      }
+
+      const tileBuild = smooth(.76, .94, state.build);
+      const maxServiceFocus = Math.max(
+        serviceWeights.shell,
+        serviceWeights.foundation,
+        serviceWeights.concrete,
+        serviceWeights.masonry,
+        serviceWeights.roof,
+        serviceWeights.fence,
+        serviceWeights.plinth,
+        serviceWeights.demolition,
+        serviceWeights.prep
+      );
+      const roofMatch = Math.max(serviceWeights.roof, serviceWeights.shell);
+      const roofFocusFactor = 1 - maxServiceFocus * .92 + roofMatch * .92;
+      let tileOpacity = tileBuild * roofFocusFactor;
+      if (state.xray > .02) tileOpacity *= 1 - state.xray * .30;
+
+      extra.roofTileMaterial.opacity = tileOpacity;
+      extra.roofTileMaterial.color.copy(roofTileBaseColor).lerp(serviceTint, roofMatch * .24);
+      extra.roofTileMaterial.emissive.setHex(roofMatch > .01 ? 0x6b4d00 : 0);
+      extra.roofTileMaterial.emissiveIntensity = .72 * roofMatch;
+      extra.roofTiles.visible = tileOpacity > .002;
+      updateRoofInstances(state.build);
+
+      const craneAlpha = smooth(.10,.20,state.build) * (1 - smooth(.70,.82,state.build));
+      extra.crane.visible = state.section === "hero" && craneAlpha > .01;
+      extra.yellow.opacity = craneAlpha;
+      extra.dark.opacity = craneAlpha;
+      extra.pivot.rotation.y = -.42 + smooth(.15,.76,state.build) * .92;
+
+      lastModelBuild = state.build;
+      lastModelXray = state.xray;
+      lastModelDemolition = state.demolition;
+      lastModelSection = state.section;
+      for (let i = 0; i < serviceKeys.length; i += 1) {
+        const key = serviceKeys[i];
+        lastServiceWeights[key] = serviceWeights[key];
+      }
+    }
+
+    const ghost = 1 - smooth(.05, .86, state.build);
+    extra.ghostMat.opacity = .045 + ghost * .38 + state.xray * .12 + introGlow * .12;
+    extra.accent.opacity = .06 + ghost * .68 + state.xray * .16 + introGlow * .26;
+    extra.ghostFillMat.opacity = .008 + ghost * .035 + introGlow * .022;
+    warm.intensity = baseWarmIntensity * (1 + introGlow * .72);
+
     world.position.set(
       state.x + state.pointerX * .07,
       state.y - state.pointerY * .025 + introLift,
@@ -438,17 +613,38 @@ export function createHouseScene(layer, canvas) {
 
     const layout = currentLayout();
     const phone = layout === "phone";
-    const serviceWeightTotal = serviceKeys.reduce((sum, key) => sum + serviceWeights[key], 0);
-    const serviceOffsetRaw = serviceKeys.reduce(
-      (sum, key) => sum + serviceLook[key] * serviceWeights[key],
-      0
-    );
+    const shellWeight = serviceWeights.shell;
+    const foundationWeight = serviceWeights.foundation;
+    const concreteWeight = serviceWeights.concrete;
+    const masonryWeight = serviceWeights.masonry;
+    const roofWeight = serviceWeights.roof;
+    const fenceWeight = serviceWeights.fence;
+    const plinthWeight = serviceWeights.plinth;
+    const demolitionWeight = serviceWeights.demolition;
+    const prepWeight = serviceWeights.prep;
+
+    const serviceWeightTotal =
+      shellWeight + foundationWeight + concreteWeight + masonryWeight +
+      roofWeight + fenceWeight + plinthWeight + demolitionWeight + prepWeight;
+
+    const serviceOffsetRaw =
+      serviceLook.shell * shellWeight +
+      serviceLook.foundation * foundationWeight +
+      serviceLook.concrete * concreteWeight +
+      serviceLook.masonry * masonryWeight +
+      serviceLook.roof * roofWeight +
+      serviceLook.fence * fenceWeight +
+      serviceLook.plinth * plinthWeight +
+      serviceLook.demolition * demolitionWeight +
+      serviceLook.prep * prepWeight;
+
     const serviceOffset = serviceOffsetRaw / Math.max(1, serviceWeightTotal);
 
     camera.position.x = phone ? 0 : state.pointerX * .13;
     camera.position.y = (phone ? 2.42 : 2.62) - state.pointerY * .06;
     camera.position.z = state.cameraZ + introCamera;
     camera.fov = state.fov;
+
     if (Math.abs(camera.fov - lastCameraFov) > .01) {
       camera.updateProjectionMatrix();
       lastCameraFov = camera.fov;
@@ -457,7 +653,13 @@ export function createHouseScene(layer, canvas) {
     cameraTarget.set(phone ? 0 : state.pointerX * .02, state.lookY + serviceOffset, 0);
     camera.lookAt(cameraTarget);
 
-    if (!phone) extra.grid.rotation.y = safeNow * .000006;
+    if (!phone && motionActive) {
+      extra.grid.rotation.y += dt * .006;
+    }
+
+    if (quality.shadows && (modelDirty || stateMoving || groupMoving || intro.active || requestedDraw)) {
+      renderer.shadowMap.needsUpdate = true;
+    }
 
     renderer.render(scene, camera);
 
@@ -467,7 +669,9 @@ export function createHouseScene(layer, canvas) {
         calls: renderer.info.render.calls,
         triangles: renderer.info.render.triangles,
         geometries: renderer.info.memory.geometries,
-        textures: renderer.info.memory.textures
+        textures: renderer.info.memory.textures,
+        active: motionActive,
+        dpr: renderer.getPixelRatio()
       };
     }
   }
@@ -479,7 +683,7 @@ export function createHouseScene(layer, canvas) {
 
   const onContextLost = (event) => {
     event.preventDefault();
-    renderer.setAnimationLoop(null);
+    sleepRenderer();
     layer.classList.remove("three-ready");
     layer.classList.add("three-failed");
     layer.dataset.threeState = "context-lost";
@@ -493,21 +697,20 @@ export function createHouseScene(layer, canvas) {
     layer.dataset.threeState = "ready";
     resize();
     last = performance.now();
-    try {
-      updateFrame(last);
-      renderer.setAnimationLoop(render);
-    } catch (error) {
-      fail(error);
-    }
+    forceDraw = true;
+
+    wakeRenderer();
   };
 
   const onVisibility = () => {
     if (destroyed || failed) return;
-    if (document.hidden) renderer.setAnimationLoop(null);
-    else {
-      last = performance.now();
-      renderer.setAnimationLoop(render);
+
+    if (document.hidden) {
+      sleepRenderer();
+      return;
     }
+
+    wakeRenderer();
   };
 
   const resizeObserver = "ResizeObserver" in window
@@ -516,17 +719,20 @@ export function createHouseScene(layer, canvas) {
   Object.values(mapped).flat().forEach((anchor) => resizeObserver?.observe(anchor.el));
 
   resize();
-  updateFrame(performance.now());
-  layer.dataset.threeState = "rendered";
+  layer.dataset.threeState = "ready";
   layer.dataset.threeQuality = quality.name;
 
-  window.addEventListener("resize", resize, { passive: true });
-  window.addEventListener("orientationchange", refreshLayout, { passive: true });
+  window.addEventListener("resize", scheduleResize, { passive: true });
+  window.visualViewport?.addEventListener("resize", scheduleResize, { passive: true });
+  window.addEventListener("orientationchange", scheduleResize, { passive: true });
   window.addEventListener("pointermove", pointer, { passive: true });
   canvas.addEventListener("webglcontextlost", onContextLost);
   canvas.addEventListener("webglcontextrestored", onContextRestored);
   document.addEventListener("visibilitychange", onVisibility);
-  renderer.setAnimationLoop(render);
+
+  if (!document.documentElement.classList.contains("is-loading")) {
+    wakeRenderer();
+  }
 
   return {
     quality: quality.name,
@@ -538,10 +744,12 @@ export function createHouseScene(layer, canvas) {
     playIntro,
     destroy() {
       destroyed = true;
-      renderer.setAnimationLoop(null);
+      sleepRenderer();
       resizeObserver?.disconnect();
-      window.removeEventListener("resize", resize);
-      window.removeEventListener("orientationchange", refreshLayout);
+      if (resizeFrame) cancelAnimationFrame(resizeFrame);
+      window.removeEventListener("resize", scheduleResize);
+      window.visualViewport?.removeEventListener("resize", scheduleResize);
+      window.removeEventListener("orientationchange", scheduleResize);
       window.removeEventListener("pointermove", pointer);
       canvas.removeEventListener("webglcontextlost", onContextLost);
       canvas.removeEventListener("webglcontextrestored", onContextRestored);
