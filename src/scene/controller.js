@@ -180,7 +180,7 @@ export function createHouseScene(layer, canvas) {
   ];
 
   const phoneAnchors = [
-    ["hero", ".hero", .24, -1.15, .59, -.32, .88, 0, 12.7, 1.02, 38],
+    ["hero", ".hero", .18, -1.52, .53, -.30, .88, 0, 12.85, .96, 38.5],
     ["about", "#o-nama", 0, -1.18, .40, .06, 0, 0, 13.1, 1.00, 38],
     ["structure", "#konstrukcija", .20, -.44, .59, .45, .72, .74, 12.45, 1.38, 37],
     ["work", "#radovi", 0, -1.05, .34, .72, 0, 0, 13.1, 1.00, 38],
