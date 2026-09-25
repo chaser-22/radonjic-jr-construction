@@ -110,6 +110,7 @@ export function createHouseScene(layer, canvas) {
   );
   warm.position.set(-4.5, .9, 4.8);
   scene.add(warm);
+  const baseWarmIntensity = warm.intensity;
 
   const world = new THREE.Group();
   scene.add(world);
@@ -149,6 +150,12 @@ export function createHouseScene(layer, canvas) {
   const offsetCache = new Map();
   const cameraTarget = new THREE.Vector3();
   let lastTileBuild = -1;
+  const intro = {
+    active: false,
+    played: false,
+    start: 0,
+    duration: quality.name === "phone" ? 1500 : 1750
+  };
 
   const desktopAnchors = [
     ["hero", ".hero", 3.02, -0.20, .94, -.42, 1, 0, 11.7, 1.24, 33.5],
@@ -271,6 +278,14 @@ export function createHouseScene(layer, canvas) {
   const setService = (key) => { target.focus = key; };
   const clearService = () => { target.focus = null; };
 
+  const playIntro = () => {
+    if (reduced || intro.played || destroyed || failed) return;
+    intro.played = true;
+    intro.active = true;
+    intro.start = performance.now();
+    last = intro.start;
+  };
+
   const pointer = (event) => {
     if (quality.name === "phone" || reduced) return;
     target.pointerX = (event.clientX / Math.max(1, window.innerWidth) - .5) * 2;
@@ -324,6 +339,32 @@ export function createHouseScene(layer, canvas) {
     state.section = target.section;
     state.focus = target.section === "services" ? target.focus : null;
 
+    let introAlpha = 1;
+    let introLift = 0;
+    let introScale = 1;
+    let introTurn = 0;
+    let introTilt = 0;
+    let introCamera = 0;
+    let introGlow = 0;
+
+    if (intro.active) {
+      const raw = Math.max(0, Math.min(1, (safeNow - intro.start) / intro.duration));
+      const ease = 1 - Math.pow(1 - raw, 3);
+      const c1 = 1.16;
+      const c3 = c1 + 1;
+      const back = 1 + c3 * Math.pow(raw - 1, 3) + c1 * Math.pow(raw - 1, 2);
+
+      introAlpha = smooth(0, .17, raw);
+      introLift = (1 - ease) * 1.18;
+      introScale = .78 + .22 * back;
+      introTurn = (1 - ease) * -.66;
+      introTilt = (1 - ease) * -.055;
+      introCamera = (1 - ease) * 1.45;
+      introGlow = Math.sin(Math.PI * raw);
+
+      if (raw >= 1) intro.active = false;
+    }
+
     // Every service now cross-fades at the same pace as the Rušenje animation.
     // Old focus decays while the new focus rises, avoiding hard opacity/camera snaps.
     serviceKeys.forEach((key) => {
@@ -335,7 +376,7 @@ export function createHouseScene(layer, canvas) {
       );
     });
 
-    layer.style.opacity = String(state.opacity);
+    layer.style.opacity = String(state.opacity * introAlpha);
     if (target.opacity <= .001 && state.opacity < .012) {
       if (safeNow - lastIdleDraw < 280) return;
       lastIdleDraw = safeNow;
@@ -348,9 +389,10 @@ export function createHouseScene(layer, canvas) {
     );
 
     const ghost = 1 - smooth(.05, .86, state.build);
-    extra.ghostMat.opacity = .045 + ghost * .38 + state.xray * .12;
-    extra.accent.opacity = .06 + ghost * .68 + state.xray * .16;
-    extra.ghostFillMat.opacity = .008 + ghost * .035;
+    extra.ghostMat.opacity = .045 + ghost * .38 + state.xray * .12 + introGlow * .12;
+    extra.accent.opacity = .06 + ghost * .68 + state.xray * .16 + introGlow * .26;
+    extra.ghostFillMat.opacity = .008 + ghost * .035 + introGlow * .022;
+    warm.intensity = baseWarmIntensity * (1 + introGlow * .72);
 
     const tileBuild = smooth(.76, .94, state.build);
     const maxServiceFocus = Math.max(0, ...Object.values(serviceWeights));
@@ -387,12 +429,12 @@ export function createHouseScene(layer, canvas) {
 
     world.position.set(
       state.x + state.pointerX * .07,
-      state.y - state.pointerY * .025,
+      state.y - state.pointerY * .025 + introLift,
       0
     );
-    world.scale.setScalar(state.scale);
-    world.rotation.y = state.rotation + state.pointerX * .022;
-    world.rotation.x = -state.pointerY * .010;
+    world.scale.setScalar(state.scale * introScale);
+    world.rotation.y = state.rotation + state.pointerX * .022 + introTurn;
+    world.rotation.x = -state.pointerY * .010 + introTilt;
 
     const layout = currentLayout();
     const phone = layout === "phone";
@@ -405,7 +447,7 @@ export function createHouseScene(layer, canvas) {
 
     camera.position.x = phone ? 0 : state.pointerX * .13;
     camera.position.y = (phone ? 2.42 : 2.62) - state.pointerY * .06;
-    camera.position.z = state.cameraZ;
+    camera.position.z = state.cameraZ + introCamera;
     camera.fov = state.fov;
     if (Math.abs(camera.fov - lastCameraFov) > .01) {
       camera.updateProjectionMatrix();
@@ -493,6 +535,7 @@ export function createHouseScene(layer, canvas) {
     updateFromScroll,
     setService,
     clearService,
+    playIntro,
     destroy() {
       destroyed = true;
       renderer.setAnimationLoop(null);

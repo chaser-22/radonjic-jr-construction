@@ -42,6 +42,7 @@ function finishLoader() {
     siteLoader?.classList.add("loader-out");
     document.documentElement.classList.remove("is-loading");
     document.documentElement.classList.add("site-ready");
+    houseScene?.playIntro();
   }, 60);
 }
 
