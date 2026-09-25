@@ -14,12 +14,12 @@ function chooseQuality() {
     return {
       name: "phone",
       constrained: phoneConstrained,
-      dpr: phoneConstrained ? .90 : 1.08,
-      textureSize: phoneConstrained ? 128 : 192,
+      dpr: phoneConstrained ? 1.5 : 2.0,
+      textureSize: phoneConstrained ? 192 : 256,
       shadows: false,
       shadowSize: 0,
-      roofRows: phoneConstrained ? 6 : 7,
-      roofCols: phoneConstrained ? 8 : 10,
+      roofRows: phoneConstrained ? 7 : 9,
+      roofCols: phoneConstrained ? 9 : 12,
       transmission: false
     };
   }
@@ -55,9 +55,11 @@ export function createHouseScene(layer, canvas) {
 
   const renderer = new THREE.WebGLRenderer({
     canvas,
-    antialias: quality.name !== "phone",
+    antialias: true,
     alpha: true,
-    premultipliedAlpha: true
+    premultipliedAlpha: true,
+    powerPreference: "high-performance",
+    stencil: false
   });
 
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, quality.dpr));
