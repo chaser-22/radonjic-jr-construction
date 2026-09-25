@@ -141,14 +141,20 @@ export function createHouseScene(layer, canvas) {
   const target = { ...state, buildTarget: reduced ? 1 : 0 };
 
   let last = performance.now();
-  let lastPresented = 0;
   let lastIdleDraw = 0;
   let lastCameraFov = camera.fov;
+  let lastLayerOpacity = -1;
   let destroyed = false;
   let failed = false;
   let layoutRevision = 0;
+  let resizeFrame = 0;
+  let lastWidth = 0;
+  let lastHeight = 0;
+  let lastPixelRatio = 0;
+  let forceDraw = true;
   const offsetCache = new Map();
   const cameraTarget = new THREE.Vector3();
+  const motionKeys = ["x","y","scale","rotation","opacity","xray","cameraZ","lookY","fov"];
   let lastTileBuild = -1;
   const intro = {
     active: false,
@@ -213,6 +219,7 @@ export function createHouseScene(layer, canvas) {
   const refreshLayout = () => {
     layoutRevision += 1;
     offsetCache.clear();
+    forceDraw = true;
   };
 
   const getOffsets = (anchors) => {
@@ -227,15 +234,32 @@ export function createHouseScene(layer, canvas) {
   };
 
   const resize = () => {
+    resizeFrame = 0;
     const width = Math.max(1, window.innerWidth);
     const height = Math.max(1, window.innerHeight);
     const layout = currentLayout();
     const cap = layout === "phone" ? quality.dpr : layout === "tablet" ? Math.min(1.25, quality.dpr) : quality.dpr;
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, cap);
 
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, cap));
-    renderer.setSize(width, height, false);
-    camera.aspect = width / height;
+    if (Math.abs(pixelRatio - lastPixelRatio) > .001) {
+      renderer.setPixelRatio(pixelRatio);
+      lastPixelRatio = pixelRatio;
+    }
+
+    if (width !== lastWidth || height !== lastHeight) {
+      renderer.setSize(width, height, false);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      lastWidth = width;
+      lastHeight = height;
+    }
+
     refreshLayout();
+  };
+
+  const scheduleResize = () => {
+    if (resizeFrame) return;
+    resizeFrame = requestAnimationFrame(resize);
   };
 
   function updateFromScroll(build) {
@@ -254,10 +278,12 @@ export function createHouseScene(layer, canvas) {
     const span = Math.max(1, nextOffset - offsets[index]);
     const t = index === anchors.length - 1 ? 0 : smooth(0, 1, (center - offsets[index]) / span);
 
-    ["x","y","scale","rotation","opacity","xray","cameraZ","lookY","fov"].forEach((key) => {
+    for (let i = 0; i < motionKeys.length; i += 1) {
+      const key = motionKeys[i];
       target[key] = lerp(a[key], b[key], t);
-    });
+    }
     target.section = a.name;
+    forceDraw = true;
   }
 
   const serviceLook = {
@@ -275,8 +301,17 @@ export function createHouseScene(layer, canvas) {
   const serviceKeys = Object.keys(serviceLook);
   const serviceWeights = Object.fromEntries(serviceKeys.map((key) => [key, 0]));
 
-  const setService = (key) => { target.focus = key; };
-  const clearService = () => { target.focus = null; };
+  const setService = (key) => {
+    if (target.focus === key) return;
+    target.focus = key;
+    forceDraw = true;
+  };
+
+  const clearService = () => {
+    if (target.focus === null) return;
+    target.focus = null;
+    forceDraw = true;
+  };
 
   const playIntro = () => {
     if (reduced || intro.played || destroyed || failed) return;
@@ -284,12 +319,17 @@ export function createHouseScene(layer, canvas) {
     intro.active = true;
     intro.start = performance.now();
     last = intro.start;
+    forceDraw = true;
   };
 
   const pointer = (event) => {
     if (quality.name === "phone" || reduced) return;
-    target.pointerX = (event.clientX / Math.max(1, window.innerWidth) - .5) * 2;
-    target.pointerY = (event.clientY / Math.max(1, window.innerHeight) - .5) * 2;
+    const nextX = (event.clientX / Math.max(1, window.innerWidth) - .5) * 2;
+    const nextY = (event.clientY / Math.max(1, window.innerHeight) - .5) * 2;
+    if (Math.abs(nextX - target.pointerX) < .002 && Math.abs(nextY - target.pointerY) < .002) return;
+    target.pointerX = nextX;
+    target.pointerY = nextY;
+    forceDraw = true;
   };
 
   function fail(error) {
@@ -306,14 +346,17 @@ export function createHouseScene(layer, canvas) {
     if (!extra.roofTileData || Math.abs(build - lastTileBuild) < .002) return;
     lastTileBuild = build;
     const { mesh, entries, dummy } = extra.roofTileData;
-    entries.forEach((entry, index) => {
+
+    for (let index = 0; index < entries.length; index += 1) {
+      const entry = entries[index];
       const amount = smooth(entry.start, entry.start + .055, build);
       dummy.position.copy(entry.position);
       dummy.rotation.copy(entry.rotation);
       dummy.scale.set(entry.scale.x * Math.max(.001, amount), entry.scale.y, entry.scale.z);
       dummy.updateMatrix();
       mesh.setMatrixAt(index, dummy.matrix);
-    });
+    }
+
     mesh.instanceMatrix.needsUpdate = true;
   }
 
