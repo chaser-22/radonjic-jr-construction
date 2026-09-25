@@ -530,13 +530,22 @@ document.querySelectorAll("[data-header]").forEach((section) => themeObserver.ob
 const serviceButtons = [...document.querySelectorAll(".service-row")];
 const serviceTitle = document.querySelector("[data-active-service-title]");
 const serviceCode = document.querySelector("[data-active-service-code]");
+let activeServiceButton = serviceButtons.find((button) => button.classList.contains("is-active")) || null;
 
 function activateService(button) {
-  serviceButtons.forEach((item) => {
+  if (button === activeServiceButton) {
+    houseScene?.setService(button.dataset.service);
+    return;
+  }
+
+  for (let i = 0; i < serviceButtons.length; i += 1) {
+    const item = serviceButtons[i];
     const active = item === button;
     item.classList.toggle("is-active", active);
     item.setAttribute("aria-pressed", String(active));
-  });
+  }
+
+  activeServiceButton = button;
   if (serviceTitle) serviceTitle.textContent = button.querySelector("strong").textContent.toUpperCase();
   if (serviceCode) serviceCode.textContent = button.dataset.serviceCode;
   houseScene?.setService(button.dataset.service);
@@ -554,8 +563,8 @@ const servicesSection = document.querySelector("#usluge");
 const serviceSectionObserver = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
     if (!entry.isIntersecting) houseScene?.clearService();
-    else if (serviceButtons[0] && !serviceButtons.some((button) => button.matches(":focus"))) {
-      const active = serviceButtons.find((button) => button.classList.contains("is-active")) || serviceButtons[0];
+    else if (serviceButtons[0] && !serviceButtons.includes(document.activeElement)) {
+      const active = activeServiceButton || serviceButtons[0];
       houseScene?.setService(active.dataset.service);
     }
   });
