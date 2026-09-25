@@ -355,14 +355,16 @@ export function addFinish(ctx, xs, zs) {
 
   crane.position.set(-5.1,-1.72,-1.4);
 
-  const shadow=new THREE.Mesh(
-    new THREE.PlaneGeometry(13,10),
-    new THREE.ShadowMaterial({color:0,opacity:.16,transparent:true})
-  );
-  shadow.rotation.x=-Math.PI/2;
-  shadow.position.y=-1.84;
-  shadow.receiveShadow=true;
-  ctx.groups.ground.add(shadow);
+  if (ctx.quality.shadows) {
+    const shadow=new THREE.Mesh(
+      new THREE.PlaneGeometry(13,10),
+      new THREE.ShadowMaterial({color:0,opacity:.16,transparent:true})
+    );
+    shadow.rotation.x=-Math.PI/2;
+    shadow.position.y=-1.84;
+    shadow.receiveShadow=true;
+    ctx.groups.ground.add(shadow);
+  }
 
   const grid=new THREE.GridHelper(16,32,0xf2b600,0x777b74);
   grid.position.y=-1.82;
