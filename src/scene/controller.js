@@ -166,7 +166,7 @@ export function createHouseScene(layer, canvas) {
   const intro = {
     active: false,
     played: false,
-    start: 0,
+    elapsed: 0,
     duration: quality.name === "phone" ? 1500 : 1750
   };
 
@@ -337,7 +337,7 @@ export function createHouseScene(layer, canvas) {
     if (reduced || intro.played) return;
     intro.played = true;
     intro.active = true;
-    intro.start = last;
+    intro.elapsed = 0;
   };
 
   const pointer = (event) => {
@@ -418,7 +418,8 @@ export function createHouseScene(layer, canvas) {
     let introGlow = 0;
 
     if (intro.active) {
-      const raw = Math.max(0, Math.min(1, (safeNow - intro.start) / intro.duration));
+      intro.elapsed = Math.min(intro.duration, intro.elapsed + dt * 1000);
+      const raw = intro.elapsed / intro.duration;
       const ease = 1 - Math.pow(1 - raw, 3);
       const c1 = 1.16;
       const c3 = c1 + 1;
