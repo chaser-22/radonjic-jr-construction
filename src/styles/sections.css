@@ -277,6 +277,7 @@
 .services-head h2 { font-size: clamp(68px, 8.5vw, 138px); }
 .services-head > p:last-child { max-width: 410px; margin: 0 0 12px; color: #d0d3cc; font-size: 15px; line-height: 1.68; }
 .services-layout { margin-top: 80px; display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(38px, 6vw, 92px); align-items: start; }
+.service-tip { display: none; }
 .service-list { display: grid; }
 .service-row {
   width: 100%;
