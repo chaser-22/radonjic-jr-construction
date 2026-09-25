@@ -467,6 +467,15 @@ html:not(.site-entered) .mobile-contact {
   transition-delay: 0s;
 }
 
+.site-settled .header-cta,
+.site-settled .hero-actions .button {
+  transition:
+    transform .2s var(--ease),
+    background .2s ease,
+    border-color .2s ease,
+    color .2s ease;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .site-header,
   .site-header .brand,
