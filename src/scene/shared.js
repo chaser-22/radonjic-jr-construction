@@ -8,6 +8,7 @@ export const smooth = (a, b, v) => {
 };
 
 const BOX = new THREE.BoxGeometry(1, 1, 1);
+const BOX_EDGES = new THREE.EdgesGeometry(BOX);
 const CYL = new THREE.CylinderGeometry(1, 1, 1, 16);
 const FOCUS_TINT = new THREE.Color(0xf2b600);
 const FOCUS_EMISSIVE = 0x6b4d00;
@@ -260,7 +261,7 @@ export function cylinder(ctx, group, radius, height, pos, materialRef, start, en
 
 export function outline(mesh, color=0x4b4a45, opacity=.14) {
   const line = new THREE.LineSegments(
-    new THREE.EdgesGeometry(BOX),
+    BOX_EDGES,
     new THREE.LineBasicMaterial({ color, transparent:true, opacity, toneMapped:false })
   );
   line.userData.baseOpacity = opacity;
