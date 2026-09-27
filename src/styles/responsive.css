@@ -2305,3 +2305,216 @@
     width: 30px;
   }
 }
+
+
+/* V45 — professional typography and breathing room. */
+body {
+  font-family: var(--sans);
+  font-weight: 500;
+  letter-spacing: .004em;
+  line-height: 1.6;
+}
+
+.hero h1,
+.section-heading h2,
+.work-intro h2,
+.services-head h2,
+.process-head h2,
+.contact h2,
+.values-layout h2 {
+  letter-spacing: -.028em;
+  line-height: .95;
+}
+
+.hero h1 {
+  letter-spacing: -.024em;
+  line-height: .94;
+}
+
+.section-heading h2,
+.work-intro h2,
+.services-head h2,
+.process-head h2,
+.values-layout h2 {
+  line-height: .97;
+}
+
+.contact h2 {
+  line-height: .94;
+}
+
+.project-copy h3 {
+  letter-spacing: -.018em;
+  line-height: 1.02;
+}
+
+.about-copy .lede {
+  letter-spacing: -.014em;
+  line-height: 1.34;
+}
+
+.hero-intro,
+.about-copy > p:not(.lede),
+.work-intro > p,
+.section-description,
+.services-head > p:last-child,
+.project-copy > div span,
+.values-copy p,
+.process-grid p,
+.contact-copy > p:last-child {
+  letter-spacing: .006em;
+  line-height: 1.72;
+}
+
+.phase-list h3,
+.service-row strong,
+.process-grid h3 {
+  letter-spacing: -.008em;
+  line-height: 1.28;
+}
+
+.desktop-nav a,
+.header-cta,
+.button,
+.contact-links a,
+.values-copy a {
+  letter-spacing: .018em;
+}
+
+.micro-label,
+.scroll-cue,
+.photo-disclaimer,
+.trust-row span,
+.site-progress-copy,
+.service-row > span,
+.service-tip {
+  letter-spacing: .11em;
+}
+
+.brand-copy strong {
+  letter-spacing: .055em;
+}
+
+.brand-copy span {
+  letter-spacing: .22em;
+}
+
+.phone-link {
+  letter-spacing: -.018em;
+  line-height: 1.08;
+}
+
+.email-address {
+  letter-spacing: .025em;
+  line-height: 1.4;
+}
+
+@media (max-width: 1180px) {
+  .hero h1,
+  .section-heading h2,
+  .work-intro h2,
+  .services-head h2,
+  .process-head h2,
+  .values-layout h2,
+  .contact h2 {
+    letter-spacing: -.024em;
+  }
+
+  .brand-copy strong {
+    letter-spacing: .05em;
+  }
+}
+
+@media (max-width: 760px) {
+  body {
+    letter-spacing: .003em;
+    line-height: 1.58;
+  }
+
+  .hero h1 {
+    letter-spacing: -.018em;
+    line-height: .96;
+  }
+
+  .section-heading h2,
+  .work-intro h2,
+  .process-head h2,
+  .services-head h2,
+  .values-layout h2,
+  .contact h2 {
+    letter-spacing: -.018em;
+    line-height: .98;
+  }
+
+  .project-copy h3 {
+    letter-spacing: -.012em;
+    line-height: 1.04;
+  }
+
+  .about-copy .lede {
+    letter-spacing: -.010em;
+    line-height: 1.36;
+  }
+
+  .hero-intro,
+  .about-copy > p:not(.lede),
+  .work-intro > p,
+  .section-description,
+  .services-head > p:last-child,
+  .project-copy > div span,
+  .values-copy p,
+  .process-grid p,
+  .contact-copy > p:last-child {
+    line-height: 1.66;
+  }
+
+  .service-row strong {
+    letter-spacing: 0;
+    line-height: 1.22;
+  }
+
+  .button,
+  .header-cta,
+  .quick-contact {
+    letter-spacing: .015em;
+  }
+
+  .micro-label,
+  .photo-disclaimer,
+  .trust-row span,
+  .service-tip {
+    letter-spacing: .09em;
+  }
+
+  .brand-copy strong {
+    letter-spacing: .045em;
+  }
+
+  .brand-copy span {
+    letter-spacing: .18em;
+  }
+
+  .phone-link {
+    letter-spacing: -.012em;
+  }
+}
+
+@media (max-width: 430px) {
+  .hero h1,
+  .section-heading h2,
+  .work-intro h2,
+  .process-head h2,
+  .services-head h2,
+  .values-layout h2,
+  .contact h2 {
+    letter-spacing: -.014em;
+  }
+
+  .brand-copy strong {
+    letter-spacing: .04em;
+  }
+
+  .brand-copy span {
+    letter-spacing: .15em;
+  }
+}
