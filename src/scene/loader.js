@@ -28,8 +28,8 @@ export function createLoaderHouse(canvas) {
   const scene = new THREE.Scene();
   scene.fog = new THREE.Fog(0x0d0e0c, 12.5, 23);
 
-  const camera = new THREE.PerspectiveCamera(phone ? 39 : 39, 1, .1, 40);
-  camera.position.set(0, phone ? 2.45 : 2.58, phone ? 12.85 : 13.15);
+  const camera = new THREE.PerspectiveCamera(39, 1, .1, 40);
+  camera.position.set(0, phone ? 2.52 : 2.66, phone ? 13.55 : 13.85);
 
   scene.add(new THREE.HemisphereLight(0xfff4df, 0x1b211f, 1.62));
 
@@ -50,7 +50,7 @@ export function createLoaderHouse(canvas) {
   scene.add(warm);
 
   const world = new THREE.Group();
-  world.position.y = phone ? -.72 : -.40;
+  world.position.y = phone ? -.54 : -.24;
   world.rotation.y = -.68;
   scene.add(world);
 
@@ -404,7 +404,7 @@ export function createLoaderHouse(canvas) {
 
     world.rotation.y = -.72 + buildEase * .48 + Math.sin(now * .00048) * .022;
     world.rotation.x = -.025 + (1 - buildEase) * -.015;
-    world.position.y = (phone ? -.76 : -.42) + (1 - smooth(0, .18, progress)) * .30;
+    world.position.y = (phone ? -.56 : -.26) + (1 - smooth(0, .18, progress)) * .30;
     world.scale.setScalar((phone ? .79 : .99) + smooth(.05, .72, progress) * (phone ? .09 : .11));
 
     const glow = Math.sin(Math.PI * smooth(.58, 1, progress));
@@ -413,9 +413,9 @@ export function createLoaderHouse(canvas) {
     key.intensity = 2.55 + finishEase * .35;
 
     camera.position.x = Math.sin(buildEase * .72) * .28;
-    camera.position.y = (phone ? 2.48 : 2.58) + buildEase * .12;
-    camera.position.z = (phone ? 12.95 : 13.15) - buildEase * (phone ? .72 : .60);
-    camera.lookAt(0, (phone ? 1.65 : 1.72) + finishEase * .08, 0);
+    camera.position.y = (phone ? 2.54 : 2.66) + buildEase * .10;
+    camera.position.z = (phone ? 13.55 : 13.85) - buildEase * (phone ? .55 : .60);
+    camera.lookAt(0, (phone ? 1.68 : 1.76) + finishEase * .06, 0);
 
     gridMaterials.forEach((material) => {
       material.opacity = .10 + (1 - finishEase) * .08;
