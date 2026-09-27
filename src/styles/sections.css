@@ -106,9 +106,9 @@
 .site-progress {
   position: fixed;
   z-index: 92;
-  top: 176px;
+  top: 220px;
   right: 22px;
-  bottom: 98px;
+  bottom: 140px;
   width: 104px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 5px;
