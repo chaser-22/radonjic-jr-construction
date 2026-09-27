@@ -106,12 +106,12 @@
 .site-progress {
   position: fixed;
   z-index: 92;
-  top: 116px;
+  top: 150px;
   right: 22px;
-  bottom: 34px;
+  bottom: 72px;
   width: 104px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 3px;
+  grid-template-columns: minmax(0, 1fr) 5px;
   gap: 14px;
   pointer-events: none;
   color: #f3f1eb;
@@ -182,7 +182,7 @@
   top: 0;
   bottom: 0;
   left: 1px;
-  width: 1px;
+  width: 2px;
 }
 
 .site-progress-track {
@@ -201,7 +201,7 @@
   top: 0;
   bottom: auto;
   height: 100%;
-  width: 2px;
+  width: 4px;
   left: 0;
   background: linear-gradient(to bottom, #ffd65a, var(--yellow));
   box-shadow: 0 0 14px rgba(242,182,0,.26);
@@ -213,8 +213,8 @@
   position: absolute;
   top: calc(var(--site-progress, .002) * 100%);
   left: 50%;
-  width: 7px;
-  height: 7px;
+  width: 9px;
+  height: 9px;
   border: 1px solid var(--yellow);
   background: #121310;
   box-shadow: 0 0 0 3px rgba(242,182,0,.08), 0 0 15px rgba(242,182,0,.30);
