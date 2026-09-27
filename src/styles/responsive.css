@@ -2076,3 +2076,74 @@
     height: 31px;
   }
 }
+
+
+/* V39 — persistent page progress rail. */
+@media (min-width: 761px) and (max-width: 980px) {
+  .site-progress {
+    right: 14px;
+    width: 82px;
+    gap: 10px;
+  }
+
+  .site-progress-copy > strong {
+    max-width: 66px;
+    font-size: 8px;
+  }
+
+  .site-progress-copy > em {
+    gap: 5px;
+    font-size: 7px;
+  }
+}
+
+@media (max-width: 760px) {
+  .site-progress {
+    top: calc(74px + env(safe-area-inset-top));
+    right: max(6px, env(safe-area-inset-right));
+    bottom: calc(76px + env(safe-area-inset-bottom));
+    width: 42px;
+    grid-template-columns: minmax(0, 1fr) 2px;
+    gap: 7px;
+  }
+
+  .site-progress-copy {
+    gap: 4px;
+    text-shadow: 0 1px 8px rgba(0,0,0,.24);
+  }
+
+  .site-progress-copy > span {
+    font-size: 6px;
+    letter-spacing: .10em;
+  }
+
+  .site-progress-copy > strong,
+  .site-progress-copy > em b {
+    display: none;
+  }
+
+  .site-progress-copy > em {
+    font-size: 7px;
+    letter-spacing: .04em;
+  }
+
+  .site-progress-fill {
+    width: 2px;
+  }
+
+  .site-progress-marker {
+    width: 6px;
+    height: 6px;
+  }
+}
+
+@media (max-width: 360px) {
+  .site-progress {
+    right: max(4px, env(safe-area-inset-right));
+    width: 34px;
+  }
+
+  .site-progress-copy > span {
+    display: none;
+  }
+}
