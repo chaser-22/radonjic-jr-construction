@@ -2099,11 +2099,11 @@
 
 @media (max-width: 760px) {
   .site-progress {
-    top: calc(74px + env(safe-area-inset-top));
+    top: calc(94px + env(safe-area-inset-top));
     right: max(6px, env(safe-area-inset-right));
-    bottom: calc(76px + env(safe-area-inset-bottom));
+    bottom: calc(98px + env(safe-area-inset-bottom));
     width: 42px;
-    grid-template-columns: minmax(0, 1fr) 2px;
+    grid-template-columns: minmax(0, 1fr) 3px;
     gap: 7px;
   }
 
@@ -2128,12 +2128,12 @@
   }
 
   .site-progress-fill {
-    width: 2px;
+    width: 3px;
   }
 
   .site-progress-marker {
-    width: 6px;
-    height: 6px;
+    width: 7px;
+    height: 7px;
   }
 }
 
