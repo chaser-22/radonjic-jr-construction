@@ -111,11 +111,11 @@ app.innerHTML = `
 
   <header class="site-header" data-header-theme="dark">
     <a class="brand" href="#top" aria-label="Radonjic JR Construction — početna">
-      <span class="brand-mark">RJ</span>
       <span class="brand-copy">
         <strong>RADONJIC JR</strong>
         <span>CONSTRUCTION</span>
       </span>
+      <span class="brand-accent" aria-hidden="true"></span>
     </a>
 
     <nav class="desktop-nav" aria-label="Glavna navigacija">
