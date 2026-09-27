@@ -19,39 +19,41 @@ export function createLoaderHouse(canvas) {
     stencil: false
   });
 
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, phone ? 1.5 : 1.8));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, phone ? 1.5 : 1.9));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.12;
+  renderer.toneMappingExposure = 1.1;
   renderer.setClearColor(0x000000, 0);
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(0x0d0e0c, 12.5, 23);
+  scene.fog = new THREE.Fog(0x0d0e0c, 14.5, 27);
 
-  const camera = new THREE.PerspectiveCamera(39, 1, .1, 40);
-  camera.position.set(0, phone ? 2.52 : 2.66, phone ? 13.55 : 13.85);
+  // A slightly longer lens and a lower target keep the entire plinth in frame
+  // while preserving the large-house feel on both desktop and phone.
+  const camera = new THREE.PerspectiveCamera(phone ? 37 : 36, 1, .1, 45);
+  camera.position.set(0, phone ? 2.15 : 2.34, phone ? 15.2 : 15.45);
 
-  scene.add(new THREE.HemisphereLight(0xfff4df, 0x1b211f, 1.62));
+  scene.add(new THREE.HemisphereLight(0xfff4df, 0x1a201e, 1.66));
 
-  const key = new THREE.DirectionalLight(0xffe2ae, 2.65);
-  key.position.set(7, 10, 7);
+  const key = new THREE.DirectionalLight(0xffe5b8, 2.6);
+  key.position.set(8, 10, 7);
   scene.add(key);
 
-  const fill = new THREE.DirectionalLight(0x8ea7b1, .62);
-  fill.position.set(-6, 4, -6);
+  const fill = new THREE.DirectionalLight(0x91a9b1, .66);
+  fill.position.set(-7, 4, -6);
   scene.add(fill);
 
-  const rim = new THREE.DirectionalLight(0xf2b600, 1.2);
-  rim.position.set(-7, 6, 3);
+  const rim = new THREE.DirectionalLight(0xf2b600, 1.15);
+  rim.position.set(-8, 6, 4);
   scene.add(rim);
 
-  const warm = new THREE.PointLight(0xf2b600, .75, 9, 2);
-  warm.position.set(-3.8, .4, 4.2);
+  const warm = new THREE.PointLight(0xf2b600, .7, 11, 2);
+  warm.position.set(-4.4, .35, 4.8);
   scene.add(warm);
 
   const world = new THREE.Group();
-  world.position.y = phone ? -.54 : -.24;
-  world.rotation.y = -.68;
+  world.position.y = phone ? -.44 : -.34;
+  world.rotation.y = -.66;
   scene.add(world);
 
   const BOX = new THREE.BoxGeometry(1, 1, 1);
@@ -70,16 +72,16 @@ export function createLoaderHouse(canvas) {
       ...extra
     });
 
-  const concrete = makeMat(0xbdb9b0, .9, .02);
-  const concreteDark = makeMat(0x77756f, .94, .03);
-  const steel = makeMat(0x343b39, .4, .64);
-  const rebar = makeMat(0x6b4739, .54, .52);
-  const masonry = makeMat(0x9d5d42, .9, .01);
-  const plaster = makeMat(0xd9d6ce, .92, 0);
-  const timber = makeMat(0x76563c, .8, .02);
-  const roof = makeMat(0x282d2b, .76, .1);
-  const glass = makeMat(0x93a19e, .18, .05, { opacity: .58, depthWrite: false });
-  const accent = makeMat(0xf2b600, .46, .12);
+  const concrete = makeMat(0xc1bdb4, .91, .02);
+  const concreteDark = makeMat(0x76746e, .94, .03);
+  const steel = makeMat(0x2f3634, .38, .68);
+  const rebar = makeMat(0x684538, .55, .54);
+  const masonry = makeMat(0x95604a, .9, .01);
+  const plaster = makeMat(0xddd9d0, .9, 0);
+  const timber = makeMat(0x76523a, .78, .02);
+  const roof = makeMat(0x252a28, .74, .12);
+  const glass = makeMat(0x9ba8a5, .16, .06, { opacity: .58, depthWrite: false });
+  const accent = makeMat(0xf2b600, .45, .14);
 
   const parts = [];
   const materials = [concrete, concreteDark, steel, rebar, masonry, plaster, timber, roof, glass, accent];
@@ -130,185 +132,212 @@ export function createLoaderHouse(canvas) {
   const addCylinder = (radius, height, position, material, start, end, options = {}) =>
     addPart(CYL, [radius, height, radius], position, material, start, end, options);
 
-  // 01 / Site + foundation
-  addBox([6.8, .10, 4.7], [0, -1.62, 0], accent, .015, .08, {
+  const addWindow = (x, y, width, height, z, start, end) => {
+    addBox([width, height, .055], [x, y, z], glass, start, end, {
+      reveal: "all",
+      edges: false
+    });
+    const frameDepth = .09;
+    const frame = .055;
+    addBox([width + .14, frame, frameDepth], [x, y + height / 2 + .065, z + .035], steel, start + .008, end, { reveal: "x", edges: false });
+    addBox([width + .14, frame, frameDepth], [x, y - height / 2 - .065, z + .035], steel, start + .008, end, { reveal: "x", edges: false });
+    addBox([frame, height + .14, frameDepth], [x - width / 2 - .065, y, z + .035], steel, start + .008, end, { edges: false });
+    addBox([frame, height + .14, frameDepth], [x + width / 2 + .065, y, z + .035], steel, start + .008, end, { edges: false });
+    addBox([frame * .72, height, frameDepth], [x, y, z + .04], steel, start + .012, end, { edges: false });
+  };
+
+  // 01 / Wide, low foundation and plinth.
+  addBox([8.15, .10, 5.55], [0, -1.48, .08], accent, .012, .075, {
     reveal: "x",
     accent: true
   });
-  addBox([6.2, .14, 4.25], [0, -1.51, 0], concreteDark, .04, .11, {
+  addBox([7.65, .16, 5.02], [0, -1.37, .04], concreteDark, .035, .105, {
     reveal: "x"
   });
 
-  [-2.58, 2.58].forEach((x, i) => {
-    addBox([.42, .30, 3.65], [x, -1.35, 0], concrete, .08 + i * .01, .16 + i * .01, {
+  [-3.22, 3.22].forEach((x, i) => {
+    addBox([.44, .30, 4.35], [x, -1.22, 0], concrete, .07 + i * .008, .15 + i * .008, {
       reveal: "z",
-      accent: true
+      accent: i === 0
     });
   });
-  [-1.58, 1.58].forEach((z, i) => {
-    addBox([5.55, .30, .42], [0, -1.35, z], concrete, .09 + i * .01, .17 + i * .01, {
+  [-1.90, 1.90].forEach((z, i) => {
+    addBox([6.90, .30, .44], [0, -1.22, z], concrete, .08 + i * .008, .16 + i * .008, {
       reveal: "x"
     });
   });
-  addBox([5.82, .28, 3.88], [0, -1.16, 0], concrete, .13, .22, {
+  addBox([7.22, .28, 4.62], [0, -.99, 0], concrete, .12, .21, {
     reveal: "x",
     accent: true
   });
 
-  // 02 / Rebar cages + structural columns
-  const xs = [-2.30, 0, 2.30];
-  const zs = [-1.42, 1.42];
+  // Front porch is deliberately part of the base so the house lands visually.
+  addBox([1.95, .18, 1.10], [0, -.91, 2.52], concreteDark, .15, .23, {
+    reveal: "z"
+  });
 
-  xs.forEach((x, xi) => zs.forEach((z, zi) => {
-    const delay = (xi * 2 + zi) * .007;
+  // 02 / Rebar cages + ground-floor structure.
+  const columnXs = [-2.88, 0, 2.88];
+  const columnZs = [-1.68, 1.68];
+
+  columnXs.forEach((x, xi) => columnZs.forEach((z, zi) => {
+    const delay = (xi * 2 + zi) * .006;
     [-.10, .10].forEach((dx) => {
       [-.10, .10].forEach((dz) => {
-        addCylinder(.025, 3.55, [x + dx, .52, z + dz], rebar, .18 + delay, .31 + delay, {
+        addCylinder(.024, 2.76, [x + dx, .40, z + dz], rebar, .17 + delay, .285 + delay, {
           edges: false
         });
       });
     });
 
-    [0, .55, 1.1, 1.65, 2.2, 2.75].forEach((y, yi) => {
-      addBox([.28, .025, .28], [x, -1.03 + y, z], rebar, .20 + delay + yi * .003, .30 + delay + yi * .003, {
+    [-.70, -.18, .34, .86, 1.38].forEach((y, yi) => {
+      addBox([.28, .025, .28], [x, y, z], rebar, .19 + delay + yi * .003, .29 + delay + yi * .003, {
         reveal: "x",
         edges: false
       });
     });
 
-    addBox([.36, 3.45, .36], [x, .48, z], concrete, .25 + delay, .39 + delay, {
+    addBox([.38, 2.72, .38], [x, .39, z], concrete, .235 + delay, .36 + delay, {
       accent: xi === 1 && zi === 1
     });
   }));
 
-  // 03 / Ground-floor beams + slab
-  addBox([5.45, .26, .34], [0, 2.12, -1.42], concrete, .34, .45, { reveal: "x" });
-  addBox([5.45, .26, .34], [0, 2.12, 1.42], concrete, .35, .46, { reveal: "x", accent: true });
-  addBox([.34, .26, 3.2], [-2.30, 2.12, 0], concrete, .36, .47, { reveal: "z" });
-  addBox([.34, .26, 3.2], [2.30, 2.12, 0], concrete, .37, .48, { reveal: "z" });
-  addBox([5.45, .18, 3.18], [0, 2.32, 0], concrete, .40, .50, { reveal: "x", accent: true });
+  // 03 / First-floor beams and slab.
+  addBox([6.18, .28, .36], [0, 1.80, -1.68], concrete, .32, .43, { reveal: "x" });
+  addBox([6.18, .28, .36], [0, 1.80, 1.68], concrete, .33, .44, { reveal: "x", accent: true });
+  addBox([.36, .28, 3.72], [-2.88, 1.80, 0], concrete, .34, .45, { reveal: "z" });
+  addBox([.36, .28, 3.72], [2.88, 1.80, 0], concrete, .35, .46, { reveal: "z" });
+  addBox([6.55, .18, 4.02], [0, 2.01, 0], concrete, .38, .48, { reveal: "x", accent: true });
 
-  // Temporary scaffold appears during masonry and disappears before handoff.
-  [-3.08, 3.08].forEach((x, xi) => {
-    [-1.9, 0, 1.9].forEach((z, zi) => {
-      addBox([.045, 4.3, .045], [x, .55, z], steel, .38 + (xi + zi) * .005, .47, {
-        fadeStart: .79,
-        fadeEnd: .94,
-        edges: false
-      });
+  // Upper structure is shorter than the ground floor for a calmer, residential proportion.
+  columnXs.forEach((x, xi) => columnZs.forEach((z, zi) => {
+    const delay = (xi * 2 + zi) * .006;
+    addBox([.34, 1.70, .34], [x, 2.95, z], concrete, .40 + delay, .51 + delay, {
+      accent: xi === 1 && zi === 0
     });
-  });
-  [-.62, .58, 1.78, 2.98].forEach((y, i) => {
-    addBox([6.15, .04, .04], [0, y, 1.9], steel, .40 + i * .008, .48 + i * .008, {
-      reveal: "x",
-      fadeStart: .79,
-      fadeEnd: .94,
-      edges: false
-    });
-    addBox([6.15, .04, .04], [0, y, -1.9], steel, .405 + i * .008, .485 + i * .008, {
-      reveal: "x",
-      fadeStart: .79,
-      fadeEnd: .94,
-      edges: false
-    });
-  });
+  }));
+  addBox([6.18, .25, .34], [0, 3.88, -1.68], concrete, .45, .54, { reveal: "x" });
+  addBox([6.18, .25, .34], [0, 3.88, 1.68], concrete, .46, .55, { reveal: "x", accent: true });
+  addBox([.34, .25, 3.72], [-2.88, 3.88, 0], concrete, .47, .56, { reveal: "z" });
+  addBox([.34, .25, 3.72], [2.88, 3.88, 0], concrete, .48, .57, { reveal: "z" });
 
-  // 04 / Masonry — built around real openings instead of solid walls.
-  addBox([.20, 1.95, 3.15], [-2.53, 3.10, 0], masonry, .46, .60, {});
-  addBox([.20, 1.95, 3.15], [2.53, 3.10, 0], masonry, .47, .61, {});
+  // 04 / Ground-floor masonry with real openings.
+  addBox([.20, 2.45, 4.18], [-3.35, .34, 0], masonry, .46, .60, {});
+  addBox([.20, 2.45, 4.18], [3.35, .34, 0], masonry, .47, .61, {});
+  addBox([6.52, 2.45, .20], [0, .34, -2.09], masonry, .48, .62, { reveal: "x" });
 
-  addBox([1.50, 1.95, .20], [-1.75, 3.10, -1.56], masonry, .48, .62, { reveal: "x" });
-  addBox([1.05, 1.95, .20], [0, 3.10, -1.56], masonry, .49, .63, { reveal: "x" });
-  addBox([1.50, 1.95, .20], [1.75, 3.10, -1.56], masonry, .50, .64, { reveal: "x" });
+  // Front facade: low sill, tall header, end piers and door/window separators.
+  addBox([6.52, .48, .20], [0, -.64, 2.09], masonry, .49, .62, { reveal: "x" });
+  addBox([6.52, .48, .20], [0, 1.31, 2.09], masonry, .50, .63, { reveal: "x" });
+  addBox([.42, 1.48, .20], [-3.14, .34, 2.09], masonry, .50, .63, {});
+  addBox([.44, 1.48, .20], [-1.03, .34, 2.09], masonry, .51, .64, {});
+  addBox([.44, 1.48, .20], [1.03, .34, 2.09], masonry, .52, .65, {});
+  addBox([.42, 1.48, .20], [3.14, .34, 2.09], masonry, .53, .66, {});
 
-  addBox([1.34, 1.95, .20], [-1.82, 3.10, 1.56], masonry, .49, .63, { reveal: "x" });
-  addBox([.78, 1.95, .20], [-.48, 3.10, 1.56], masonry, .50, .64, { reveal: "x" });
-  addBox([.78, 1.95, .20], [.48, 3.10, 1.56], masonry, .51, .65, { reveal: "x" });
-  addBox([1.34, 1.95, .20], [1.82, 3.10, 1.56], masonry, .52, .66, { reveal: "x" });
+  // Upper floor is shallower and visually lighter.
+  addBox([.20, 1.62, 4.18], [-3.35, 2.98, 0], masonry, .52, .66, {});
+  addBox([.20, 1.62, 4.18], [3.35, 2.98, 0], masonry, .53, .67, {});
+  addBox([6.52, 1.62, .20], [0, 2.98, -2.09], masonry, .54, .68, { reveal: "x" });
+  addBox([6.52, .34, .20], [0, 2.34, 2.09], masonry, .55, .68, { reveal: "x" });
+  addBox([6.52, .34, .20], [0, 3.62, 2.09], masonry, .56, .69, { reveal: "x" });
+  addBox([.44, .96, .20], [-3.14, 2.98, 2.09], masonry, .57, .69, {});
+  addBox([1.18, .96, .20], [0, 2.98, 2.09], masonry, .58, .70, {});
+  addBox([.44, .96, .20], [3.14, 2.98, 2.09], masonry, .59, .70, {});
 
-  addBox([5.14, .24, .24], [0, 4.14, -1.56], concrete, .58, .67, { reveal: "x", accent: true });
-  addBox([5.14, .24, .24], [0, 4.14, 1.56], concrete, .59, .68, { reveal: "x" });
+  // 05 / Roof carpentry + broad gable silhouette.
+  const roofRise = .98;
+  const halfSpan = 3.72;
+  const pitch = Math.atan2(roofRise, halfSpan);
+  const slope = Math.hypot(halfSpan, roofRise);
+  const roofCenterY = 4.38;
+  const leftCenter = [-halfSpan / 2, roofCenterY, 0];
+  const rightCenter = [halfSpan / 2, roofCenterY, 0];
 
-  // 05 / Roof carpentry
-  const pitch = Math.atan2(1.24, 3.05);
-  const slope = Math.hypot(3.05, 1.24);
-  const leftCenter = [-1.525, 4.76, 0];
-  const rightCenter = [1.525, 4.76, 0];
-
-  addBox([.14, .14, 4.18], [0, 5.38, 0], timber, .64, .73, {
+  addBox([.16, .16, 5.16], [0, 4.87, 0], timber, .64, .73, {
     reveal: "z",
     accent: true
   });
 
-  for (let z = -1.88, i = 0; z <= 1.88; z += .63, i += 1) {
-    addBox([slope, .075, .075], [leftCenter[0], leftCenter[1], z], timber, .65 + i * .006, .76 + i * .004, {
+  for (let z = -2.34, i = 0; z <= 2.34; z += .72, i += 1) {
+    addBox([slope, .075, .075], [leftCenter[0], leftCenter[1], z], timber, .65 + i * .005, .76 + i * .004, {
       reveal: "x",
       rotation: [0, 0, pitch]
     });
-    addBox([slope, .075, .075], [rightCenter[0], rightCenter[1], z], timber, .66 + i * .006, .77 + i * .004, {
+    addBox([slope, .075, .075], [rightCenter[0], rightCenter[1], z], timber, .66 + i * .005, .77 + i * .004, {
       reveal: "x",
       rotation: [0, 0, -pitch]
     });
   }
 
-  // 06 / Roof skin + final details
-  addBox([slope, .12, 4.20], leftCenter, roof, .75, .86, {
+  addBox([slope, .14, 5.20], leftCenter, roof, .74, .86, {
     reveal: "x",
     rotation: [0, 0, pitch],
     accent: true
   });
-  addBox([slope, .12, 4.20], rightCenter, roof, .77, .88, {
+  addBox([slope, .14, 5.20], rightCenter, roof, .76, .88, {
     reveal: "x",
     rotation: [0, 0, -pitch],
     accent: true
   });
-  addBox([.22, .17, 4.28], [0, 5.40, 0], steel, .84, .92, {
+  addBox([.24, .18, 5.30], [0, 4.90, 0], steel, .83, .91, {
     reveal: "z",
     accent: true
   });
 
-  // Front openings finish late so the completed house reads clearly.
-  const frontZ = 1.69;
-  [
-    [-1.55, 3.15, .94, 1.10],
-    [1.55, 3.15, .94, 1.10]
-  ].forEach(([x, y, w, h], i) => {
-    addBox([w, h, .045], [x, y, frontZ], glass, .86 + i * .008, .95 + i * .008, {
-      reveal: "all",
-      edges: false
-    });
-    addBox([w + .12, .045, .08], [x, y + h / 2 + .06, frontZ + .04], steel, .87, .96, {
-      reveal: "x",
-      edges: false
-    });
-    addBox([w + .12, .045, .08], [x, y - h / 2 - .06, frontZ + .04], steel, .87, .96, {
-      reveal: "x",
-      edges: false
-    });
-    addBox([.045, h + .12, .08], [x - w / 2 - .06, y, frontZ + .04], steel, .87, .96, {
-      edges: false
-    });
-    addBox([.045, h + .12, .08], [x + w / 2 + .06, y, frontZ + .04], steel, .87, .96, {
-      edges: false
-    });
-  });
+  // Crisp fascia lines make the roof shape read immediately at loader scale.
+  addBox([.16, .20, 5.26], [-3.73, 3.90, 0], steel, .80, .91, { reveal: "z", edges: false });
+  addBox([.16, .20, 5.26], [3.73, 3.90, 0], steel, .80, .91, { reveal: "z", edges: false });
 
-  addBox([.84, 1.82, .08], [0, 3.02, frontZ], timber, .88, .97, {
+  // 06 / Finished light facade skin. Offsets prevent z-fighting with masonry.
+  const facadeStart = .76;
+  addBox([.05, 2.45, 4.18], [-3.465, .34, 0], plaster, facadeStart, .89, { edges: false });
+  addBox([.05, 2.45, 4.18], [3.465, .34, 0], plaster, facadeStart + .008, .90, { edges: false });
+  addBox([6.52, 2.45, .05], [0, .34, -2.205], plaster, facadeStart + .01, .90, { reveal: "x", edges: false });
+  addBox([6.52, .48, .05], [0, -.64, 2.205], plaster, facadeStart + .018, .91, { reveal: "x", edges: false });
+  addBox([6.52, .48, .05], [0, 1.31, 2.205], plaster, facadeStart + .025, .91, { reveal: "x", edges: false });
+  addBox([.42, 1.48, .05], [-3.14, .34, 2.205], plaster, facadeStart + .02, .91, { edges: false });
+  addBox([.44, 1.48, .05], [-1.03, .34, 2.205], plaster, facadeStart + .025, .915, { edges: false });
+  addBox([.44, 1.48, .05], [1.03, .34, 2.205], plaster, facadeStart + .03, .92, { edges: false });
+  addBox([.42, 1.48, .05], [3.14, .34, 2.205], plaster, facadeStart + .035, .92, { edges: false });
+
+  addBox([.05, 1.62, 4.18], [-3.465, 2.98, 0], plaster, .79, .92, { edges: false });
+  addBox([.05, 1.62, 4.18], [3.465, 2.98, 0], plaster, .795, .925, { edges: false });
+  addBox([6.52, 1.62, .05], [0, 2.98, -2.205], plaster, .80, .93, { reveal: "x", edges: false });
+  addBox([6.52, .34, .05], [0, 2.34, 2.205], plaster, .805, .93, { reveal: "x", edges: false });
+  addBox([6.52, .34, .05], [0, 3.62, 2.205], plaster, .81, .935, { reveal: "x", edges: false });
+  addBox([.44, .96, .05], [-3.14, 2.98, 2.205], plaster, .815, .935, { edges: false });
+  addBox([1.18, .96, .05], [0, 2.98, 2.205], plaster, .82, .94, { edges: false });
+  addBox([.44, .96, .05], [3.14, 2.98, 2.205], plaster, .825, .94, { edges: false });
+
+  // Front glazing, centered timber door and a shallow modern entry canopy.
+  const frontZ = 2.25;
+  addWindow(-2.05, .35, 1.60, 1.26, frontZ, .84, .95);
+  addWindow(2.05, .35, 1.60, 1.26, frontZ, .845, .955);
+  addWindow(-2.05, 2.98, 1.46, .98, frontZ, .855, .96);
+  addWindow(2.05, 2.98, 1.46, .98, frontZ, .86, .965);
+
+  addBox([.98, 2.12, .08], [0, .24, frontZ + .005], timber, .86, .97, {
     reveal: "all",
     accent: true
   });
-
-  addBox([.44, 1.22, .54], [-1.36, 5.18, -.72], plaster, .87, .96, {});
-  addBox([.55, .08, .65], [-1.36, 5.82, -.72], steel, .91, .98, {
-    reveal: "all"
+  addBox([.15, 1.76, .04], [.24, .24, frontZ + .055], glass, .89, .975, {
+    reveal: "all",
+    edges: false
   });
 
-  const grid = new THREE.GridHelper(13.5, 27, 0xf2b600, 0x464b47);
-  grid.position.y = -1.68;
+  addBox([1.86, .14, 1.04], [0, 1.72, 2.58], roof, .875, .98, {
+    reveal: "z",
+    accent: true
+  });
+  addBox([.09, 1.72, .09], [-.78, .83, 2.90], steel, .89, .98, { edges: false });
+  addBox([.09, 1.72, .09], [.78, .83, 2.90], steel, .895, .98, { edges: false });
+
+  const grid = new THREE.GridHelper(15.5, 31, 0xf2b600, 0x454a46);
+  grid.position.y = -1.54;
   const gridMaterials = Array.isArray(grid.material) ? grid.material : [grid.material];
   gridMaterials.forEach((material) => {
     material.transparent = true;
-    material.opacity = .16;
+    material.opacity = .14;
     material.depthWrite = false;
   });
   world.add(grid);
@@ -371,7 +400,7 @@ export function createLoaderHouse(canvas) {
       mesh.scale.z = data.baseScale.z * f;
     } else if (data.reveal === "all") {
       mesh.scale.multiplyScalar(.78 + f * .22);
-      mesh.position.y = data.basePosition.y + (1 - f) * .15;
+      mesh.position.y = data.basePosition.y + (1 - f) * .13;
     } else {
       mesh.scale.y = data.baseScale.y * f;
       mesh.position.y = data.basePosition.y - data.baseScale.y * (1 - f) * .5;
@@ -381,12 +410,12 @@ export function createLoaderHouse(canvas) {
 
     if (mesh.material.emissive) {
       mesh.material.emissive.setHex(data.accent && localPulse > .01 ? 0x5f4500 : 0);
-      mesh.material.emissiveIntensity = data.accent ? localPulse * .75 : 0;
+      mesh.material.emissiveIntensity = data.accent ? localPulse * .72 : 0;
     }
 
     const edge = data.edge;
     if (edge) {
-      edge.material.opacity = (edge.userData.baseOpacity || .18) * amount * (1 + localPulse * .55);
+      edge.material.opacity = (edge.userData.baseOpacity || .18) * amount * (1 + localPulse * .5);
     }
   };
 
@@ -402,23 +431,24 @@ export function createLoaderHouse(canvas) {
     const buildEase = smooth(.02, .94, progress);
     const finishEase = smooth(.72, 1, progress);
 
-    world.rotation.y = -.72 + buildEase * .48 + Math.sin(now * .00048) * .022;
-    world.rotation.x = -.025 + (1 - buildEase) * -.015;
-    world.position.y = (phone ? -.56 : -.26) + (1 - smooth(0, .18, progress)) * .30;
-    world.scale.setScalar((phone ? .79 : .99) + smooth(.05, .72, progress) * (phone ? .09 : .11));
+    world.rotation.y = -.70 + buildEase * .42 + Math.sin(now * .00046) * .018;
+    world.rotation.x = -.018 + (1 - buildEase) * -.012;
+    world.position.y = (phone ? -.44 : -.34) + (1 - smooth(0, .18, progress)) * .20;
+    world.scale.setScalar((phone ? .76 : .94) + smooth(.05, .72, progress) * (phone ? .07 : .08));
 
     const glow = Math.sin(Math.PI * smooth(.58, 1, progress));
-    rim.intensity = 1.15 + glow * 1.85;
-    warm.intensity = .70 + glow * 1.05;
-    key.intensity = 2.55 + finishEase * .35;
+    rim.intensity = 1.12 + glow * 1.72;
+    warm.intensity = .68 + glow * .96;
+    key.intensity = 2.52 + finishEase * .34;
 
-    camera.position.x = Math.sin(buildEase * .72) * .28;
-    camera.position.y = (phone ? 2.54 : 2.66) + buildEase * .10;
-    camera.position.z = (phone ? 13.55 : 13.85) - buildEase * (phone ? .55 : .60);
-    camera.lookAt(0, (phone ? 1.68 : 1.76) + finishEase * .06, 0);
+    // Keep the camera movement subtle and always frame the full foundation slab.
+    camera.position.x = Math.sin(buildEase * .65) * .22;
+    camera.position.y = (phone ? 2.15 : 2.34) + buildEase * .05;
+    camera.position.z = (phone ? 15.2 : 15.45) - buildEase * (phone ? .24 : .30);
+    camera.lookAt(0, (phone ? 1.28 : 1.34) + finishEase * .03, .05);
 
     gridMaterials.forEach((material) => {
-      material.opacity = .10 + (1 - finishEase) * .08;
+      material.opacity = .08 + (1 - finishEase) * .07;
     });
 
     renderer.render(scene, camera);
