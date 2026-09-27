@@ -20,9 +20,11 @@
     #site-loader.loader-out,#site-loader.loader-timeout{opacity:0;visibility:hidden;pointer-events:none}
     #site-loader:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 48%,rgba(255,255,255,.028),transparent 42%),linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:auto,72px 72px,72px 72px;mask-image:linear-gradient(to bottom,transparent 2%,#000 24%,#000 76%,transparent 98%)}
     #site-loader .loader-core{position:relative;z-index:1;width:min(760px,calc(100vw - 64px));display:grid;justify-items:center;gap:28px}
-    #site-loader .loader-mark{width:94px;height:94px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.60);background:rgba(255,255,255,.018);box-shadow:inset 0 0 0 7px rgba(255,255,255,.018),0 18px 52px rgba(0,0,0,.24);font-weight:900;font-size:28px;letter-spacing:-.08em;position:relative;opacity:.96}
-    #site-loader .loader-mark:before{content:"";position:absolute;inset:9px;border:1px solid rgba(255,255,255,.10);pointer-events:none}
-    #site-loader .loader-mark:after{content:"";position:absolute;width:13px;height:13px;right:-6px;bottom:-6px;background:#f2b600;box-shadow:0 0 22px rgba(242,182,0,.38)}
+    #site-loader .loader-mark{position:relative;width:min(430px,86vw);min-height:74px;padding:8px 28px 12px;display:grid;place-items:center;gap:3px;text-align:center;opacity:.98}
+    #site-loader .loader-mark:before{content:"";position:absolute;left:50%;bottom:0;width:min(340px,72vw);height:1px;transform:translateX(-50%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.16) 20%,rgba(255,255,255,.16) 80%,transparent);pointer-events:none}
+    #site-loader .loader-mark:after{content:"";position:absolute;left:50%;bottom:-1px;width:64px;height:3px;transform:translateX(-50%);background:#f2b600;box-shadow:0 0 20px rgba(242,182,0,.34)}
+    #site-loader .loader-mark strong{display:block;font-family:"Manrope",Arial,sans-serif;font-size:27px;line-height:1;font-weight:800;letter-spacing:.045em;text-transform:uppercase;color:#f7f5ef;text-shadow:0 8px 28px rgba(0,0,0,.24)}
+    #site-loader .loader-mark span{display:block;margin-top:4px;font-family:"IBM Plex Mono",monospace;font-size:9px;line-height:1.2;font-weight:600;letter-spacing:.34em;text-transform:uppercase;color:#aeb2aa}
     #site-loader .loader-build{position:relative;width:100%;height:min(57vh,500px);min-height:360px;display:grid;place-items:center;overflow:visible}
     #site-loader .loader-three{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity .24s ease}
     #site-loader.loader-three-ready .loader-three{opacity:1}
@@ -53,8 +55,11 @@
     @media(max-width:760px){
       #site-loader:before{background-size:auto,48px 48px,48px 48px}
       #site-loader .loader-core{width:calc(100vw - 32px - env(safe-area-inset-left) - env(safe-area-inset-right));gap:12px}
-      #site-loader .loader-mark{width:62px;height:62px;font-size:19px}
-      #site-loader .loader-mark:after{width:9px;height:9px;right:-4px;bottom:-4px}
+      #site-loader .loader-mark{width:min(330px,90vw);min-height:56px;padding:5px 12px 10px}
+      #site-loader .loader-mark strong{font-size:20px;letter-spacing:.035em}
+      #site-loader .loader-mark span{margin-top:3px;font-size:7px;letter-spacing:.27em}
+      #site-loader .loader-mark:before{width:min(270px,74vw)}
+      #site-loader .loader-mark:after{width:48px;height:2px}
       #site-loader .loader-build{height:min(34dvh,280px);min-height:205px}
       #site-loader .loader-house{width:100%;max-width:460px}
       #site-loader .loader-progress{width:min(340px,86vw)}
@@ -63,7 +68,9 @@
     }
     @media(orientation:landscape) and (max-height:560px){
       #site-loader .loader-core{gap:10px}
-      #site-loader .loader-mark{width:54px;height:54px;font-size:17px}
+      #site-loader .loader-mark{width:min(300px,74vw);min-height:48px;padding:3px 10px 8px}
+      #site-loader .loader-mark strong{font-size:18px}
+      #site-loader .loader-mark span{font-size:6.5px}
       #site-loader .loader-build{height:58vh;min-height:210px}
       #site-loader .loader-house{width:min(74vw,500px)}
     }
@@ -78,7 +85,10 @@
 <body>
   <div id="site-loader" aria-hidden="true" style="--loader-progress:0%">
     <div class="loader-core">
-      <div class="loader-mark">RJ</div>
+      <div class="loader-mark" aria-label="Radonjic JR Construction D.O.O.">
+        <strong>RADONJIC JR</strong>
+        <span>CONSTRUCTION D.O.O.</span>
+      </div>
       <div class="loader-build" aria-hidden="true">
         <canvas class="loader-three" data-loader-three></canvas>
         <svg class="loader-house" viewBox="0 0 700 390" role="presentation">
