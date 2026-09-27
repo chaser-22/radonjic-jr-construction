@@ -1,5 +1,5 @@
 /* Content always sits above the WebGL layer. */
-.hero-content, .build-status, .scroll-cue,
+.hero-content, .scroll-cue,
 .about-layout, .structure-layout, .work-intro, .project-editorial, .photo-disclaimer,
 .services-head, .services-layout, .values-layout, .process-head, .process-grid, .contact-layout {
   position: relative;
@@ -103,27 +103,143 @@
   color: #fff;
 }
 
-.build-status {
-  position: absolute;
-  right: max(22px, 4vw);
-  top: 24vh;
-  width: 190px;
+.site-progress {
+  position: fixed;
+  z-index: 92;
+  top: 116px;
+  right: 22px;
+  bottom: 34px;
+  width: 104px;
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 8px 12px;
-  align-items: center;
-  padding: 12px 14px;
-  background: rgba(10,11,10,.58);
-  border: 1px solid rgba(255,255,255,.12);
-  backdrop-filter: blur(10px);
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: .08em;
-  color: #e0e3dc;
+  grid-template-columns: minmax(0, 1fr) 3px;
+  gap: 14px;
+  pointer-events: none;
+  color: #f3f1eb;
+  transition: color .28s ease, opacity .45s ease, transform .55s var(--ease);
 }
-.build-status strong { color: var(--yellow); font-size: 10px; }
-.build-status i { grid-column: 1 / -1; height: 1px; background: rgba(255,255,255,.14); overflow: hidden; }
-.build-status b { display: block; height: 1px; background: var(--yellow); transform-origin: left; transform: scaleX(.01); }
+
+.site-progress-copy {
+  align-self: start;
+  display: grid;
+  justify-items: end;
+  gap: 5px;
+  min-width: 0;
+  padding-top: 1px;
+  font-family: var(--mono);
+  text-align: right;
+  text-transform: uppercase;
+  text-shadow: 0 1px 12px rgba(0,0,0,.28);
+}
+
+.site-progress-copy > span {
+  color: var(--yellow);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .16em;
+}
+
+.site-progress-copy > strong {
+  max-width: 84px;
+  min-height: 22px;
+  color: currentColor;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1.16;
+  letter-spacing: .08em;
+}
+
+.site-progress-copy > em {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: currentColor;
+  font-size: 8px;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: .08em;
+  opacity: .70;
+}
+
+.site-progress-copy > em b,
+.site-progress-copy > em i {
+  font-style: normal;
+  font-weight: inherit;
+}
+
+.site-progress-copy > em i {
+  color: var(--yellow);
+  opacity: 1;
+}
+
+.site-progress-rail {
+  position: relative;
+  min-height: 100%;
+}
+
+.site-progress-track,
+.site-progress-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 1px;
+  width: 1px;
+}
+
+.site-progress-track {
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,.32) 0,
+      rgba(255,255,255,.32) 1px,
+      transparent 1px,
+      transparent 9%
+    ),
+    rgba(255,255,255,.16);
+}
+
+.site-progress-fill {
+  top: 0;
+  bottom: auto;
+  height: 100%;
+  width: 2px;
+  left: 0;
+  background: linear-gradient(to bottom, #ffd65a, var(--yellow));
+  box-shadow: 0 0 14px rgba(242,182,0,.26);
+  transform-origin: top;
+  transform: scaleY(var(--site-progress, .002));
+}
+
+.site-progress-marker {
+  position: absolute;
+  top: calc(var(--site-progress, .002) * 100%);
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--yellow);
+  background: #121310;
+  box-shadow: 0 0 0 3px rgba(242,182,0,.08), 0 0 15px rgba(242,182,0,.30);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.site-progress[data-theme="light"] {
+  color: #1d201c;
+}
+
+.site-progress[data-theme="light"] .site-progress-track {
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(24,27,23,.34) 0,
+      rgba(24,27,23,.34) 1px,
+      transparent 1px,
+      transparent 9%
+    ),
+    rgba(24,27,23,.16);
+}
+
+.site-progress[data-theme="light"] .site-progress-marker {
+  background: #f2efe7;
+}
 .scroll-cue {
   position: absolute;
   left: max(26px, 5vw);

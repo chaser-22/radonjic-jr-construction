@@ -143,12 +143,6 @@ app.innerHTML = `
         </div>
       </div>
 
-      <div class="build-status" aria-hidden="true">
-        <span data-build-phase>PRIPREMA</span>
-        <strong data-build-percent>000%</strong>
-        <i><b data-build-bar></b></i>
-      </div>
-
       <div class="scroll-cue" aria-hidden="true"><span>SCROLL</span><i></i></div>
     </section>
 
@@ -298,6 +292,19 @@ app.innerHTML = `
     </section>
   </main>
 
+  <div class="site-progress" data-theme="dark" aria-hidden="true">
+    <div class="site-progress-copy">
+      <span>PROGRES</span>
+      <strong data-site-progress-section>POČETAK</strong>
+      <em><b data-site-progress-index>01/08</b><i data-site-progress-percent>000%</i></em>
+    </div>
+    <div class="site-progress-rail">
+      <span class="site-progress-track"></span>
+      <span class="site-progress-fill" data-site-progress-fill></span>
+      <span class="site-progress-marker" data-site-progress-marker></span>
+    </div>
+  </div>
+
   <div class="mobile-contact" aria-label="Brzi kontakt">
     <a class="quick-contact quick-contact-call" href="tel:${PHONE}">
       <span class="quick-contact-icon" aria-hidden="true">
@@ -326,17 +333,33 @@ const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matc
 
 const houseLayer = document.querySelector("[data-house-layer]");
 const hero = document.querySelector(".hero");
-const buildPercent = document.querySelector("[data-build-percent]");
-const buildPhase = document.querySelector("[data-build-phase]");
-const buildBar = document.querySelector("[data-build-bar]");
 const header = document.querySelector(".site-header");
+const siteProgress = document.querySelector(".site-progress");
+const siteProgressFill = document.querySelector("[data-site-progress-fill]");
+const siteProgressMarker = document.querySelector("[data-site-progress-marker]");
+const siteProgressPercent = document.querySelector("[data-site-progress-percent]");
+const siteProgressSection = document.querySelector("[data-site-progress-section]");
+const siteProgressIndex = document.querySelector("[data-site-progress-index]");
 const projectElements = [...document.querySelectorAll(".project")];
 const visibleProjects = new Set();
+const progressSections = [...document.querySelectorAll("main > section")];
+const progressLabels = {
+  top: "POČETAK",
+  "o-nama": "O NAMA",
+  konstrukcija: "KAKO GRADIMO",
+  radovi: "RADOVI",
+  usluge: "USLUGE",
+  vrijednosti: "PRISTUP",
+  proces: "PROCES",
+  kontakt: "KONTAKT"
+};
 
 let houseScene = null;
 let heroTop = 0;
 let heroHeight = 1;
 let viewportHeight = window.innerHeight;
+let pageScrollRange = 1;
+let progressSectionOffsets = [];
 let metricsTicking = false;
 
 if (canUseWebGL()) {
@@ -397,27 +420,19 @@ document.fonts?.ready?.then(() => {
   requestScrollState();
 });
 
-const phases = [
-  [0.00, "PRIPREMA"],
-  [0.09, "TEMELJI"],
-  [0.20, "ARMATURA"],
-  [0.34, "KONSTRUKCIJA"],
-  [0.50, "ZIDANJE"],
-  [0.66, "KROV"],
-  [0.80, "FASADA"],
-  [0.93, "ZAVRŠENO"]
-];
-
 let ticking = false;
 let lastHeroProgress = -1;
-let lastHeroPercent = -1;
-let lastHeroPhase = "";
+let lastSiteProgress = -1;
+let lastSitePercent = -1;
+let lastSiteSection = -1;
 let lastHeaderScrolled = null;
 
 function refreshScrollMetrics() {
   heroTop = hero.offsetTop;
   heroHeight = Math.max(1, hero.offsetHeight);
   viewportHeight = Math.max(1, window.innerHeight);
+  pageScrollRange = Math.max(1, document.documentElement.scrollHeight - viewportHeight);
+  progressSectionOffsets = progressSections.map((section) => section.offsetTop);
 }
 
 function requestMetricsRefresh() {
@@ -435,34 +450,49 @@ function updateScrollState() {
   ticking = false;
 
   const scrollY = window.scrollY;
-  const distance = Math.max(1, heroHeight - viewportHeight * .70);
-  const progress = clamp01((scrollY - heroTop) / distance);
+  const heroDistance = Math.max(1, heroHeight - viewportHeight * .70);
+  const heroProgress = clamp01((scrollY - heroTop) / heroDistance);
+  const pageProgress = clamp01(scrollY / pageScrollRange);
 
-  houseScene?.updateFromScroll(progress);
+  houseScene?.updateFromScroll(heroProgress);
 
-  if (Math.abs(progress - lastHeroProgress) > .00035) {
-    hero.style.setProperty("--hero-progress", progress.toFixed(4));
-    hero.style.setProperty("--hero-y", `${progress * -105}px`);
-    hero.style.setProperty("--hero-opacity", String(1 - progress * .68));
-    if (buildBar) buildBar.style.transform = `scaleX(${Math.max(.01, progress)})`;
-    lastHeroProgress = progress;
+  if (Math.abs(heroProgress - lastHeroProgress) > .00035) {
+    hero.style.setProperty("--hero-progress", heroProgress.toFixed(4));
+    hero.style.setProperty("--hero-y", `${heroProgress * -105}px`);
+    hero.style.setProperty("--hero-opacity", String(1 - heroProgress * .68));
+    lastHeroProgress = heroProgress;
   }
 
-  const percent = Math.round(progress * 100);
-  if (buildPercent && percent !== lastHeroPercent) {
-    buildPercent.textContent = `${String(percent).padStart(3, "0")}%`;
-    lastHeroPercent = percent;
+  if (Math.abs(pageProgress - lastSiteProgress) > .00025) {
+    const normalized = Math.max(.002, pageProgress);
+    siteProgressFill?.style.setProperty("--site-progress", normalized.toFixed(4));
+    siteProgressMarker?.style.setProperty("--site-progress", normalized.toFixed(4));
+    lastSiteProgress = pageProgress;
   }
 
-  if (buildPhase) {
-    let phase = phases[0][1];
-    for (let i = 0; i < phases.length; i += 1) {
-      if (progress >= phases[i][0]) phase = phases[i][1];
+  const sitePercent = Math.round(pageProgress * 100);
+  if (siteProgressPercent && sitePercent !== lastSitePercent) {
+    siteProgressPercent.textContent = `${String(sitePercent).padStart(3, "0")}%`;
+    lastSitePercent = sitePercent;
+  }
+
+  const sectionProbe = scrollY + viewportHeight * .38;
+  let activeSection = 0;
+  for (let i = 0; i < progressSectionOffsets.length; i += 1) {
+    if (sectionProbe >= progressSectionOffsets[i]) activeSection = i;
+    else break;
+  }
+
+  if (activeSection !== lastSiteSection) {
+    const section = progressSections[activeSection];
+    if (siteProgressSection) {
+      siteProgressSection.textContent = progressLabels[section?.id] || "PROGRES";
     }
-    if (phase !== lastHeroPhase) {
-      buildPhase.textContent = phase;
-      lastHeroPhase = phase;
+    if (siteProgressIndex) {
+      siteProgressIndex.textContent =
+        `${String(activeSection + 1).padStart(2, "0")}/${String(progressSections.length).padStart(2, "0")}`;
     }
+    lastSiteSection = activeSection;
   }
 
   const headerScrolled = scrollY > 20;
@@ -523,7 +553,9 @@ const themeObserver = new IntersectionObserver((entries) => {
     .filter((entry) => entry.isIntersecting)
     .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
   if (!visible) return;
-  header.dataset.headerTheme = visible.target.dataset.header || "dark";
+  const theme = visible.target.dataset.header || "dark";
+  header.dataset.headerTheme = theme;
+  if (siteProgress) siteProgress.dataset.theme = theme;
 }, { threshold: [0.18, 0.35, 0.55], rootMargin: "-15% 0px -70% 0px" });
 document.querySelectorAll("[data-header]").forEach((section) => themeObserver.observe(section));
 

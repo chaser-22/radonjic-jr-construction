@@ -321,7 +321,7 @@ html.site-ready .hero h1 > span,
 html.site-ready .hero h1 > em,
 html.site-ready .hero-intro,
 html.site-ready .hero-actions .button,
-html.site-ready .build-status,
+html.site-ready .site-progress,
 html.site-ready .scroll-cue,
 html.site-ready .mobile-contact {
   will-change: transform, opacity;
@@ -412,13 +412,13 @@ html:not(.site-entered) .hero-actions .button {
     border-color .2s;
 }
 
-html:not(.site-entered) .build-status,
+html:not(.site-entered) .site-progress,
 html:not(.site-entered) .scroll-cue {
   opacity: 0;
   transform: translateY(14px);
 }
 
-.build-status {
+.site-progress {
   transition: opacity .55s ease .62s, transform .68s var(--ease) .62s;
 }
 
@@ -447,7 +447,7 @@ html:not(.site-entered) .mobile-contact {
 .site-settled .hero h1 > em,
 .site-settled .hero-intro,
 .site-settled .hero-actions .button,
-.site-settled .build-status,
+.site-settled .site-progress,
 .site-settled .scroll-cue,
 .site-settled .mobile-contact {
   will-change: auto;
@@ -461,7 +461,7 @@ html:not(.site-entered) .mobile-contact {
 .site-settled .hero h1 > em,
 .site-settled .hero-intro,
 .site-settled .hero-actions .button,
-.site-settled .build-status,
+.site-settled .site-progress,
 .site-settled .scroll-cue,
 .site-settled .mobile-contact {
   transition-delay: 0s;
@@ -487,7 +487,7 @@ html:not(.site-entered) .mobile-contact {
   .hero h1 > em,
   .hero-intro,
   .hero-actions .button,
-  .build-status,
+  .site-progress,
   .scroll-cue,
   .mobile-contact {
     transition-delay: 0s !important;
