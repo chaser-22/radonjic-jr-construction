@@ -30,8 +30,8 @@ export function createLoaderHouse(canvas) {
 
   // A slightly longer lens and a lower target keep the entire plinth in frame
   // while preserving the large-house feel on both desktop and phone.
-  const camera = new THREE.PerspectiveCamera(phone ? 36 : 35, 1, .1, 45);
-  camera.position.set(0, phone ? 2.12 : 2.30, phone ? 14.65 : 14.72);
+  const camera = new THREE.PerspectiveCamera(phone ? 34 : 33, 1, .1, 45);
+  camera.position.set(0, phone ? 2.02 : 2.18, phone ? 13.25 : 13.35);
 
   scene.add(new THREE.HemisphereLight(0xfff4df, 0x1a201e, 1.66));
 
@@ -52,7 +52,7 @@ export function createLoaderHouse(canvas) {
   scene.add(warm);
 
   const world = new THREE.Group();
-  world.position.y = phone ? -.40 : -.30;
+  world.position.y = phone ? -.22 : -.10;
   world.rotation.y = -.66;
   scene.add(world);
 
@@ -433,8 +433,8 @@ export function createLoaderHouse(canvas) {
 
     world.rotation.y = -.70 + buildEase * .42 + Math.sin(now * .00046) * .018;
     world.rotation.x = -.018 + (1 - buildEase) * -.012;
-    world.position.y = (phone ? -.40 : -.30) + (1 - smooth(0, .18, progress)) * .18;
-    world.scale.setScalar((phone ? .84 : 1.06) + smooth(.05, .72, progress) * (phone ? .07 : .09));
+    world.position.y = (phone ? -.22 : -.10) + (1 - smooth(0, .18, progress)) * .15;
+    world.scale.setScalar((phone ? .98 : 1.27) + smooth(.05, .72, progress) * (phone ? .08 : .10));
 
     const glow = Math.sin(Math.PI * smooth(.58, 1, progress));
     rim.intensity = 1.12 + glow * 1.72;
@@ -443,9 +443,9 @@ export function createLoaderHouse(canvas) {
 
     // Keep the camera movement subtle and always frame the full foundation slab.
     camera.position.x = Math.sin(buildEase * .65) * .22;
-    camera.position.y = (phone ? 2.12 : 2.30) + buildEase * .04;
-    camera.position.z = (phone ? 14.65 : 14.72) - buildEase * (phone ? .18 : .22);
-    camera.lookAt(0, (phone ? 1.24 : 1.30) + finishEase * .03, .05);
+    camera.position.y = (phone ? 2.02 : 2.18) + buildEase * .03;
+    camera.position.z = (phone ? 13.25 : 13.35) - buildEase * (phone ? .12 : .16);
+    camera.lookAt(0, (phone ? 1.16 : 1.22) + finishEase * .03, .05);
 
     gridMaterials.forEach((material) => {
       material.opacity = .08 + (1 - finishEase) * .07;
