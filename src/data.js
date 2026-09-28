@@ -11,7 +11,7 @@ export const projects = [
     provider: "local",
     source: "https://www.instagram.com/radonjicjrconstruction/p/DMhu9Z-NZ98/",
     position: "center 48%",
-    fallback: "https://images.pexels.com/photos/35757191/pexels-photo-35757191.jpeg",
+    fallback: "/instagram/project-03.jpg",
     text: "Temelji, ploče, zidovi i kompletna nosiva konstrukcija objekta."
   },
   {
@@ -22,7 +22,7 @@ export const projects = [
     provider: "local",
     source: "https://www.instagram.com/radonjicjrconstruction/p/DL0UZyRtA0t/",
     position: "center 52%",
-    fallback: "https://images.pexels.com/photos/18283441/pexels-photo-18283441.jpeg",
+    fallback: "/instagram/project-04.jpg",
     text: "Priprema, armiranje i betoniranje sa urednom geometrijom i jasnim fazama rada."
   },
   {
@@ -33,7 +33,7 @@ export const projects = [
     provider: "local",
     source: "https://www.instagram.com/radonjicjrconstruction/p/DLe82QWtNk3/",
     position: "center 48%",
-    fallback: "https://images.pexels.com/photos/21750843/pexels-photo-21750843.jpeg",
+    fallback: "/instagram/project-02.jpg",
     text: "Nosivi i pregradni zidovi, otvori i priprema za naredne faze objekta."
   },
   {
@@ -44,7 +44,7 @@ export const projects = [
     provider: "local",
     source: "https://www.instagram.com/radonjicjrconstruction/p/DLUj4FJNyfs/",
     position: "center 44%",
-    fallback: "https://images.pexels.com/photos/8576025/pexels-photo-8576025.jpeg",
+    fallback: "/instagram/project-03.jpg",
     text: "Krovna konstrukcija, izolacija, letvanje i završno pokrivanje."
   }
 ];
