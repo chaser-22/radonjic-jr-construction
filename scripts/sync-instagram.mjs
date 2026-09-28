@@ -1,11 +1,13 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 
+const PROFILE_URL = "https://www.instagram.com/radonjicjrconstruction/";
+
 const posts = [
-  { url: "https://www.instagram.com/radonjicjrconstruction/p/DMhu9Z-NZ98/", file: "project-01.jpg" },
-  { url: "https://www.instagram.com/radonjicjrconstruction/p/DL0UZyRtA0t/", file: "project-02.jpg" },
-  { url: "https://www.instagram.com/radonjicjrconstruction/p/DLe82QWtNk3/", file: "project-03.jpg" },
-  { url: "https://www.instagram.com/radonjicjrconstruction/p/DLUj4FJNyfs/", file: "project-04.jpg" }
+  { url: "https://www.instagram.com/radonjicjrconstruction/p/DMhu9Z-NZ98/", file: "project-01.jpg", needle: "524578531" },
+  { url: "https://www.instagram.com/radonjicjrconstruction/p/DL0UZyRtA0t/", file: "project-02.jpg", needle: "517028396" },
+  { url: "https://www.instagram.com/radonjicjrconstruction/p/DLe82QWtNk3/", file: "project-03.jpg", needle: "514755031" },
+  { url: "https://www.instagram.com/radonjicjrconstruction/p/DLUj4FJNyfs/", file: "project-04.jpg", needle: "510973165" }
 ];
 
 const outDir = join(process.cwd(), "public", "instagram");
@@ -41,29 +43,46 @@ function score(url) {
   return value;
 }
 
-async function syncPost({ url, file }) {
-  const page = await fetch(url, { headers, redirect: "follow" });
-  if (!page.ok) throw new Error(`Instagram page returned ${page.status}`);
-
-  const html = await page.text();
-  const candidates = getCandidates(html);
-
-  const ogMatch = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i)
-    || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
-
-  if (ogMatch?.[1]) candidates.push(decodeHtml(ogMatch[1]));
-
+async function syncPost({ url, file, needle }) {
+  const sources = [url, PROFILE_URL];
   let lastError = null;
-  for (const imageUrl of [...new Set(candidates)]) {
+
+  for (const sourceUrl of sources) {
     try {
-      const image = await fetch(imageUrl, { headers: { ...headers, referer: url } });
-      const type = image.headers.get("content-type") || "";
-      if (!image.ok || !type.startsWith("image/")) continue;
-      const bytes = new Uint8Array(await image.arrayBuffer());
-      if (bytes.byteLength < 25000) continue;
-      await writeFile(join(outDir, file), bytes);
-      console.log(`Instagram asset synced: ${file} (${Math.round(bytes.byteLength / 1024)} KB)`);
-      return;
+      const page = await fetch(sourceUrl, { headers, redirect: "follow" });
+      if (!page.ok) {
+        lastError = new Error(`Instagram page returned ${page.status}`);
+        continue;
+      }
+
+      const html = await page.text();
+      let candidates = getCandidates(html);
+
+      if (sourceUrl === PROFILE_URL && needle) {
+        candidates = candidates.filter((candidate) => candidate.includes(needle));
+      }
+
+      const ogMatch = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i)
+        || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
+
+      if (ogMatch?.[1] && sourceUrl !== PROFILE_URL) {
+        candidates.push(decodeHtml(ogMatch[1]));
+      }
+
+      for (const imageUrl of [...new Set(candidates)]) {
+        try {
+          const image = await fetch(imageUrl, { headers: { ...headers, referer: sourceUrl } });
+          const type = image.headers.get("content-type") || "";
+          if (!image.ok || !type.startsWith("image/")) continue;
+          const bytes = new Uint8Array(await image.arrayBuffer());
+          if (bytes.byteLength < 25000) continue;
+          await writeFile(join(outDir, file), bytes);
+          console.log(`Instagram asset synced: ${file} (${Math.round(bytes.byteLength / 1024)} KB)`);
+          return;
+        } catch (error) {
+          lastError = error;
+        }
+      }
     } catch (error) {
       lastError = error;
     }
