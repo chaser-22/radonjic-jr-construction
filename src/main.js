@@ -189,7 +189,7 @@ app.innerHTML = `
 
       <div class="project-editorial shell">
         ${projects.map((project, index) => {
-          const image = (width) => project.provider === "local"
+          const image = (width) => project.provider === "local" || project.provider === "instagram"
             ? project.image
             : project.provider === "unsplash"
               ? `${project.image}?auto=format&fit=crop&q=82&w=${width}`
