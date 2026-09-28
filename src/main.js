@@ -189,9 +189,11 @@ app.innerHTML = `
 
       <div class="project-editorial shell">
         ${projects.map((project, index) => {
-          const image = (width) => project.provider === "unsplash"
-            ? `${project.image}?auto=format&fit=crop&q=82&w=${width}`
-            : `${project.image}?auto=compress&cs=tinysrgb&w=${width}`;
+          const image = (width) => project.provider === "local"
+            ? project.image
+            : project.provider === "unsplash"
+              ? `${project.image}?auto=format&fit=crop&q=82&w=${width}`
+              : `${project.image}?auto=compress&cs=tinysrgb&w=${width}`;
           return `
           <article class="project reveal">
             <div class="project-image">
@@ -220,7 +222,7 @@ app.innerHTML = `
         }).join("")}
       </div>
 
-      <p class="photo-disclaimer shell">Profesionalne ilustrativne fotografije evropskih gradilišta. Zamijenićemo ih originalnim RADONJIC JR fotografijama kada budu spremne.</p>
+      <p class="photo-disclaimer shell">Fotografije izvedenih RADONJIC JR projekata sa našeg Instagram profila.</p>
     </section>
 
     <section class="services dark-section" id="usluge" data-house-section="services" data-header="dark">
