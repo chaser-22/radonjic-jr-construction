@@ -220,7 +220,7 @@ app.innerHTML = `
         }).join("")}
       </div>
 
-      <p class="photo-disclaimer shell">Profesionalne ilustrativne fotografije gradilišta. Zamijenićemo ih originalnim RADONJIC JR fotografijama kada budu spremne.</p>
+      <p class="photo-disclaimer shell">Profesionalne ilustrativne fotografije evropskih gradilišta. Zamijenićemo ih originalnim RADONJIC JR fotografijama kada budu spremne.</p>
     </section>
 
     <section class="services dark-section" id="usluge" data-house-section="services" data-header="dark">
