@@ -184,7 +184,7 @@ app.innerHTML = `
           <p class="micro-label dark-label">03 / RADOVI</p>
           <h2>RADOVI<br><em>GOVORE NAJVIŠE.</em></h2>
         </div>
-        <p>Portfolio je namjerno jednostavan: velika fotografija, vrsta radova i kratko objašnjenje. Kada ubacimo vaše originalne fotografije, one postaju glavni dokaz kvaliteta.</p>
+        <p>Portfolio prikazuje stvarne RADONJIC JR projekte: izvedene radove, detalje sa gradilišta i završene objekte.</p>
       </div>
 
       <div class="project-editorial shell">
@@ -203,7 +203,7 @@ app.innerHTML = `
                 sizes="(max-width: 760px) calc(100vw - 24px), (max-width: 1180px) calc(100vw - 48px), 70vw"
                 data-fallback="${project.fallback}?auto=compress&cs=tinysrgb&w=1200"
                 style="object-position:${project.position || "center"}"
-                alt="${project.title} — ilustrativna fotografija gradilišta"
+                alt="${project.title} — RADONJIC JR izvedeni radovi"
                 width="1200"
                 height="1500"
                 loading="${!isPhoneViewport && index === 0 ? "eager" : "lazy"}"
