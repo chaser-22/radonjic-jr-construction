@@ -3704,3 +3704,40 @@ main > section {
     margin-top: 16px;
   }
 }
+
+
+/* V51 — services single-line intro and stacked values CTA. */
+@media (min-width: 761px) {
+  .services-head > p:last-child {
+    max-width: none;
+    width: max-content;
+    white-space: nowrap;
+  }
+}
+
+.values-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.values-copy p {
+  width: 100%;
+}
+
+.values-copy a {
+  width: min(100%, 430px);
+  align-self: flex-start;
+}
+
+@media (max-width: 760px) {
+  .services-head > p:last-child {
+    width: auto;
+    max-width: 32ch;
+    white-space: normal;
+  }
+
+  .values-copy a {
+    width: 100%;
+  }
+}
