@@ -435,6 +435,7 @@ let lastSiteProgress = -1;
 let lastSitePercent = -1;
 let lastSiteSection = -1;
 let lastHeaderScrolled = null;
+let lastHeaderTheme = null;
 
 function refreshScrollMetrics() {
   heroTop = hero.offsetTop;
@@ -510,6 +511,23 @@ function updateScrollState() {
     lastHeaderScrolled = headerScrolled;
   }
 
+  // Resolve the header theme from the section physically underneath the
+  // header on every scroll frame. This works identically scrolling down
+  // or back up and avoids IntersectionObserver state getting stuck.
+  const headerProbe = scrollY + Math.min(104, Math.max(68, header.offsetHeight * .78));
+  let headerSection = 0;
+  for (let i = 0; i < progressSectionOffsets.length; i += 1) {
+    if (headerProbe >= progressSectionOffsets[i]) headerSection = i;
+    else break;
+  }
+
+  const headerTheme = progressSections[headerSection]?.dataset.header || "dark";
+  if (headerTheme !== lastHeaderTheme) {
+    header.dataset.headerTheme = headerTheme;
+    if (siteProgress) siteProgress.dataset.theme = headerTheme;
+    lastHeaderTheme = headerTheme;
+  }
+
   if (!reducedMotion && window.innerWidth > 760) {
     for (const project of visibleProjects) {
       const rect = project.getBoundingClientRect();
@@ -556,17 +574,6 @@ const revealObserver = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.14, rootMargin: "0px 0px -8% 0px" });
 document.querySelectorAll(".reveal").forEach((element) => revealObserver.observe(element));
-
-const themeObserver = new IntersectionObserver((entries) => {
-  const visible = entries
-    .filter((entry) => entry.isIntersecting)
-    .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-  if (!visible) return;
-  const theme = visible.target.dataset.header || "dark";
-  header.dataset.headerTheme = theme;
-  if (siteProgress) siteProgress.dataset.theme = theme;
-}, { threshold: [0.18, 0.35, 0.55], rootMargin: "-15% 0px -70% 0px" });
-document.querySelectorAll("[data-header]").forEach((section) => themeObserver.observe(section));
 
 const serviceButtons = [...document.querySelectorAll(".service-row")];
 const serviceTitle = document.querySelector("[data-active-service-title]");
