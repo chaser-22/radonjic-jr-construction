@@ -31,7 +31,7 @@ export function createLoaderHouse(canvas) {
   // A slightly longer lens and a lower target keep the entire plinth in frame
   // while preserving the large-house feel on both desktop and phone.
   const camera = new THREE.PerspectiveCamera(phone ? 36 : 35, 1, .1, 45);
-  camera.position.set(0, phone ? 1.98 : 2.12, phone ? 14.05 : 14.15);
+  camera.position.set(0, phone ? 1.94 : 2.08, phone ? 14.20 : 14.30);
 
   scene.add(new THREE.HemisphereLight(0xfff4df, 0x1a201e, 1.66));
 
@@ -52,7 +52,7 @@ export function createLoaderHouse(canvas) {
   scene.add(warm);
 
   const world = new THREE.Group();
-  world.position.y = phone ? -.34 : -.24;
+  world.position.y = phone ? -.40 : -.29;
   world.rotation.y = -.66;
   scene.add(world);
 
@@ -433,8 +433,8 @@ export function createLoaderHouse(canvas) {
 
     world.rotation.y = -.70 + buildEase * .42 + Math.sin(now * .00046) * .018;
     world.rotation.x = -.018 + (1 - buildEase) * -.012;
-    world.position.y = (phone ? -.34 : -.24) + (1 - smooth(0, .18, progress)) * .14;
-    world.scale.setScalar((phone ? .87 : 1.10) + smooth(.05, .72, progress) * (phone ? .06 : .07));
+    world.position.y = (phone ? -.40 : -.29) + (1 - smooth(0, .18, progress)) * .13;
+    world.scale.setScalar((phone ? .82 : 1.02) + smooth(.05, .72, progress) * (phone ? .055 : .06));
 
     const glow = Math.sin(Math.PI * smooth(.58, 1, progress));
     rim.intensity = 1.12 + glow * 1.72;
@@ -443,9 +443,9 @@ export function createLoaderHouse(canvas) {
 
     // Keep the camera movement subtle and always frame the full foundation slab.
     camera.position.x = Math.sin(buildEase * .65) * .22;
-    camera.position.y = (phone ? 1.98 : 2.12) + buildEase * .025;
-    camera.position.z = (phone ? 14.05 : 14.15) - buildEase * (phone ? .10 : .14);
-    camera.lookAt(0, (phone ? 1.08 : 1.12) + finishEase * .025, .05);
+    camera.position.y = (phone ? 1.94 : 2.08) + buildEase * .02;
+    camera.position.z = (phone ? 14.20 : 14.30) - buildEase * (phone ? .08 : .11);
+    camera.lookAt(0, (phone ? 1.02 : 1.07) + finishEase * .02, .05);
 
     gridMaterials.forEach((material) => {
       material.opacity = .08 + (1 - finishEase) * .07;
