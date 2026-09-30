@@ -4084,3 +4084,130 @@ main > section {
     transition: none !important;
   }
 }
+
+
+/* V57 — shared manifesto treatment for core section headings. */
+.manifesto-reveal.reveal {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+.section-manifesto {
+  width: 100%;
+  margin: 0 !important;
+  display: grid;
+  gap: clamp(4px, .7vw, 12px);
+  line-height: .91 !important;
+  letter-spacing: -.048em !important;
+  text-transform: uppercase;
+}
+
+.section-manifesto-line {
+  display: block;
+  width: 100%;
+  opacity: 0;
+  filter: blur(8px);
+  will-change: transform, opacity, filter;
+  transition:
+    transform 1s cubic-bezier(.18,.78,.18,1),
+    opacity .56s ease,
+    filter .7s ease;
+}
+
+.section-manifesto-line:nth-child(1) {
+  text-align: left;
+  transform: translate3d(-3.6vw, 30px, 0) scale(.987);
+}
+
+.section-manifesto-line:nth-child(2) {
+  text-align: right;
+  transform: translate3d(3.6vw, 40px, 0) scale(.987);
+}
+
+.section-manifesto-accent {
+  color: var(--yellow) !important;
+}
+
+.manifesto-reveal.is-visible .section-manifesto-line {
+  opacity: 1;
+  filter: blur(0);
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+.manifesto-reveal.is-visible .section-manifesto-line:nth-child(1) {
+  transition-delay: .04s;
+}
+
+.manifesto-reveal.is-visible .section-manifesto-line:nth-child(2) {
+  transition-delay: .15s;
+}
+
+.structure .manifesto-reveal .section-description {
+  opacity: 0;
+  transform: translate3d(0, 16px, 0);
+  transition:
+    opacity .5s ease,
+    transform .68s var(--ease);
+}
+
+.structure .manifesto-reveal.is-visible .section-description {
+  opacity: 1;
+  transform: none;
+  transition-delay: .28s;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .about .manifesto-reveal:hover .section-manifesto-line:nth-child(1),
+  .structure .manifesto-reveal:hover .section-manifesto-line:nth-child(1),
+  .work .manifesto-reveal:hover .section-manifesto-line:nth-child(1) {
+    transform: translate3d(5px, 0, 0);
+  }
+
+  .about .manifesto-reveal:hover .section-manifesto-line:nth-child(2),
+  .structure .manifesto-reveal:hover .section-manifesto-line:nth-child(2),
+  .work .manifesto-reveal:hover .section-manifesto-line:nth-child(2) {
+    transform: translate3d(-5px, 0, 0);
+  }
+}
+
+@media (max-width: 900px) {
+  .section-manifesto-line:nth-child(1),
+  .section-manifesto-line:nth-child(2) {
+    text-align: center;
+  }
+}
+
+@media (max-width: 760px) {
+  .section-manifesto {
+    gap: 7px;
+    line-height: .96 !important;
+    letter-spacing: -.032em !important;
+  }
+
+  .section-manifesto-line:nth-child(1),
+  .section-manifesto-line:nth-child(2) {
+    transform: translate3d(0, 22px, 0) scale(.99);
+  }
+
+  .manifesto-reveal.is-visible .section-manifesto-line {
+    transform: none;
+  }
+
+  .structure .manifesto-reveal .section-description {
+    transform: translate3d(0, 12px, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-manifesto-line,
+  .manifesto-reveal.is-visible .section-manifesto-line,
+  .manifesto-reveal:hover .section-manifesto-line,
+  .structure .manifesto-reveal .section-description,
+  .structure .manifesto-reveal.is-visible .section-description {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
