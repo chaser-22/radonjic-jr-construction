@@ -3686,3 +3686,21 @@ main > section {
     grid-column: 2;
   }
 }
+
+
+/* V50 — stack services intro copy below heading. */
+.services-head {
+  display: block;
+}
+
+.services-head > p:last-child {
+  max-width: 46ch;
+  margin: 20px 0 0;
+}
+
+@media (max-width: 760px) {
+  .services-head > p:last-child {
+    max-width: 32ch;
+    margin-top: 16px;
+  }
+}
