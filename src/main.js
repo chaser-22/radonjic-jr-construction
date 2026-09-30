@@ -144,7 +144,7 @@ app.innerHTML = `
 
     <section class="about light-section" id="o-nama" data-house-section="about" data-header="light">
       <div class="shell about-layout">
-        <div class="section-heading reveal">
+        <div class="section-heading manifesto-reveal reveal">
           <h2 class="section-manifesto">
             <span class="section-manifesto-line">GRADNJA KOJU</span>
             <span class="section-manifesto-line section-manifesto-accent">MOŽETE DA VIDITE.</span>
@@ -162,7 +162,7 @@ app.innerHTML = `
 
     <section class="structure dark-section" id="konstrukcija" data-house-section="structure" data-header="dark">
       <div class="shell structure-layout">
-        <div class="section-heading reveal">
+        <div class="section-heading manifesto-reveal reveal">
           <h2 class="section-manifesto">
             <span class="section-manifesto-line">SVAKA FAZA</span>
             <span class="section-manifesto-line section-manifesto-accent">IMA SVOJ RED.</span>
@@ -179,7 +179,7 @@ app.innerHTML = `
     </section>
 
     <section class="work light-section" id="radovi" data-house-section="work" data-header="light">
-      <div class="shell work-intro reveal">
+      <div class="shell work-intro manifesto-reveal reveal">
         <div>
           <h2 class="section-manifesto">
             <span class="section-manifesto-line">RADOVI</span>
