@@ -52,7 +52,7 @@ export function createLoaderHouse(canvas) {
   scene.add(warm);
 
   const world = new THREE.Group();
-  world.position.y = phone ? -.40 : -.29;
+  world.position.y = phone ? -.33 : -.22;
   world.rotation.y = -.66;
   scene.add(world);
 
@@ -245,20 +245,20 @@ export function createLoaderHouse(canvas) {
   addBox([.44, .96, .20], [3.14, 2.98, 2.09], masonry, .59, .70, {});
 
   // 05 / Roof carpentry + broad gable silhouette.
-  const roofRise = .98;
-  const halfSpan = 3.72;
+  const roofRise = .88;
+  const halfSpan = 3.62;
   const pitch = Math.atan2(roofRise, halfSpan);
   const slope = Math.hypot(halfSpan, roofRise);
-  const roofCenterY = 4.38;
+  const roofCenterY = 4.20;
   const leftCenter = [-halfSpan / 2, roofCenterY, 0];
   const rightCenter = [halfSpan / 2, roofCenterY, 0];
 
-  addBox([.16, .16, 5.16], [0, 4.87, 0], timber, .64, .73, {
+  addBox([.16, .16, 4.98], [0, 4.65, 0], timber, .64, .73, {
     reveal: "z",
     accent: true
   });
 
-  for (let z = -2.34, i = 0; z <= 2.34; z += .72, i += 1) {
+  for (let z = -2.20, i = 0; z <= 2.20; z += .68, i += 1) {
     addBox([slope, .075, .075], [leftCenter[0], leftCenter[1], z], timber, .65 + i * .005, .76 + i * .004, {
       reveal: "x",
       rotation: [0, 0, pitch]
@@ -269,24 +269,24 @@ export function createLoaderHouse(canvas) {
     });
   }
 
-  addBox([slope, .14, 5.20], leftCenter, roof, .74, .86, {
+  addBox([slope, .14, 4.92], leftCenter, roof, .74, .86, {
     reveal: "x",
     rotation: [0, 0, pitch],
     accent: true
   });
-  addBox([slope, .14, 5.20], rightCenter, roof, .76, .88, {
+  addBox([slope, .14, 4.92], rightCenter, roof, .76, .88, {
     reveal: "x",
     rotation: [0, 0, -pitch],
     accent: true
   });
-  addBox([.24, .18, 5.30], [0, 4.90, 0], steel, .83, .91, {
+  addBox([.22, .16, 5.02], [0, 4.67, 0], steel, .83, .91, {
     reveal: "z",
     accent: true
   });
 
   // Crisp fascia lines make the roof shape read immediately at loader scale.
-  addBox([.16, .20, 5.26], [-3.73, 3.90, 0], steel, .80, .91, { reveal: "z", edges: false });
-  addBox([.16, .20, 5.26], [3.73, 3.90, 0], steel, .80, .91, { reveal: "z", edges: false });
+  addBox([.11, .14, 4.94], [-3.62, 3.76, 0], roof, .80, .91, { reveal: "z", edges: false });
+  addBox([.11, .14, 4.94], [3.62, 3.76, 0], roof, .80, .91, { reveal: "z", edges: false });
 
   // 06 / Finished light facade skin. Offsets prevent z-fighting with masonry.
   const facadeStart = .76;
@@ -433,7 +433,7 @@ export function createLoaderHouse(canvas) {
 
     world.rotation.y = -.70 + buildEase * .42 + Math.sin(now * .00046) * .018;
     world.rotation.x = -.018 + (1 - buildEase) * -.012;
-    world.position.y = (phone ? -.40 : -.29) + (1 - smooth(0, .18, progress)) * .13;
+    world.position.y = (phone ? -.33 : -.22) + (1 - smooth(0, .18, progress)) * .12;
     world.scale.setScalar((phone ? .82 : 1.02) + smooth(.05, .72, progress) * (phone ? .055 : .06));
 
     const glow = Math.sin(Math.PI * smooth(.58, 1, progress));
