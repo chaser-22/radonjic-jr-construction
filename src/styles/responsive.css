@@ -3660,3 +3660,29 @@ main > section {
     margin-top: 42px;
   }
 }
+
+
+/* V49 — simplified header and label-free section hierarchy. */
+.hero h1,
+.section-heading h2,
+.work-intro h2,
+.services-head h2,
+.process-head h2,
+.values-layout h2,
+.contact h2 {
+  margin-top: 0;
+}
+
+@media (min-width: 761px) and (max-width: 1180px) {
+  .site-header {
+    grid-template-columns: 1fr auto 1fr;
+  }
+
+  .brand {
+    grid-column: 1;
+  }
+
+  .desktop-nav {
+    grid-column: 2;
+  }
+}
