@@ -3552,3 +3552,68 @@ main > section {
     padding-bottom: 68px;
   }
 }
+
+
+/* V47 — viewport QA refinements. */
+@media (min-width: 901px) {
+  .site-progress {
+    right: clamp(14px, 2vw, 32px);
+  }
+
+  .project-image img {
+    height: calc(100% + 48px);
+    transform: translate3d(0, var(--image-y, 0px), 0) scale(1.018);
+  }
+}
+
+@media (max-width: 760px) {
+  .phase-list article {
+    align-items: start;
+  }
+
+  .phase-list > article > span {
+    margin-top: 2px;
+  }
+
+  .service-list {
+    align-items: stretch;
+  }
+
+  .service-row,
+  .service-row:last-child {
+    height: 100%;
+    align-content: start;
+  }
+}
+
+@media (max-width: 430px) {
+  .hero {
+    min-height: max(112svh, 690px);
+    min-height: max(112dvh, 690px);
+  }
+
+  .project-image {
+    width: 100%;
+  }
+}
+
+@media (max-width: 390px) {
+  .site-progress {
+    bottom: calc(152px + env(safe-area-inset-bottom));
+  }
+
+  .process-grid article > span {
+    padding-top: 1px;
+  }
+}
+
+@media (max-width: 375px) {
+  .hero {
+    min-height: max(110svh, 680px);
+    min-height: max(110dvh, 680px);
+  }
+
+  .site-progress {
+    bottom: calc(156px + env(safe-area-inset-bottom));
+  }
+}
