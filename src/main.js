@@ -177,7 +177,7 @@ app.innerHTML = `
         <div>
           <h2>RADOVI<br><em>GOVORE NAJVIŠE.</em></h2>
         </div>
-        <p>Prikazujemo stvarne RADONJIC JR projekte — radove u toku, detalje sa gradilišta i završene objekte.</p>
+        
       </div>
 
       <div class="project-editorial shell">
