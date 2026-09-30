@@ -3983,3 +3983,104 @@ main > section {
     transition: none !important;
   }
 }
+
+
+/* V56 — process manifesto matching values treatment. */
+.process-head {
+  position: relative;
+  overflow: hidden;
+}
+
+.process-head.reveal {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+.process-manifesto {
+  width: 100%;
+  max-width: none !important;
+  margin: 0 !important;
+  display: grid;
+  gap: clamp(4px, .8vw, 14px);
+  font-size: clamp(64px, 8vw, 138px) !important;
+  line-height: .89 !important;
+  letter-spacing: -.05em !important;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.process-line {
+  display: block;
+  width: 100%;
+  opacity: 0;
+  filter: blur(8px);
+  will-change: transform, opacity, filter;
+  transition:
+    transform 1.02s cubic-bezier(.18,.78,.18,1),
+    opacity .58s ease,
+    filter .72s ease;
+}
+
+.process-line:nth-child(1) {
+  text-align: left;
+  transform: translate3d(-4vw, 34px, 0) scale(.985);
+}
+
+.process-line:nth-child(2) {
+  text-align: right;
+  transform: translate3d(4vw, 44px, 0) scale(.985);
+}
+
+.process-line em {
+  font-style: normal;
+  color: var(--yellow);
+}
+
+.process-head.is-visible .process-line {
+  opacity: 1;
+  filter: blur(0);
+  transform: translate3d(0,0,0) scale(1);
+}
+
+.process-head.is-visible .process-line:nth-child(1) { transition-delay: .04s; }
+.process-head.is-visible .process-line:nth-child(2) { transition-delay: .16s; }
+
+@media (max-width: 900px) {
+  .process-manifesto {
+    font-size: clamp(50px, 9vw, 82px) !important;
+  }
+
+  .process-line:nth-child(1),
+  .process-line:nth-child(2) {
+    text-align: center;
+  }
+}
+
+@media (max-width: 760px) {
+  .process-manifesto {
+    gap: 8px;
+    font-size: clamp(39px, 10.8vw, 56px) !important;
+    line-height: .95 !important;
+    letter-spacing: -.035em !important;
+  }
+
+  .process-line:nth-child(1),
+  .process-line:nth-child(2) {
+    transform: translate3d(0, 24px, 0) scale(.99);
+  }
+
+  .process-head.is-visible .process-line {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .process-line,
+  .process-head.is-visible .process-line {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
