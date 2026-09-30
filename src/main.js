@@ -145,7 +145,10 @@ app.innerHTML = `
     <section class="about light-section" id="o-nama" data-house-section="about" data-header="light">
       <div class="shell about-layout">
         <div class="section-heading reveal">
-          <h2>GRADNJA KOJU<br><em>MOŽETE DA VIDITE.</em></h2>
+          <h2 class="section-manifesto">
+            <span class="section-manifesto-line">GRADNJA KOJU</span>
+            <span class="section-manifesto-line section-manifesto-accent">MOŽETE DA VIDITE.</span>
+          </h2>
         </div>
         <div class="about-copy reveal">
           <p class="lede">Bez komplikovanja. Dogovorimo posao, organizujemo faze i izvedemo ga kako treba.</p>
@@ -160,7 +163,10 @@ app.innerHTML = `
     <section class="structure dark-section" id="konstrukcija" data-house-section="structure" data-header="dark">
       <div class="shell structure-layout">
         <div class="section-heading reveal">
-          <h2>SVAKA FAZA<br><em>IMA SVOJ RED.</em></h2>
+          <h2 class="section-manifesto">
+            <span class="section-manifesto-line">SVAKA FAZA</span>
+            <span class="section-manifesto-line section-manifesto-accent">IMA SVOJ RED.</span>
+          </h2>
           <p class="section-description">Kuća nije jedan potez. Ona je sistem u kojem svaka faza zavisi od prethodne.</p>
         </div>
         <div class="stage-spacer" aria-hidden="true"></div>
@@ -175,7 +181,10 @@ app.innerHTML = `
     <section class="work light-section" id="radovi" data-house-section="work" data-header="light">
       <div class="shell work-intro reveal">
         <div>
-          <h2>RADOVI<br><em>GOVORE NAJVIŠE.</em></h2>
+          <h2 class="section-manifesto">
+            <span class="section-manifesto-line">RADOVI</span>
+            <span class="section-manifesto-line section-manifesto-accent">GOVORE NAJVIŠE.</span>
+          </h2>
         </div>
         
       </div>
