@@ -125,16 +125,12 @@ app.innerHTML = `
       <a href="#kontakt">Kontakt</a>
     </nav>
 
-    <a class="header-cta" href="tel:${PHONE}">
-      <span>Pozovite nas</span><i aria-hidden="true">${arrowIcon}</i>
-    </a>
   </header>
 
   <main id="main">
     <section class="hero" id="top" data-house-section="hero" data-header="dark">
       <div class="hero-grid" aria-hidden="true"></div>
       <div class="hero-content shell">
-        <p class="micro-label">RADONJIC JR / CONSTRUCTION</p>
         <h1><span>OD TEMELJA</span><em>DO KROVA.</em></h1>
         <p class="hero-intro">Gradimo jasno, pouzdano i bez komplikacija — od prvog iskopa do završnog krova.</p>
         <div class="hero-actions">
@@ -149,7 +145,6 @@ app.innerHTML = `
     <section class="about light-section" id="o-nama" data-house-section="about" data-header="light">
       <div class="shell about-layout">
         <div class="section-heading reveal">
-          <p class="micro-label dark-label">01 / O NAMA</p>
           <h2>GRADNJA KOJU<br><em>MOŽETE DA VIDITE.</em></h2>
         </div>
         <div class="about-copy reveal">
@@ -165,7 +160,6 @@ app.innerHTML = `
     <section class="structure dark-section" id="konstrukcija" data-house-section="structure" data-header="dark">
       <div class="shell structure-layout">
         <div class="section-heading reveal">
-          <p class="micro-label">02 / KAKO GRADIMO</p>
           <h2>SVAKA FAZA<br><em>IMA SVOJ RED.</em></h2>
           <p class="section-description">Kuća nije jedan potez. Ona je sistem u kojem svaka faza zavisi od prethodne.</p>
         </div>
@@ -181,7 +175,6 @@ app.innerHTML = `
     <section class="work light-section" id="radovi" data-house-section="work" data-header="light">
       <div class="shell work-intro reveal">
         <div>
-          <p class="micro-label dark-label">03 / RADOVI</p>
           <h2>RADOVI<br><em>GOVORE NAJVIŠE.</em></h2>
         </div>
         <p>Prikazujemo stvarne RADONJIC JR projekte — radove u toku, detalje sa gradilišta i završene objekte.</p>
@@ -234,7 +227,6 @@ app.innerHTML = `
 
     <section class="services dark-section" id="usluge" data-house-section="services" data-header="dark">
       <div class="shell services-head reveal">
-        <p class="micro-label">04 / USLUGE</p>
         <h2>ŠTA RADIMO.</h2>
         <p>Izaberite vrstu radova. Model kuće pokazuje relevantan dio konstrukcije.</p>
       </div>
@@ -260,7 +252,6 @@ app.innerHTML = `
 
     <section class="values accent-section" id="vrijednosti" data-house-section="values" data-header="light">
       <div class="shell values-layout reveal">
-        <p class="micro-label dark-label">05 / PRISTUP</p>
         <h2>JASAN DOGOVOR.<br>UREDAN RAD.<br>DOBAR REZULTAT.</h2>
         <div class="values-copy">
           <p>Uvijek znate šta se radi, kojim redom i gdje smo u procesu.</p>
@@ -271,7 +262,6 @@ app.innerHTML = `
 
     <section class="process light-section" id="proces" data-house-section="process" data-header="light">
       <div class="shell process-head reveal">
-        <p class="micro-label dark-label">06 / PROCES</p>
         <h2>ČETIRI KORAKA.<br><em>BEZ KOMPLIKACIJA.</em></h2>
       </div>
       <div class="shell process-grid reveal">
@@ -285,7 +275,6 @@ app.innerHTML = `
     <section class="contact dark-section" id="kontakt" data-house-section="contact" data-header="dark">
       <div class="shell contact-layout">
         <div class="contact-copy reveal">
-          <p class="micro-label">07 / KONTAKT</p>
           <h2>IMATE<br><em>PROJEKAT?</em></h2>
           <p>Najbrže je da se čujemo. Recite nam šta planirate i gdje se projekat nalazi.</p>
         </div>
