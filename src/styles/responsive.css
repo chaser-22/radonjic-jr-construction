@@ -3617,3 +3617,44 @@ main > section {
     bottom: calc(156px + env(safe-area-inset-bottom));
   }
 }
+
+
+/* V48 — compact page progress rail clearance. */
+@media (min-width: 761px) {
+  .site-progress {
+    bottom: auto;
+    height: min(54vh, 520px);
+  }
+
+  .site-progress-rail {
+    align-self: start;
+    min-height: 0;
+    height: min(44vh, 410px);
+    margin-top: 34px;
+  }
+}
+
+@media (min-width: 1181px) {
+  .site-progress {
+    top: 218px;
+    height: min(52vh, 500px);
+  }
+
+  .site-progress-rail {
+    height: min(42vh, 390px);
+    margin-top: 38px;
+  }
+}
+
+@media (max-width: 760px) {
+  .site-progress {
+    bottom: auto;
+    height: min(46dvh, 390px);
+  }
+
+  .site-progress-rail {
+    min-height: 0;
+    height: min(38dvh, 320px);
+    margin-top: 24px;
+  }
+}
