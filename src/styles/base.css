@@ -72,10 +72,10 @@ img { display: block; width: 100%; }
 .three-ready .house-canvas { opacity: 1; }
 .house-fallback {
   position: absolute;
-  right: 4vw;
-  top: 20vh;
-  width: min(48vw, 760px);
-  height: min(58vh, 640px);
+  right: -1vw;
+  top: 22vh;
+  width: min(42vw, 680px);
+  height: min(52vh, 570px);
   opacity: .25;
   transition: opacity .25s ease;
 }
