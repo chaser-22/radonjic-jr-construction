@@ -262,7 +262,10 @@ app.innerHTML = `
 
     <section class="process light-section" id="proces" data-house-section="process" data-header="light">
       <div class="shell process-head reveal">
-        <h2>ČETIRI KORAKA.<br><em>BEZ KOMPLIKACIJA.</em></h2>
+        <h2 class="process-manifesto">
+          <span class="process-line">ČETIRI KORAKA.</span>
+          <span class="process-line"><em>BEZ KOMPLIKACIJA.</em></span>
+        </h2>
       </div>
       <div class="shell process-grid reveal">
         <article><span>01</span><h3>Pregled</h3><p>Vidimo posao i definišemo obim.</p></article>
