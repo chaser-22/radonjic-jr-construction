@@ -253,10 +253,6 @@ app.innerHTML = `
     <section class="values accent-section" id="vrijednosti" data-house-section="values" data-header="light">
       <div class="shell values-layout reveal">
         <h2>JASAN DOGOVOR.<br>UREDAN RAD.<br>DOBAR REZULTAT.</h2>
-        <div class="values-copy">
-          <p>Uvijek znate šta se radi, kojim redom i gdje smo u procesu.</p>
-          <a href="tel:${PHONE}">Razgovarajmo o projektu <span>${arrowIcon}</span></a>
-        </div>
       </div>
     </section>
 
