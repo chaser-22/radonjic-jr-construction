@@ -434,7 +434,7 @@ export function createLoaderHouse(canvas) {
     world.rotation.y = -.70 + buildEase * .42 + Math.sin(now * .00046) * .018;
     world.rotation.x = -.018 + (1 - buildEase) * -.012;
     world.position.y = (phone ? -.25 : -.14) + (1 - smooth(0, .18, progress)) * .11;
-    world.scale.setScalar((phone ? .82 : 1.02) + smooth(.05, .72, progress) * (phone ? .055 : .06));
+    world.scale.setScalar((phone ? .78 : .97) + smooth(.05, .72, progress) * (phone ? .052 : .057));
 
     const glow = Math.sin(Math.PI * smooth(.58, 1, progress));
     rim.intensity = 1.12 + glow * 1.72;
