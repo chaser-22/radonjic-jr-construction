@@ -3751,3 +3751,22 @@ main > section {
 .values-layout h2 {
   max-width: 12ch;
 }
+
+
+/* V53 — center values statement. */
+.values {
+  display: grid;
+  align-items: center;
+}
+
+.values-layout {
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+.values-layout h2 {
+  max-width: 12ch;
+  margin-left: auto;
+  margin-right: auto;
+}
