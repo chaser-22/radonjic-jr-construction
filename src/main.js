@@ -153,7 +153,7 @@ app.innerHTML = `
           <h2>GRADNJA KOJU<br><em>MOŽETE DA VIDITE.</em></h2>
         </div>
         <div class="about-copy reveal">
-          <p class="lede">Ne prodajemo komplikovane priče. Dogovorimo posao, organizujemo faze i izvedemo ga kako treba.</p>
+          <p class="lede">Bez komplikovanja. Dogovorimo posao, organizujemo faze i izvedemo ga kako treba.</p>
           <p>Radimo grubu gradnju, temelje, armirano-betonske radove, zidanje, krovove, ograde, coklove, rušenje i pripremne radove.</p>
           <div class="trust-row" aria-label="Naše vrijednosti">
             <span>Pouzdanost</span><span>Tačnost</span><span>Kvalitet</span><span>Poštena cijena</span>
@@ -184,24 +184,31 @@ app.innerHTML = `
           <p class="micro-label dark-label">03 / RADOVI</p>
           <h2>RADOVI<br><em>GOVORE NAJVIŠE.</em></h2>
         </div>
-        <p>Portfolio prikazuje stvarne RADONJIC JR projekte: izvedene radove, detalje sa gradilišta i završene objekte.</p>
+        <p>Prikazujemo stvarne RADONJIC JR projekte — radove u toku, detalje sa gradilišta i završene objekte.</p>
       </div>
 
       <div class="project-editorial shell">
         ${projects.map((project, index) => {
-          const image = (width) => project.provider === "local" || project.provider === "instagram"
+          const isFixedAsset = project.provider === "local" || project.provider === "instagram";
+          const image = (width) => isFixedAsset
             ? project.image
             : project.provider === "unsplash"
               ? `${project.image}?auto=format&fit=crop&q=82&w=${width}`
               : `${project.image}?auto=compress&cs=tinysrgb&w=${width}`;
+          const responsiveAttrs = isFixedAsset
+            ? ""
+            : `srcset="${image(640)} 640w, ${image(960)} 960w, ${image(1400)} 1400w, ${image(2000)} 2000w"`;
+          const fallback = isFixedAsset
+            ? project.fallback
+            : `${project.fallback}?auto=compress&cs=tinysrgb&w=1200`;
           return `
           <article class="project reveal">
             <div class="project-image">
               <img
                 src="${image(1200)}"
-                srcset="${image(640)} 640w, ${image(960)} 960w, ${image(1400)} 1400w, ${image(2000)} 2000w"
-                sizes="(max-width: 760px) calc(100vw - 24px), (max-width: 1180px) calc(100vw - 48px), 70vw"
-                data-fallback="${project.fallback}?auto=compress&cs=tinysrgb&w=1200"
+                ${responsiveAttrs}
+                sizes="(max-width: 760px) calc(100vw - 28px), (max-width: 1180px) calc(100vw - 48px), 70vw"
+                data-fallback="${fallback}"
                 style="object-position:${project.position || "center"}"
                 alt="${project.title} — RADONJIC JR izvedeni radovi"
                 width="1200"
@@ -234,7 +241,7 @@ app.innerHTML = `
 
       <div class="shell services-layout">
         <div class="service-picker reveal">
-          <p class="service-tip"><span aria-hidden="true"></span>Klikni me</p>
+          <p class="service-tip"><span aria-hidden="true"></span>Odaberite radove</p>
           <div class="service-list" role="list">
           ${services.map((service, index) => `
             <button class="service-row ${index === 0 ? "is-active" : ""}" type="button" data-service="${service.key}" data-service-code="${service.code}" aria-pressed="${index === 0 ? "true" : "false"}">
@@ -256,7 +263,7 @@ app.innerHTML = `
         <p class="micro-label dark-label">05 / PRISTUP</p>
         <h2>JASAN DOGOVOR.<br>UREDAN RAD.<br>DOBAR REZULTAT.</h2>
         <div class="values-copy">
-          <p>Najvažnije je da znate šta se radi, kojim redom i gdje smo u procesu.</p>
+          <p>Uvijek znate šta se radi, kojim redom i gdje smo u procesu.</p>
           <a href="tel:${PHONE}">Razgovarajmo o projektu <span>${arrowIcon}</span></a>
         </div>
       </div>
