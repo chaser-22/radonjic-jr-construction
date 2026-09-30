@@ -3741,3 +3741,13 @@ main > section {
     width: 100%;
   }
 }
+
+
+/* V52 — simplify values section after copy removal. */
+.values-layout {
+  display: block;
+}
+
+.values-layout h2 {
+  max-width: 12ch;
+}
