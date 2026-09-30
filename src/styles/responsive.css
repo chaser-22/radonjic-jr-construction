@@ -3803,3 +3803,183 @@ main > section {
     min-height: 88svh;
   }
 }
+
+
+/* V55 — cinematic architectural values manifesto. */
+.values {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: clamp(620px, 82vh, 900px);
+  padding: 0;
+  display: grid;
+  place-items: center;
+  background:
+    linear-gradient(rgba(23,25,21,.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(23,25,21,.055) 1px, transparent 1px),
+    var(--yellow);
+  background-size: clamp(72px, 7vw, 118px) clamp(72px, 7vw, 118px);
+}
+
+.values::before,
+.values::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.values::before {
+  inset: 7% 4%;
+  border-top: 1px solid rgba(22,24,20,.18);
+  border-bottom: 1px solid rgba(22,24,20,.18);
+  background:
+    linear-gradient(90deg, rgba(22,24,20,.20), rgba(22,24,20,.20)) 0 0 / 42px 1px no-repeat,
+    linear-gradient(90deg, rgba(22,24,20,.20), rgba(22,24,20,.20)) 100% 100% / 42px 1px no-repeat;
+}
+
+.values::after {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(22,24,20,.10) 16%,
+    rgba(22,24,20,.16) 50%,
+    rgba(22,24,20,.10) 84%,
+    transparent 100%
+  );
+}
+
+.values-layout {
+  position: relative;
+  z-index: 2;
+  width: var(--shell);
+  min-height: 0;
+  display: block;
+  text-align: initial;
+}
+
+.values-layout.reveal {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+.values-manifesto {
+  width: 100%;
+  max-width: none !important;
+  margin: 0 !important;
+  display: grid;
+  gap: clamp(4px, .8vw, 14px);
+  font-size: clamp(64px, 8.2vw, 146px) !important;
+  line-height: .88 !important;
+  letter-spacing: -.052em !important;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.values-line {
+  position: relative;
+  display: block;
+  width: 100%;
+  opacity: 0;
+  filter: blur(8px);
+  will-change: transform, opacity, filter;
+  transition:
+    transform 1.02s cubic-bezier(.18,.78,.18,1),
+    opacity .58s ease,
+    filter .72s ease;
+}
+
+.values-line:nth-child(1) {
+  text-align: left;
+  transform: translate3d(-5.5vw, 34px, 0) scale(.985);
+}
+
+.values-line:nth-child(2) {
+  text-align: center;
+  transform: translate3d(0, 42px, 0) scale(.985);
+}
+
+.values-line:nth-child(3) {
+  text-align: right;
+  transform: translate3d(5.5vw, 50px, 0) scale(.985);
+}
+
+.values-layout.is-visible .values-line {
+  opacity: 1;
+  filter: blur(0);
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+.values-layout.is-visible .values-line:nth-child(1) { transition-delay: .04s; }
+.values-layout.is-visible .values-line:nth-child(2) { transition-delay: .15s; }
+.values-layout.is-visible .values-line:nth-child(3) { transition-delay: .26s; }
+
+@media (hover: hover) and (pointer: fine) {
+  .values:hover .values-line:nth-child(1) { transform: translate3d(8px, 0, 0); }
+  .values:hover .values-line:nth-child(2) { transform: translate3d(0, 0, 0); }
+  .values:hover .values-line:nth-child(3) { transform: translate3d(-8px, 0, 0); }
+}
+
+@media (max-width: 900px) {
+  .values {
+    min-height: clamp(500px, 70svh, 700px);
+  }
+
+  .values-manifesto {
+    font-size: clamp(52px, 9.4vw, 86px) !important;
+  }
+
+  .values-line:nth-child(1),
+  .values-line:nth-child(2),
+  .values-line:nth-child(3) {
+    text-align: center;
+  }
+}
+
+@media (max-width: 760px) {
+  .values {
+    min-height: clamp(430px, 62svh, 560px);
+    background-size: 64px 64px;
+  }
+
+  .values::before {
+    inset: 8% 12px;
+  }
+
+  .values::after {
+    opacity: .65;
+  }
+
+  .values-manifesto {
+    gap: 8px;
+    font-size: clamp(42px, 11vw, 58px) !important;
+    line-height: .94 !important;
+    letter-spacing: -.035em !important;
+  }
+
+  .values-line:nth-child(1),
+  .values-line:nth-child(2),
+  .values-line:nth-child(3) {
+    transform: translate3d(0, 24px, 0) scale(.99);
+  }
+
+  .values-layout.is-visible .values-line {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .values-line,
+  .values-layout.is-visible .values-line,
+  .values:hover .values-line {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
