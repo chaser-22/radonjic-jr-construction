@@ -252,7 +252,11 @@ app.innerHTML = `
 
     <section class="values accent-section" id="vrijednosti" data-house-section="values" data-header="light">
       <div class="shell values-layout reveal">
-        <h2>JASAN DOGOVOR.<br>UREDAN RAD.<br>DOBAR REZULTAT.</h2>
+        <h2 class="values-manifesto">
+          <span class="values-line">JASAN DOGOVOR.</span>
+          <span class="values-line">UREDAN RAD.</span>
+          <span class="values-line">DOBAR REZULTAT.</span>
+        </h2>
       </div>
     </section>
 
