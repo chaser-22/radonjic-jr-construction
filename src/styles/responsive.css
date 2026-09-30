@@ -3630,7 +3630,7 @@ main > section {
     align-self: start;
     min-height: 0;
     height: min(44vh, 410px);
-    margin-top: 34px;
+    margin-top: 64px;
   }
 }
 
@@ -3642,7 +3642,7 @@ main > section {
 
   .site-progress-rail {
     height: min(42vh, 390px);
-    margin-top: 38px;
+    margin-top: 74px;
   }
 }
 
@@ -3655,6 +3655,6 @@ main > section {
   .site-progress-rail {
     min-height: 0;
     height: min(38dvh, 320px);
-    margin-top: 24px;
+    margin-top: 42px;
   }
 }
