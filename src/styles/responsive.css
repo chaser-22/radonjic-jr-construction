@@ -3770,3 +3770,36 @@ main > section {
   margin-left: auto;
   margin-right: auto;
 }
+
+
+/* V54 — true visual centering inside values band. */
+.values {
+  min-height: 78vh;
+  padding-top: 0;
+  padding-bottom: 0;
+  place-items: center;
+}
+
+.values-layout {
+  width: var(--shell);
+  min-height: 100%;
+  place-items: center;
+}
+
+.values-layout h2 {
+  margin: 0 auto;
+}
+
+@media (max-width: 760px) {
+  .values {
+    min-height: clamp(360px, 54svh, 480px);
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 520px) and (max-width: 900px) {
+  .values {
+    min-height: 88svh;
+  }
+}
