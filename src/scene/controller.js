@@ -173,7 +173,7 @@ export function createHouseScene(layer, canvas) {
   };
 
   const desktopAnchors = [
-    ["hero", ".hero", 3.02, -0.20, .94, -.42, 1, 0, 11.7, 1.24, 33.5],
+    ["hero", ".hero", 3.46, -0.24, .82, -.42, 1, 0, 12.10, 1.22, 34],
     ["about", "#o-nama", 4.12, -.56, .44, .12, .06, 0, 12.4, 1.15, 34],
     ["structure", "#konstrukcija", 2.92, -.10, .76, .58, .86, .90, 11.35, 1.72, 32.5],
     ["work", "#radovi", 4.45, -.60, .30, .96, .03, 0, 12.8, 1.12, 34.5],
@@ -184,7 +184,7 @@ export function createHouseScene(layer, canvas) {
   ];
 
   const tabletAnchors = [
-    ["hero", ".hero", 1.42, -.60, .75, -.38, .92, 0, 12.0, 1.16, 35.5],
+    ["hero", ".hero", 1.72, -.64, .68, -.38, .92, 0, 12.35, 1.14, 36],
     ["about", "#o-nama", 2.75, -.70, .40, .10, .03, 0, 12.8, 1.10, 36],
     ["structure", "#konstrukcija", 1.34, -.31, .65, .50, .76, .80, 11.8, 1.58, 34.5],
     ["work", "#radovi", 2.85, -.72, .28, .82, .01, 0, 13.0, 1.05, 36],
