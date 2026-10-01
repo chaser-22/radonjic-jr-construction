@@ -111,11 +111,16 @@ app.innerHTML = `
 
   <header class="site-header" data-header-theme="dark">
     <a class="brand" href="#top" aria-label="Radonjic JR Construction — početna">
+      <svg class="brand-logo-mark" viewBox="0 0 120 78" aria-hidden="true" focusable="false">
+        <path class="brand-logo-ink" d="M7 12h31l14 13v15l-9 9-9-9 8-8v-4l-8-7H18v9H7V12Zm1 26h15l24 25H31L8 40v-2Z"/>
+        <path class="brand-logo-ink" d="M68 12h31l14 13v15l-9 9-9-9 8-8v-4l-8-7H79v9H68V12Zm1 26h15l24 25H92L69 40v-2Z"/>
+        <path class="brand-logo-ink" d="M53 22h12v34l-6 7-6-7V22Z"/>
+        <path class="brand-logo-accent" d="M53 4h12v13L53 24V4Z"/>
+      </svg>
       <span class="brand-copy">
         <strong>RADONJIC JR</strong>
         <span>CONSTRUCTION</span>
       </span>
-      <span class="brand-accent" aria-hidden="true"></span>
     </a>
 
     <nav class="desktop-nav" aria-label="Glavna navigacija">
