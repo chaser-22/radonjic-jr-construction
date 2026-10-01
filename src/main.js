@@ -232,7 +232,6 @@ app.innerHTML = `
         }).join("")}
       </div>
 
-      <p class="photo-disclaimer shell">Fotografije izvedenih RADONJIC JR projekata sa našeg Instagram profila.</p>
     </section>
 
     <section class="services dark-section" id="usluge" data-house-section="services" data-header="dark">
