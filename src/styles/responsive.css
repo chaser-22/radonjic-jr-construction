@@ -4836,21 +4836,21 @@ main > section {
 }
 
 
-/* V70 — align portfolio readability panel to image edge. */
+/* V70 — retain soft overlap while aligning panel bottom to project image. */
 @media (min-width: 901px) {
   .work .project-copy::before {
-    inset: -30px -52px -30px 0;
+    inset: -30px -52px 0 -34px;
   }
 }
 
 @media (min-width: 761px) and (max-width: 900px) {
   .work .project-copy::before {
-    inset: -24px -28px -26px 0;
+    inset: -24px -28px 0 -24px;
   }
 }
 
 @media (max-width: 760px) {
   .work .project-copy::before {
-    inset: -18px -14px -20px 0;
+    inset: -18px -14px 0 -14px;
   }
 }
