@@ -4626,3 +4626,66 @@ main > section {
     line-height: .95 !important;
   }
 }
+
+
+/* V64 — protect portfolio copy from 3D backdrop. */
+.work .project-copy {
+  position: relative;
+  isolation: isolate;
+}
+
+.work .project-copy::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -30px -52px -30px -34px;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at 28% 48%,
+    rgba(243,241,235,.99) 0%,
+    rgba(243,241,235,.97) 52%,
+    rgba(243,241,235,.82) 70%,
+    rgba(243,241,235,.38) 86%,
+    rgba(243,241,235,0) 100%
+  );
+}
+
+.work .project-copy > p {
+  color: #41443e;
+}
+
+.work .project-copy h3 {
+  color: #11120f;
+}
+
+.work .project-copy > div {
+  border-top-color: rgba(25,27,23,.24);
+}
+
+.work .project-copy > div span {
+  color: #3f423c;
+}
+
+@media (max-width: 900px) {
+  .work .project-copy::before {
+    inset: -24px -28px -26px -24px;
+    background: linear-gradient(
+      90deg,
+      rgba(243,241,235,.995) 0%,
+      rgba(243,241,235,.98) 74%,
+      rgba(243,241,235,.72) 90%,
+      rgba(243,241,235,0) 100%
+    );
+  }
+}
+
+@media (max-width: 760px) {
+  .work .project-copy::before {
+    inset: -18px -14px -20px -14px;
+    background: rgba(243,241,235,.94);
+  }
+
+  .work .project-copy > div span {
+    color: #343731;
+  }
+}
