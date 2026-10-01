@@ -165,7 +165,7 @@ app.innerHTML = `
         <div class="section-heading manifesto-reveal reveal">
           <h2 class="section-manifesto">
             <span class="section-manifesto-line">SVAKA FAZA</span>
-            <span class="section-manifesto-line section-manifesto-accent">IMA SVOJ RED.</span>
+            <span class="section-manifesto-line section-manifesto-accent structure-manifesto-accent"><span>IMA SVOJ</span><span class="structure-red"> RED.</span></span>
           </h2>
           <p class="section-description">Kuća nije jedan potez. Ona je sistem u kojem svaka faza zavisi od prethodne.</p>
         </div>
