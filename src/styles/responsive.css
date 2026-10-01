@@ -4550,3 +4550,79 @@ main > section {
     transition: none !important;
   }
 }
+
+
+/* V63 — optical vertical rhythm for manifesto headings. */
+/* Use em-based rhythm so spacing scales with each manifesto's type size. */
+.section-manifesto,
+.process-manifesto,
+.values-manifesto {
+  row-gap: .12em;
+}
+
+/* Shared two-line editorial headings. */
+.section-manifesto {
+  line-height: .94 !important;
+}
+
+/* Process heading should breathe the same way as the shared section headings. */
+.process-manifesto {
+  line-height: .93 !important;
+}
+
+/* The yellow three-line statement is intentionally dense, but no longer cramped. */
+.values-manifesto {
+  line-height: .92 !important;
+  row-gap: .11em;
+}
+
+/* RADOVI: left / right / left needs a little more optical air before line three. */
+.work-manifesto {
+  row-gap: .10em;
+  line-height: .93 !important;
+}
+
+.work-manifesto .section-manifesto-line:nth-child(3) {
+  margin-top: .08em;
+}
+
+/* Construction lockup remains compact, but with a cleaner baseline rhythm. */
+.structure .section-manifesto {
+  gap: .13em;
+  line-height: .93 !important;
+}
+
+/* Mobile needs slightly tighter, consistent spacing without line collisions. */
+@media (max-width: 760px) {
+  .section-manifesto,
+  .process-manifesto,
+  .values-manifesto {
+    row-gap: .10em;
+  }
+
+  .section-manifesto {
+    line-height: .96 !important;
+  }
+
+  .process-manifesto {
+    line-height: .96 !important;
+  }
+
+  .values-manifesto {
+    line-height: .95 !important;
+  }
+
+  .work-manifesto {
+    row-gap: .08em;
+    line-height: .96 !important;
+  }
+
+  .work-manifesto .section-manifesto-line:nth-child(3) {
+    margin-top: .05em;
+  }
+
+  .structure .section-manifesto {
+    gap: .10em;
+    line-height: .95 !important;
+  }
+}
