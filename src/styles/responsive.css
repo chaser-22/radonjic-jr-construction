@@ -4211,3 +4211,16 @@ main > section {
     transition: none !important;
   }
 }
+
+
+/* V58 — vertically align about copy with manifesto heading. */
+@media (min-width: 901px) {
+  .about-layout {
+    align-items: center;
+  }
+
+  .about .section-heading,
+  .about-copy {
+    align-self: center;
+  }
+}
