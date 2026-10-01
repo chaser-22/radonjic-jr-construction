@@ -181,9 +181,10 @@ app.innerHTML = `
     <section class="work light-section" id="radovi" data-house-section="work" data-header="light">
       <div class="shell work-intro manifesto-reveal reveal">
         <div>
-          <h2 class="section-manifesto">
+          <h2 class="section-manifesto work-manifesto">
             <span class="section-manifesto-line">RADOVI</span>
-            <span class="section-manifesto-line section-manifesto-accent">GOVORE NAJVIŠE.</span>
+            <span class="section-manifesto-line section-manifesto-accent">GOVORE</span>
+            <span class="section-manifesto-line section-manifesto-accent">NAJVIŠE.</span>
           </h2>
         </div>
         
