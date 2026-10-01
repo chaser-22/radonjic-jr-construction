@@ -311,9 +311,7 @@ app.innerHTML = `
 
   <div class="site-progress" data-theme="dark" aria-hidden="true">
     <div class="site-progress-copy">
-      <span>PROGRES</span>
-      <strong data-site-progress-section>POČETAK</strong>
-      <em><b data-site-progress-index>01/08</b><i data-site-progress-percent>000%</i></em>
+      <em class="site-progress-status"><b>PROGRES</b><i data-site-progress-section>POČETAK</i></em>
     </div>
     <div class="site-progress-rail">
       <span class="site-progress-track"></span>
@@ -354,9 +352,7 @@ const header = document.querySelector(".site-header");
 const siteProgress = document.querySelector(".site-progress");
 const siteProgressFill = document.querySelector("[data-site-progress-fill]");
 const siteProgressMarker = document.querySelector("[data-site-progress-marker]");
-const siteProgressPercent = document.querySelector("[data-site-progress-percent]");
 const siteProgressSection = document.querySelector("[data-site-progress-section]");
-const siteProgressIndex = document.querySelector("[data-site-progress-index]");
 const projectElements = [...document.querySelectorAll(".project")];
 const visibleProjects = new Set();
 const progressSections = [...document.querySelectorAll("main > section")];
@@ -440,7 +436,6 @@ document.fonts?.ready?.then(() => {
 let ticking = false;
 let lastHeroProgress = -1;
 let lastSiteProgress = -1;
-let lastSitePercent = -1;
 let lastSiteSection = -1;
 let lastHeaderScrolled = null;
 let lastHeaderTheme = null;
@@ -488,12 +483,6 @@ function updateScrollState() {
     lastSiteProgress = pageProgress;
   }
 
-  const sitePercent = Math.round(pageProgress * 100);
-  if (siteProgressPercent && sitePercent !== lastSitePercent) {
-    siteProgressPercent.textContent = `${String(sitePercent).padStart(3, "0")}%`;
-    lastSitePercent = sitePercent;
-  }
-
   const sectionProbe = scrollY + viewportHeight * .38;
   let activeSection = 0;
   for (let i = 0; i < progressSectionOffsets.length; i += 1) {
@@ -505,10 +494,6 @@ function updateScrollState() {
     const section = progressSections[activeSection];
     if (siteProgressSection) {
       siteProgressSection.textContent = progressLabels[section?.id] || "PROGRES";
-    }
-    if (siteProgressIndex) {
-      siteProgressIndex.textContent =
-        `${String(activeSection + 1).padStart(2, "0")}/${String(progressSections.length).padStart(2, "0")}`;
     }
     lastSiteSection = activeSection;
   }
