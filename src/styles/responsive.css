@@ -4423,3 +4423,66 @@ main > section {
     border-color: rgba(242,182,0,.42);
   }
 }
+
+
+/* V61 — split-direction hero title entrance. */
+.hero h1 > span,
+.hero h1 > em {
+  opacity: 0;
+  filter: blur(9px);
+  will-change: transform, opacity, filter;
+  transition:
+    transform 1.12s cubic-bezier(.16,.82,.18,1),
+    opacity .62s ease,
+    filter .76s ease;
+}
+
+.hero h1 > span {
+  transform: translate3d(clamp(-240px, -16vw, -120px), 0, 0) scale(.985);
+}
+
+.hero h1 > em {
+  transform: translate3d(clamp(120px, 16vw, 240px), 0, 0) scale(.985);
+}
+
+.site-entered .hero h1 > span,
+.site-entered .hero h1 > em {
+  opacity: 1;
+  filter: blur(0);
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+.site-entered .hero h1 > span {
+  transition-delay: .08s;
+}
+
+.site-entered .hero h1 > em {
+  transition-delay: .18s;
+}
+
+@media (max-width: 760px) {
+  .hero h1 > span {
+    transform: translate3d(-72px, 0, 0) scale(.99);
+  }
+
+  .hero h1 > em {
+    transform: translate3d(72px, 0, 0) scale(.99);
+  }
+
+  .site-entered .hero h1 > span,
+  .site-entered .hero h1 > em {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero h1 > span,
+  .hero h1 > em,
+  .site-entered .hero h1 > span,
+  .site-entered .hero h1 > em {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
