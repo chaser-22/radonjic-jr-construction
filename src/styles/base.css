@@ -13,7 +13,7 @@
   --ease: cubic-bezier(.2,.72,.18,1);
   --shell: min(1380px, calc(100vw - 9vw));
   --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --sans: "Manrope", "Helvetica Neue", Arial, sans-serif;
+  --sans: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
 }
 
 * { box-sizing: border-box; }
