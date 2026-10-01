@@ -255,15 +255,7 @@ app.innerHTML = `
           </div>
         </div>
 
-        <div class="service-stage" aria-hidden="true">
-          <figure class="service-reference ${services[0]?.image ? "has-image" : ""}" data-service-reference>
-            <img class="service-reference-image" data-service-photo src="${services[0]?.image || ""}" alt="" loading="lazy" decoding="async" />
-            <figcaption>
-              <span data-active-service-code>${services[0]?.code || ""}</span>
-              <strong data-active-service-title>${services[0]?.title || ""}</strong>
-            </figcaption>
-          </figure>
-        </div>
+        <div class="service-stage" aria-hidden="true"></div>
       </div>
     </section>
 
@@ -585,54 +577,9 @@ const revealObserver = new IntersectionObserver((entries) => {
 document.querySelectorAll(".reveal").forEach((element) => revealObserver.observe(element));
 
 const serviceButtons = [...document.querySelectorAll(".service-row")];
-const serviceTitle = document.querySelector("[data-active-service-title]");
-const serviceCode = document.querySelector("[data-active-service-code]");
-const serviceReference = document.querySelector("[data-service-reference]");
-const servicePhoto = document.querySelector("[data-service-photo]");
-const serviceByKey = new Map(services.map((service) => [service.key, service]));
 let activeServiceButton = serviceButtons.find((button) => button.classList.contains("is-active")) || null;
-let servicePhotoSwapTimer = 0;
-let servicePhotosPreloaded = false;
-
-function preloadServicePhotos() {
-  if (servicePhotosPreloaded) return;
-  servicePhotosPreloaded = true;
-
-  const seen = new Set();
-  services.forEach((service) => {
-    if (!service.image || seen.has(service.image)) return;
-    seen.add(service.image);
-    const image = new Image();
-    image.decoding = "async";
-    image.src = service.image;
-  });
-}
-
-function updateServiceReference(serviceKey) {
-  const service = serviceByKey.get(serviceKey);
-  if (!serviceReference || !servicePhoto || !service) return;
-
-  if (serviceTitle) serviceTitle.textContent = service.title.toUpperCase();
-  if (serviceCode) serviceCode.textContent = service.code;
-
-  window.clearTimeout(servicePhotoSwapTimer);
-  serviceReference.classList.add("is-changing");
-
-  servicePhotoSwapTimer = window.setTimeout(() => {
-    if (service.image) {
-      servicePhoto.src = service.image;
-      serviceReference.classList.add("has-image");
-    } else {
-      serviceReference.classList.remove("has-image");
-    }
-
-    requestAnimationFrame(() => serviceReference.classList.remove("is-changing"));
-  }, 130);
-}
 
 function activateService(button) {
-  updateServiceReference(button.dataset.service);
-
   if (button === activeServiceButton) {
     houseScene?.setService(button.dataset.service);
     return;
@@ -660,16 +607,9 @@ serviceButtons.forEach((button) => {
 const servicesSection = document.querySelector("#usluge");
 const serviceSectionObserver = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
-    if (!entry.isIntersecting) {
-      houseScene?.clearService();
-      return;
-    }
-
-    preloadServicePhotos();
-
-    if (serviceButtons[0] && !serviceButtons.includes(document.activeElement)) {
+    if (!entry.isIntersecting) houseScene?.clearService();
+    else if (serviceButtons[0] && !serviceButtons.includes(document.activeElement)) {
       const active = activeServiceButton || serviceButtons[0];
-      updateServiceReference(active.dataset.service);
       houseScene?.setService(active.dataset.service);
     }
   });
