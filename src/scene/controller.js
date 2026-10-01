@@ -19,7 +19,7 @@ function chooseQuality() {
     return {
       name: "phone",
       constrained: phoneConstrained,
-      dpr: phoneConstrained ? 1.5 : 2.0,
+      dpr: phoneConstrained ? 1.4 : 1.75,
       textureSize: phoneConstrained ? 192 : 256,
       shadows: false,
       shadowSize: 0,
@@ -716,10 +716,11 @@ export function createHouseScene(layer, canvas) {
   layer.dataset.threeState = "ready";
   layer.dataset.threeQuality = quality.name;
 
+  const phoneLayout = currentLayout() === "phone";
   window.addEventListener("resize", scheduleResize, { passive: true });
-  window.visualViewport?.addEventListener("resize", scheduleResize, { passive: true });
+  if (!phoneLayout) window.visualViewport?.addEventListener("resize", scheduleResize, { passive: true });
   window.addEventListener("orientationchange", scheduleResize, { passive: true });
-  window.addEventListener("pointermove", pointer, { passive: true });
+  if (!phoneLayout && !reduced) window.addEventListener("pointermove", pointer, { passive: true });
   canvas.addEventListener("webglcontextlost", onContextLost);
   canvas.addEventListener("webglcontextrestored", onContextRestored);
   document.addEventListener("visibilitychange", onVisibility);
