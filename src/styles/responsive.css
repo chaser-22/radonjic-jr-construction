@@ -5140,3 +5140,23 @@ main > section {
     line-height: 1.58;
   }
 }
+
+
+/* V74 — enlarge services intro copy. */
+.services-head > p:last-child {
+  font-size: 17px;
+  line-height: 1.66;
+}
+
+@media (min-width: 761px) and (max-width: 900px) {
+  .services-head > p:last-child {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 760px) {
+  .services-head > p:last-child {
+    font-size: 15.5px;
+    line-height: 1.64;
+  }
+}
