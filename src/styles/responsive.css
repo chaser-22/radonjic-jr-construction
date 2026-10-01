@@ -4689,3 +4689,69 @@ main > section {
     color: #343731;
   }
 }
+
+
+/* V65 — localize services readability fade to text only. */
+/* Remove the old full-width dimming surface behind the services heading. */
+.services-head::before {
+  display: none !important;
+}
+
+.services-head {
+  isolation: visible;
+}
+
+.services-head h2,
+.services-head > p:last-child {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+}
+
+.services-head h2 {
+  width: max-content;
+  max-width: 100%;
+}
+
+.services-head h2::before,
+.services-head > p:last-child::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.services-head h2::before {
+  inset: -16px -30px -18px -24px;
+  background: radial-gradient(
+    ellipse at 42% 50%,
+    rgba(16,17,15,.86) 0%,
+    rgba(16,17,15,.64) 58%,
+    rgba(16,17,15,.22) 82%,
+    rgba(16,17,15,0) 100%
+  );
+}
+
+.services-head > p:last-child::before {
+  inset: -10px -20px -12px -16px;
+  background: radial-gradient(
+    ellipse at 36% 50%,
+    rgba(16,17,15,.78) 0%,
+    rgba(16,17,15,.54) 62%,
+    rgba(16,17,15,0) 100%
+  );
+}
+
+@media (max-width: 760px) {
+  .services-head h2 {
+    width: auto;
+  }
+
+  .services-head h2::before {
+    inset: -12px -16px -14px -12px;
+  }
+
+  .services-head > p:last-child::before {
+    inset: -8px -12px -10px -10px;
+  }
+}
