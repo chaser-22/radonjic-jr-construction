@@ -317,43 +317,6 @@ export function addFinish(ctx, xs, zs) {
     })
   );
 
-  const crane=new THREE.Group();
-  ctx.groups.temporary.add(crane);
-
-  const yellow=m.yellow.clone();
-  const dark=m.dark.clone();
-  yellow.transparent=dark.transparent=true;
-
-  const mast=new THREE.Mesh(new THREE.BoxGeometry(1,1,1),yellow);
-  mast.scale.set(.22,7.2,.22);
-  mast.position.y=3.6;
-  crane.add(mast);
-
-  const pivot=new THREE.Group();
-  pivot.position.y=7.15;
-  crane.add(pivot);
-
-  const jib=new THREE.Mesh(new THREE.BoxGeometry(1,1,1),yellow);
-  jib.scale.set(5.8,.14,.14);
-  jib.position.x=2.05;
-  pivot.add(jib);
-
-  const counterJib=new THREE.Mesh(new THREE.BoxGeometry(1,1,1),yellow);
-  counterJib.scale.set(2.05,.15,.15);
-  counterJib.position.x=-1.05;
-  pivot.add(counterJib);
-
-  const counter=new THREE.Mesh(new THREE.BoxGeometry(1,1,1),dark);
-  counter.scale.set(.7,.48,.52);
-  counter.position.x=-2;
-  pivot.add(counter);
-
-  const hook=new THREE.Mesh(new THREE.BoxGeometry(1,1,1),dark);
-  hook.scale.set(.025,2.2,.025);
-  hook.position.set(3.15,-1.1,0);
-  pivot.add(hook);
-
-  crane.position.set(-5.1,-1.72,-1.4);
 
   if (ctx.quality.shadows) {
     const shadow=new THREE.Mesh(
@@ -427,10 +390,6 @@ export function addFinish(ctx, xs, zs) {
   ghostBox([.20,.16,ROOF.depth+.10],[0,ROOF.ridgeY+.055,0],accent);
 
   return {
-    crane,
-    pivot,
-    yellow,
-    dark,
     grid,
     ghostMat,
     accent,
