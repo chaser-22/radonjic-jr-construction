@@ -4698,7 +4698,7 @@ main > section {
 }
 
 .services-head {
-  isolation: visible;
+  isolation: auto;
 }
 
 .services-head h2,
