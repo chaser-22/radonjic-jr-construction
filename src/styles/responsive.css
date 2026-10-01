@@ -4826,3 +4826,11 @@ main > section {
     letter-spacing: -.030em !important;
   }
 }
+
+
+/* V68 — give hero copy more clearance from 3D house. */
+@media (min-width: 761px) {
+  .hero-content {
+    left: max(24px, 3.5vw);
+  }
+}
