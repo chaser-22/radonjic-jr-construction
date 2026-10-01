@@ -4771,3 +4771,58 @@ main > section {
     padding-top: .08em;
   }
 }
+
+
+/* V67 — Instrument Sans optical tuning. */
+.hero h1,
+.section-heading h2,
+.work-intro h2,
+.services-head h2,
+.process-head h2,
+.values-layout h2,
+.contact h2,
+.section-manifesto,
+.process-manifesto,
+.values-manifesto {
+  font-weight: 700;
+}
+
+.hero h1 {
+  letter-spacing: -.042em;
+}
+
+.section-manifesto {
+  letter-spacing: -.038em !important;
+}
+
+.process-manifesto {
+  letter-spacing: -.040em !important;
+}
+
+.values-manifesto {
+  letter-spacing: -.040em !important;
+}
+
+.services-head h2,
+.contact h2 {
+  letter-spacing: -.035em;
+}
+
+.about-copy .lede,
+.project-copy h3,
+.phase-list h3,
+.service-row strong {
+  letter-spacing: -.018em;
+}
+
+@media (max-width: 760px) {
+  .hero h1 {
+    letter-spacing: -.035em;
+  }
+
+  .section-manifesto,
+  .process-manifesto,
+  .values-manifesto {
+    letter-spacing: -.030em !important;
+  }
+}
