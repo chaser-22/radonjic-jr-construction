@@ -4834,3 +4834,23 @@ main > section {
     left: max(24px, 3.5vw);
   }
 }
+
+
+/* V70 — align portfolio readability panel to image edge. */
+@media (min-width: 901px) {
+  .work .project-copy::before {
+    inset: -30px -52px -30px 0;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 900px) {
+  .work .project-copy::before {
+    inset: -24px -28px -26px 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .work .project-copy::before {
+    inset: -18px -14px -20px 0;
+  }
+}
