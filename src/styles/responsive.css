@@ -5086,3 +5086,57 @@ main > section {
     gap: 6px;
   }
 }
+
+
+/* V73 — strengthen process-step typography. */
+.process-grid article > span {
+  font-size: 11.5px;
+  letter-spacing: .05em;
+}
+
+.process-grid h3 {
+  margin-top: 60px;
+  font-size: clamp(21px, 1.45vw, 24px);
+  line-height: 1.2;
+  letter-spacing: -.012em;
+}
+
+.process-grid p {
+  margin-top: 12px;
+  max-width: 27ch;
+  font-size: clamp(14px, .95vw, 15.5px);
+  line-height: 1.62;
+}
+
+@media (min-width: 761px) and (max-width: 1180px) {
+  .process-grid article > span {
+    font-size: 10.5px;
+  }
+
+  .process-grid h3 {
+    margin-top: 48px;
+    font-size: 20px;
+  }
+
+  .process-grid p {
+    margin-top: 10px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 760px) {
+  .process-grid article > span {
+    font-size: 10.5px;
+  }
+
+  .process-grid h3 {
+    margin-top: 8px;
+    font-size: 20px;
+  }
+
+  .process-grid p {
+    margin-top: 8px;
+    font-size: 14.5px;
+    line-height: 1.58;
+  }
+}
