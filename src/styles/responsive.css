@@ -5160,3 +5160,58 @@ main > section {
     line-height: 1.64;
   }
 }
+
+
+/* V75 — simplify persistent progress copy. */
+.site-progress-copy {
+  padding-top: 40px;
+  gap: 0;
+}
+
+.site-progress-status {
+  display: grid !important;
+  justify-items: end;
+  gap: 7px !important;
+  opacity: 1 !important;
+}
+
+.site-progress-status b,
+.site-progress-status i {
+  font-style: normal;
+}
+
+.site-progress-status b {
+  color: var(--yellow);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .16em;
+}
+
+.site-progress-status i {
+  max-width: 84px;
+  color: currentColor !important;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1.16;
+  letter-spacing: .08em;
+  text-align: right;
+}
+
+@media (max-width: 760px) {
+  .site-progress-copy {
+    padding-top: 34px;
+  }
+
+  .site-progress-status {
+    gap: 6px !important;
+  }
+
+  .site-progress-status b {
+    font-size: 7.5px;
+  }
+
+  .site-progress-status i {
+    max-width: 58px;
+    font-size: 8px;
+  }
+}
