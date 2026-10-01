@@ -580,12 +580,6 @@ export function createHouseScene(layer, canvas) {
       extra.roofTiles.visible = tileOpacity > .002;
       updateRoofInstances(state.build);
 
-      const craneAlpha = smooth(.10,.20,state.build) * (1 - smooth(.70,.82,state.build));
-      extra.crane.visible = state.section === "hero" && craneAlpha > .01;
-      extra.yellow.opacity = craneAlpha;
-      extra.dark.opacity = craneAlpha;
-      extra.pivot.rotation.y = -.42 + smooth(.15,.76,state.build) * .92;
-
       lastModelBuild = state.build;
       lastModelXray = state.xray;
       lastModelDemolition = state.demolition;
