@@ -4755,3 +4755,19 @@ main > section {
     inset: -8px -12px -10px -10px;
   }
 }
+
+
+/* V66 — preserve process-title diacritics. */
+.process-head {
+  overflow: visible;
+}
+
+.process-manifesto {
+  padding-top: .10em;
+}
+
+@media (max-width: 760px) {
+  .process-manifesto {
+    padding-top: .08em;
+  }
+}
