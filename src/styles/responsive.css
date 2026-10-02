@@ -5405,3 +5405,37 @@ main > section {
     transform: none;
   }
 }
+
+
+/* V74 — photographic RJC brand lockup in the fixed header. */
+.brand {
+  padding: 4px 6px;
+  gap: 0;
+  overflow: hidden;
+  background: rgba(8,9,8,.78);
+}
+.brand-logo-image {
+  display: block;
+  width: clamp(142px, 12.8vw, 190px);
+  height: 62px;
+  object-fit: cover;
+  object-position: center;
+  border: 0;
+}
+.site-header[data-header-theme="light"] .brand {
+  background: rgba(8,9,8,.90);
+  border-color: rgba(20,21,18,.14);
+}
+@media (max-width: 1180px) {
+  .brand-logo-image { width: 150px; height: 54px; }
+}
+@media (max-width: 760px) {
+  .brand { padding: 3px 5px; }
+  .brand-logo-image { width: 132px; height: 48px; }
+}
+@media (max-width: 430px) {
+  .brand-logo-image { width: 118px; height: 44px; }
+}
+@media (max-width: 360px) {
+  .brand-logo-image { width: 108px; height: 40px; }
+}
