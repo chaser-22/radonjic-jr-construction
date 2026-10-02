@@ -111,18 +111,7 @@ app.innerHTML = `
 
   <header class="site-header" data-header-theme="dark">
     <a class="brand" href="#top" aria-label="Radonjic JR Construction — početna">
-      <svg class="brand-logo-mark" viewBox="0 0 1004 660" aria-hidden="true" focusable="false">
-        <polygon class="brand-logo-ink" points="8,252 8,513 107,513 108,328 282,494 429,494 195,252"/>
-        <polygon class="brand-logo-ink" points="604,251 604,513 692,513 694,329 873,513 1004,513 758,252"/>
-        <polygon class="brand-logo-ink" points="577,194 468,274 468,525 314,527 445,660 577,536"/>
-        <polygon class="brand-logo-ink" points="0,121 94,213 317,213 340,234 338,353 356,371 431,305 431,199 356,121"/>
-        <polygon class="brand-logo-ink" points="599,121 601,134 678,213 866,216 893,244 893,350 921,377 994,315 994,229 887,121"/>
-        <polygon class="brand-logo-accent" points="578,0 465,82 465,244 578,162"/>
-      </svg>
-      <span class="brand-copy">
-        <strong>RADONJIC JR</strong>
-        <span>CONSTRUCTION</span>
-      </span>
+      <img class="brand-logo-image" src="/5ba0da87-a3c3-417b-b3fe-469faa0a0071.png" alt="Radonjic Junior Construction" />
     </a>
 
     <nav class="desktop-nav" aria-label="Glavna navigacija">
