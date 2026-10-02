@@ -5439,3 +5439,179 @@ main > section {
 @media (max-width: 360px) {
   .brand-logo-image { width: 108px; height: 40px; }
 }
+
+
+/* V77 — phone layout repair after header artwork swap. */
+@media (max-width: 760px) {
+  :root { --shell: calc(100vw - 32px); }
+
+  .site-header {
+    padding-inline: max(12px, env(safe-area-inset-left)) max(12px, env(safe-area-inset-right));
+  }
+  .brand {
+    width: auto;
+    max-width: 168px;
+    min-height: 46px;
+    padding: 2px 4px;
+    overflow: hidden;
+  }
+  .brand-logo-image {
+    width: 156px;
+    height: 44px;
+    object-fit: contain;
+    object-position: left center;
+  }
+
+  .shell,
+  .about-layout,
+  .structure-layout,
+  .work-intro,
+  .project,
+  .services-head,
+  .services-layout,
+  .values-layout,
+  .process-head,
+  .process-grid,
+  .contact-layout {
+    width: var(--shell);
+    max-width: var(--shell);
+    margin-inline: auto;
+  }
+
+  .about-layout,
+  .structure-layout,
+  .work-intro,
+  .values-layout,
+  .contact-layout,
+  .services-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .about-layout > *,
+  .structure-layout > *,
+  .work-intro > *,
+  .values-layout > *,
+  .contact-layout > *,
+  .services-layout > *,
+  .contact-copy,
+  .contact-panel {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  p, h1, h2, h3,
+  .section-description,
+  .about-copy p,
+  .contact-copy p,
+  .services-head p {
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  .section-manifesto,
+  .process-manifesto,
+  .values-manifesto,
+  .services-head h2,
+  .contact h2 {
+    width: 100%;
+    max-width: 100%;
+    font-size: clamp(42px, 11.4vw, 62px) !important;
+    line-height: .94 !important;
+  }
+  .section-manifesto-line { max-width: 100%; }
+
+  .about-copy .lede {
+    max-width: 100%;
+    font-size: clamp(22px, 6vw, 29px);
+    line-height: 1.24;
+  }
+  .about-copy > p:not(.lede),
+  .section-description,
+  .contact-copy > p:last-child {
+    max-width: 34ch;
+    font-size: 16px;
+    line-height: 1.58;
+  }
+
+  .structure-layout {
+    grid-template-areas: "heading" "stage" "phases";
+    gap: 24px;
+  }
+  .stage-spacer {
+    height: clamp(250px, 36svh, 340px);
+    min-height: 250px;
+  }
+
+  .process-grid article,
+  .process-grid article:nth-child(2),
+  .process-grid article:nth-child(-n+2) {
+    width: 100%;
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
+  .process-grid h3,
+  .process-grid p { width: auto; }
+
+  .contact {
+    overflow: hidden;
+    padding-bottom: calc(154px + env(safe-area-inset-bottom));
+  }
+  .contact-panel { justify-self: stretch; }
+  .phone-link { font-size: clamp(24px, 8vw, 34px); }
+
+  .mobile-contact {
+    left: max(10px, env(safe-area-inset-left));
+    right: max(10px, env(safe-area-inset-right));
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    width: auto;
+    max-width: none;
+  }
+
+  .site-progress {
+    top: calc(150px + env(safe-area-inset-top));
+    right: max(3px, env(safe-area-inset-right));
+    bottom: calc(112px + env(safe-area-inset-bottom));
+    width: 26px;
+    grid-template-columns: minmax(0, 1fr) 2px;
+    gap: 4px;
+    opacity: .82;
+  }
+  .site-progress-copy {
+    padding-top: 18px;
+  }
+  .site-progress-status,
+  .site-progress-copy > span,
+  .site-progress-copy > strong,
+  .site-progress-copy > em {
+    display: none !important;
+  }
+  .site-progress-fill { width: 2px; }
+  .site-progress-marker { width: 6px; height: 6px; }
+
+  .hero-content {
+    left: 16px;
+    right: 42px;
+    width: auto;
+    max-width: none;
+  }
+  .hero h1 { font-size: clamp(48px, 14.5vw, 68px); }
+
+  .house-layer { inset: 0; }
+}
+
+@media (max-width: 430px) {
+  .brand { max-width: 150px; }
+  .brand-logo-image { width: 140px; height: 42px; }
+  .section-manifesto,
+  .process-manifesto,
+  .values-manifesto,
+  .services-head h2,
+  .contact h2 { font-size: clamp(39px, 11.2vw, 52px) !important; }
+}
+
+@media (max-width: 360px) {
+  :root { --shell: calc(100vw - 26px); }
+  .brand { max-width: 134px; }
+  .brand-logo-image { width: 126px; height: 38px; }
+  .mobile-contact { left: 7px; right: 7px; }
+}
