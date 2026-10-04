@@ -5853,3 +5853,56 @@ main > section {
     letter-spacing: .055em;
   }
 }
+
+
+/* V81 — compact marker label directly beside the scrolling dot. */
+.site-progress-marker {
+  width: 9px !important;
+  height: 9px !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: var(--yellow) !important;
+  box-shadow: 0 0 0 3px rgba(242,182,0,.08), 0 0 12px rgba(242,182,0,.22) !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+.site-progress-marker::before {
+  display: none !important;
+}
+
+.site-progress-marker > i {
+  top: 50% !important;
+  right: calc(100% + 10px) !important;
+  width: max-content !important;
+  max-width: none !important;
+  transform: translateY(-50%) !important;
+  color: currentColor !important;
+  font-family: var(--mono) !important;
+  font-size: 8px !important;
+  font-style: normal !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  letter-spacing: .08em !important;
+  text-align: right !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+  text-shadow: 0 1px 8px rgba(0,0,0,.30) !important;
+}
+
+.site-progress[data-theme="light"] .site-progress-marker {
+  background: #d99e00 !important;
+  box-shadow: 0 0 0 3px rgba(217,158,0,.08), 0 0 10px rgba(217,158,0,.16) !important;
+}
+
+@media (max-width: 760px) {
+  .site-progress-marker {
+    width: 8px !important;
+    height: 8px !important;
+  }
+
+  .site-progress-marker > i {
+    right: calc(100% + 8px) !important;
+    font-size: 7px !important;
+    letter-spacing: .055em !important;
+  }
+}
