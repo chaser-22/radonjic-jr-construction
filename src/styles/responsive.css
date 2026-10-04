@@ -5857,3 +5857,11 @@ main > section {
     margin-right: auto !important;
   }
 }
+
+
+/* V88 — mobile logo belongs to the top of the page, not the scrolling viewport. */
+@media (max-width: 760px) {
+  .site-header {
+    position: absolute !important;
+  }
+}
