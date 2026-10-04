@@ -5906,3 +5906,32 @@ main > section {
     letter-spacing: .055em !important;
   }
 }
+
+
+/* V82 — keep the moving progress label readable over every section/background. */
+.site-progress-marker > i {
+  padding: 5px 7px 5px 8px !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  border-radius: 999px !important;
+  background: rgba(9,10,9,.82) !important;
+  color: #f6f4ee !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,.22) !important;
+  -webkit-backdrop-filter: blur(8px) saturate(120%) !important;
+  backdrop-filter: blur(8px) saturate(120%) !important;
+  text-shadow: none !important;
+}
+
+.site-progress[data-theme="light"] .site-progress-marker > i {
+  border-color: rgba(20,21,18,.13) !important;
+  background: rgba(243,240,232,.92) !important;
+  color: #151713 !important;
+  box-shadow: 0 4px 14px rgba(20,21,18,.10) !important;
+}
+
+@media (max-width: 760px) {
+  .site-progress-marker > i {
+    padding: 4px 6px 4px 7px !important;
+    -webkit-backdrop-filter: blur(6px) saturate(115%) !important;
+    backdrop-filter: blur(6px) saturate(115%) !important;
+  }
+}
