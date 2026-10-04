@@ -135,7 +135,6 @@ app.innerHTML = `
         </div>
       </div>
 
-      <div class="scroll-cue" aria-hidden="true"><span>SCROLL</span><i></i></div>
     </section>
 
     <section class="about light-section" id="o-nama" data-house-section="about" data-header="light">
