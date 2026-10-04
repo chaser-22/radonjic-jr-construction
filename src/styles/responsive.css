@@ -5615,3 +5615,122 @@ main > section {
   .brand-logo-image { width: 126px; height: 38px; }
   .mobile-contact { left: 7px; right: 7px; }
 }
+
+
+/* V78 — iPhone hardening: prevent narrow-column collapse and keep fixed UI out of content. */
+@media (max-width: 760px) {
+  html, body, #app, main { width: 100%; min-width: 100%; max-width: 100%; }
+  main > section { width: 100%; max-width: 100vw; overflow-x: clip; }
+
+  .shell {
+    box-sizing: border-box;
+    width: calc(100% - 32px) !important;
+    max-width: calc(100% - 32px) !important;
+    min-width: 0 !important;
+    margin-left: 16px !important;
+    margin-right: 16px !important;
+  }
+
+  .about-layout, .structure-layout, .work-intro, .project,
+  .services-head, .services-layout, .values-layout,
+  .process-head, .process-grid, .contact-layout {
+    width: calc(100% - 32px) !important;
+    max-width: calc(100% - 32px) !important;
+    min-width: 0 !important;
+    margin-left: 16px !important;
+    margin-right: 16px !important;
+  }
+
+  .about-layout > *, .structure-layout > *, .work-intro > *,
+  .project > *, .services-head > *, .services-layout > *,
+  .values-layout > *, .process-head > *, .process-grid > *,
+  .contact-layout > * {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .about-copy, .contact-copy, .contact-panel,
+  .section-heading, .phase-list, .service-picker {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .about-copy p, .contact-copy p, .section-description,
+  .services-head p, .phase-list p, .process-grid p,
+  .project-copy span, .service-row p {
+    width: auto !important;
+    max-width: 100% !important;
+    white-space: normal !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+  }
+
+  .site-progress {
+    top: calc(160px + env(safe-area-inset-top)) !important;
+    right: max(7px, env(safe-area-inset-right)) !important;
+    bottom: calc(104px + env(safe-area-inset-bottom)) !important;
+    width: 8px !important;
+    display: block !important;
+    pointer-events: none;
+  }
+  .site-progress-copy { display: none !important; }
+  .site-progress-rail { width: 2px !important; margin-left: auto; }
+  .site-progress-marker { width: 8px !important; height: 8px !important; left: 50% !important; }
+
+  .brand {
+    width: 86px !important;
+    max-width: 86px !important;
+    min-width: 86px !important;
+    min-height: 52px !important;
+    padding: 2px !important;
+    border-radius: 12px;
+  }
+  .brand-logo-image {
+    width: 82px !important;
+    height: 48px !important;
+    object-fit: contain !important;
+    object-position: center !important;
+  }
+
+  .site-header {
+    grid-template-columns: auto 1fr !important;
+  }
+
+  .mobile-contact {
+    z-index: 190;
+    bottom: calc(10px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .contact { padding-bottom: calc(170px + env(safe-area-inset-bottom)) !important; }
+
+  .section-manifesto-line,
+  .process-line,
+  .values-line {
+    white-space: normal !important;
+    max-width: 100% !important;
+  }
+
+  .structure-manifesto-accent {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: space-between;
+    gap: .08em .18em;
+  }
+}
+
+@media (max-width: 390px) {
+  .shell,
+  .about-layout, .structure-layout, .work-intro, .project,
+  .services-head, .services-layout, .values-layout,
+  .process-head, .process-grid, .contact-layout {
+    width: calc(100% - 24px) !important;
+    max-width: calc(100% - 24px) !important;
+    margin-left: 12px !important;
+    margin-right: 12px !important;
+  }
+
+  .section-manifesto, .process-manifesto, .values-manifesto,
+  .services-head h2, .contact h2 {
+    font-size: clamp(36px, 10.7vw, 46px) !important;
+  }
+}
