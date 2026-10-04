@@ -12,6 +12,8 @@ const downIcon = `<svg class="ui-arrow ui-arrow-down" viewBox="0 0 20 20" aria-h
 const app = document.querySelector("#app");
 const isPhoneViewport = window.matchMedia("(max-width: 760px)").matches;
 const siteLoader = document.querySelector("#site-loader");
+const loaderQaMode = new URLSearchParams(window.location.search).get("loader-qa") === "1";
+if (loaderQaMode) clearTimeout(window.__RJ_LOADER_TIMEOUT__);
 const loaderValue = document.querySelector("[data-loader-value]");
 const loaderPhase = document.querySelector("[data-loader-phase]");
 const LOADER_DURATION = 4000;
@@ -54,6 +56,10 @@ function setLoader(progress) {
 
 function updateLoaderClock(now = performance.now()) {
   if (loaderFinished) return;
+  if (loaderQaMode) {
+    setLoader(96);
+    return;
+  }
   const elapsed = Math.max(0, now - loaderStartedAt);
   const ratio = Math.min(1, elapsed / LOADER_DURATION);
   setLoader(Math.min(99, ratio * 100));
@@ -89,6 +95,7 @@ function finishLoader() {
 }
 
 function finishLoaderAtFourSeconds() {
+  if (loaderQaMode) return;
   const remaining = Math.max(0, LOADER_DURATION - (performance.now() - loaderStartedAt));
   window.setTimeout(finishLoader, remaining);
 }
