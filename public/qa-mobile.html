@@ -38,7 +38,7 @@
  addEventListener('resize',fit); fit();
  let html=await fetch('/?qa-source='+Date.now(),{cache:'no-store'}).then(r=>r.text());
  html=html.replace('<head>','<head><base href="/">');
- html=html.replace('</head>','<style>html{scroll-behavior:auto!important}'+(motion?'*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}':'')+'</style></head>');
+ html=html.replace('</head>','<style>html{scroll-behavior:auto!important}'+(motion?'*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}.reveal{opacity:1!important;transform:none!important;transition:none!important}.manifesto-reveal,.values-line,.process-line,.section-manifesto-line{opacity:1!important;transform:none!important;filter:none!important}':'')+'</style></head>');
  if(loader){
    html=html.replace('<body>','<body><script>window.__RJ_LOADER_STARTED_AT__=performance.now()+1e9;<\/script>');
  }else{
