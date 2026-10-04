@@ -111,7 +111,7 @@ app.innerHTML = `
 
   <header class="site-header" data-header-theme="dark">
     <a class="brand" href="#top" aria-label="Radonjic JR Construction — početna">
-      <img class="brand-logo-image" src="/5ba0da87-a3c3-417b-b3fe-469faa0a0071.png" alt="Radonjic Junior Construction" />
+      <img class="brand-logo-image" src="/rjc-logo.png" alt="Radonjic Junior Construction" />
     </a>
 
     <nav class="desktop-nav" aria-label="Glavna navigacija">
