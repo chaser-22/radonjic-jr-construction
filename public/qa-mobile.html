@@ -39,7 +39,9 @@
  let html=await fetch('/?qa-source='+Date.now(),{cache:'no-store'}).then(r=>r.text());
  html=html.replace('<head>','<head><base href="/">');
  html=html.replace('</head>','<style>html{scroll-behavior:auto!important}'+(motion?'*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}':'')+'</style></head>');
- if(!loader){
+ if(loader){
+   html=html.replace('<body>','<body><script>window.__RJ_LOADER_STARTED_AT__=performance.now()+1e9;<\/script>');
+ }else{
    html=html.replace('<body>','<body><style>#site-loader{display:none!important}html.is-loading,html.is-loading body{overflow:auto!important}</style><script>window.__RJ_LOADER_STARTED_AT__=-1e9;document.documentElement.classList.remove("is-loading");document.documentElement.classList.add("site-ready","site-entered","site-settled");<\/script>');
  }
  frame.srcdoc=html;
