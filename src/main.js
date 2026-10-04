@@ -298,13 +298,13 @@ app.innerHTML = `
   </main>
 
   <div class="site-progress" data-theme="dark" aria-hidden="true">
-    <div class="site-progress-copy">
-      <em class="site-progress-status"><i data-site-progress-section>POČETAK</i></em>
-    </div>
+    <div class="site-progress-copy"></div>
     <div class="site-progress-rail">
       <span class="site-progress-track"></span>
       <span class="site-progress-fill" data-site-progress-fill></span>
-      <span class="site-progress-marker" data-site-progress-marker></span>
+      <span class="site-progress-marker" data-site-progress-marker>
+        <i data-site-progress-section>POČETAK</i>
+      </span>
     </div>
   </div>
 
