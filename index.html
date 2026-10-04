@@ -23,8 +23,8 @@
     #site-loader .loader-mark{position:relative;z-index:4;justify-self:center;width:min(560px,92vw);min-height:82px;padding:8px 32px 14px;display:grid;place-items:center;gap:5px;text-align:center;opacity:.99}
     #site-loader .loader-mark:before{content:"";position:absolute;left:50%;bottom:0;width:min(420px,78vw);height:1px;transform:translateX(-50%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.16) 20%,rgba(255,255,255,.16) 80%,transparent);pointer-events:none}
     #site-loader .loader-mark:after{content:"";position:absolute;left:50%;bottom:-1px;width:82px;height:3px;transform:translateX(-50%);background:#f2b600;box-shadow:0 0 20px rgba(242,182,0,.34)}
-    #site-loader .loader-mark strong{display:block;font-family:"Instrument Sans",Arial,sans-serif;font-size:38px;line-height:1;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#f7f5ef;text-shadow:0 8px 28px rgba(0,0,0,.24)}#site-loader .loader-brand-logo{display:block;width:118px;height:62px;object-fit:contain}
-    #site-loader .loader-mark span{display:block;margin-top:5px;font-family:"IBM Plex Mono",monospace;font-size:11px;line-height:1.2;font-weight:600;letter-spacing:.30em;text-transform:uppercase;color:#aeb2aa}
+    #site-loader .loader-mark strong{display:block;font-family:"Instrument Sans",Arial,sans-serif;font-size:34px;line-height:1.05;font-weight:800;letter-spacing:.055em;text-transform:uppercase;color:#f7f5ef;text-shadow:0 8px 28px rgba(0,0,0,.24);white-space:nowrap}#site-loader .loader-brand-logo{display:block;width:118px;height:62px;object-fit:contain}
+    #site-loader .loader-mark span{display:none}
     #site-loader .loader-build{position:relative;width:100%;height:100%;min-height:0;display:grid;place-items:center;overflow:hidden;margin-top:8px;margin-bottom:14px}
     #site-loader .loader-three{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity .24s ease}
     #site-loader.loader-three-ready .loader-three{opacity:1}
@@ -56,7 +56,7 @@
       #site-loader:before{background-size:auto,48px 48px,48px 48px}
       #site-loader .loader-core{width:100%;height:100dvh;min-height:100vh;padding:16px max(12px,env(safe-area-inset-right)) calc(14px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));gap:0}
       #site-loader .loader-mark{width:min(400px,96vw);min-height:66px;padding:6px 14px 11px}
-      #site-loader .loader-mark strong{font-size:27px;letter-spacing:.04em}
+      #site-loader .loader-mark strong{font-size:clamp(18px,5.7vw,27px);letter-spacing:.035em}
       #site-loader .loader-mark span{margin-top:4px;font-size:8.5px;letter-spacing:.22em}
       #site-loader .loader-mark:before{width:min(320px,80vw)}
       #site-loader .loader-mark:after{width:60px;height:3px}
@@ -69,7 +69,7 @@
     @media(orientation:landscape) and (max-height:560px){
       #site-loader .loader-core{gap:0;padding-top:10px;padding-bottom:10px}
       #site-loader .loader-mark{width:min(360px,76vw);min-height:48px;padding:3px 12px 8px}
-      #site-loader .loader-mark strong{font-size:22px}
+      #site-loader .loader-mark strong{font-size:clamp(17px,4.6vw,22px)}
       #site-loader .loader-mark span{font-size:7.5px}
       #site-loader .loader-build{height:100%;min-height:0;margin-top:2px;margin-bottom:6px}
       #site-loader .loader-house{width:min(69vw,532px);max-height:57vh}
@@ -86,7 +86,7 @@
   <div id="site-loader" aria-hidden="true" style="--loader-progress:0%">
     <div class="loader-core">
       <div class="loader-mark" aria-label="Radonjic JR Construction">
-        <strong>RADONJIC JR</strong>\n        <span>CONSTRUCTION</span>
+        <strong>RADONJIC JR CONSTRUCTION</strong>
       </div>
       <div class="loader-build" aria-hidden="true">
         <canvas class="loader-three" data-loader-three></canvas>
