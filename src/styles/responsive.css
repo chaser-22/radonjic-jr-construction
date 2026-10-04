@@ -5781,3 +5781,75 @@ main > section {
     height: 92px !important;
   }
 }
+
+
+/* V80 — section label travels with the progress marker. */
+.site-progress {
+  overflow: visible !important;
+}
+
+.site-progress-rail {
+  overflow: visible !important;
+}
+
+.site-progress-marker {
+  width: 11px !important;
+  height: 11px !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: translate(-50%, -50%) !important;
+  overflow: visible !important;
+}
+
+.site-progress-marker::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border: 1px solid var(--yellow);
+  background: #121310;
+  box-shadow:
+    0 0 0 3px rgba(242,182,0,.08),
+    0 0 15px rgba(242,182,0,.30);
+  transform: rotate(45deg);
+}
+
+.site-progress-marker > i {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 12px);
+  width: max-content;
+  max-width: 92px;
+  transform: translateY(-50%);
+  color: currentColor;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: .08em;
+  text-align: right;
+  text-transform: uppercase;
+  white-space: normal;
+  text-shadow: 0 1px 10px rgba(0,0,0,.30);
+  pointer-events: none;
+}
+
+.site-progress[data-theme="light"] .site-progress-marker::before {
+  background: #f2efe7;
+}
+
+@media (max-width: 760px) {
+  .site-progress-marker {
+    width: 9px !important;
+    height: 9px !important;
+  }
+
+  .site-progress-marker > i {
+    right: calc(100% + 9px);
+    max-width: 64px;
+    font-size: 7.5px;
+    line-height: 1.12;
+    letter-spacing: .055em;
+  }
+}
