@@ -30,8 +30,8 @@ export function createLoaderHouse(canvas) {
 
   // A slightly longer lens and a lower target keep the entire plinth in frame
   // while preserving the large-house feel on both desktop and phone.
-  const camera = new THREE.PerspectiveCamera(phone ? 38 : 35, 1, .1, 45);
-  camera.position.set(0, phone ? 1.98 : 2.08, phone ? 14.85 : 14.30);
+  const camera = new THREE.PerspectiveCamera(phone ? 40 : 35, 1, .1, 45);
+  camera.position.set(0, phone ? 1.98 : 2.08, phone ? 17.00 : 14.30);
 
   scene.add(new THREE.HemisphereLight(0xfff4df, 0x1a201e, 1.66));
 
@@ -434,7 +434,7 @@ export function createLoaderHouse(canvas) {
     world.rotation.y = -.70 + buildEase * .42 + Math.sin(now * .00046) * .018;
     world.rotation.x = -.018 + (1 - buildEase) * -.012;
     world.position.y = (phone ? -.25 : -.14) + (1 - smooth(0, .18, progress)) * .11;
-    world.scale.setScalar((phone ? .76 : .97) + smooth(.05, .72, progress) * (phone ? .048 : .057));
+    world.scale.setScalar((phone ? .68 : .97) + smooth(.05, .72, progress) * (phone ? .040 : .057));
 
     const glow = Math.sin(Math.PI * smooth(.58, 1, progress));
     rim.intensity = 1.12 + glow * 1.72;
@@ -444,7 +444,7 @@ export function createLoaderHouse(canvas) {
     // Keep the camera movement subtle and always frame the full foundation slab.
     camera.position.x = Math.sin(buildEase * .65) * .22;
     camera.position.y = (phone ? 1.98 : 2.08) + buildEase * .02;
-    camera.position.z = (phone ? 14.85 : 14.30) - buildEase * (phone ? .06 : .11);
+    camera.position.z = (phone ? 17.00 : 14.30) - buildEase * (phone ? .06 : .11);
     camera.lookAt(0, (phone ? .98 : 1.07) + finishEase * .02, .05);
 
     gridMaterials.forEach((material) => {
