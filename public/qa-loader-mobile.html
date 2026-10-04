@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RJC Loader Mobile QA</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:#171817;overflow:hidden}
+body{display:grid;place-items:center}
+#stage{width:390px;height:844px;transform-origin:center center}
+iframe{display:block;width:390px;height:844px;border:1px solid rgba(255,255,255,.16);background:#0d0e0c}
+@media(max-width:430px){#stage{transform:none}}
+</style>
+</head>
+<body>
+<div id="stage"><iframe src="/?loader-qa=mobile"></iframe></div>
+<script>
+function fit(){
+ const s=Math.min(1,(innerWidth-28)/390,(innerHeight-28)/844);
+ document.getElementById('stage').style.transform='scale('+s+')';
+}
+addEventListener('resize',fit);fit();
+</script>
+</body>
+</html>
