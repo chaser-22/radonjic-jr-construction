@@ -5766,7 +5766,7 @@ main > section {
 }
 
 
-/* V85 — targeted mobile polish for construction manifesto + process rows. */
+/* V86 — targeted mobile polish for construction manifesto + process rows. */
 @media (max-width: 760px) {
   /* Keep "IMA SVOJ RED." as one deliberate line instead of stretching RED. away. */
   .structure .structure-manifesto-accent {
