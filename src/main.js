@@ -300,7 +300,7 @@ app.innerHTML = `
 
   <div class="site-progress" data-theme="dark" aria-hidden="true">
     <div class="site-progress-copy">
-      <em class="site-progress-status"><b>PROGRES</b><i data-site-progress-section>POČETAK</i></em>
+      <em class="site-progress-status"><i data-site-progress-section>POČETAK</i></em>
     </div>
     <div class="site-progress-rail">
       <span class="site-progress-track"></span>
