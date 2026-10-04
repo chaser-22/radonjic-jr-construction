@@ -5764,3 +5764,81 @@ main > section {
     padding: 4px 6px;
   }
 }
+
+
+/* V85 — targeted mobile polish for construction manifesto + process rows. */
+@media (max-width: 760px) {
+  /* Keep "IMA SVOJ RED." as one deliberate line instead of stretching RED. away. */
+  .structure .structure-manifesto-accent {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    justify-content: center !important;
+    align-items: baseline;
+    gap: .18em !important;
+    padding-right: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  .structure .structure-manifesto-accent > span {
+    display: inline-block !important;
+    flex: 0 0 auto;
+  }
+
+  /* Give the heading a clean reading zone while the 3D house sits lower in the stage. */
+  .structure .section-heading {
+    z-index: 32;
+  }
+
+  .structure .section-heading::before {
+    inset: -20px -12px -26px !important;
+    background:
+      linear-gradient(180deg,
+        rgba(16,17,15,.99) 0%,
+        rgba(16,17,15,.96) 60%,
+        rgba(16,17,15,.82) 82%,
+        rgba(16,17,15,0) 100%) !important;
+  }
+
+  /* Every process step uses the exact same left edge and column geometry. */
+  .process-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .process-grid article,
+  .process-grid article:nth-child(2),
+  .process-grid article:nth-child(-n+2),
+  .process-grid article:nth-child(n+3) {
+    width: 100% !important;
+    margin: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    grid-template-columns: 42px minmax(0, 1fr) !important;
+    column-gap: 14px !important;
+  }
+
+  .process-grid article > span {
+    grid-column: 1 !important;
+    grid-row: 1 / 3 !important;
+    justify-self: start !important;
+    margin: 0 !important;
+    padding-left: 0 !important;
+  }
+
+  .process-grid article > h3,
+  .process-grid article > p {
+    grid-column: 2 !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    justify-self: stretch !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .process-grid article,
+  .process-grid article:nth-child(2),
+  .process-grid article:nth-child(-n+2),
+  .process-grid article:nth-child(n+3) {
+    grid-template-columns: 36px minmax(0, 1fr) !important;
+    column-gap: 12px !important;
+  }
+}
