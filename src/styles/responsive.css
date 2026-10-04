@@ -5842,3 +5842,18 @@ main > section {
     column-gap: 12px !important;
   }
 }
+
+
+/* V87 — center the RJC mark in the phone header. */
+@media (max-width: 760px) {
+  .site-header {
+    grid-template-columns: 1fr !important;
+    justify-items: center !important;
+  }
+
+  .site-header .brand {
+    justify-self: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
