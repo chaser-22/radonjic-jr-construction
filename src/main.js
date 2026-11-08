@@ -11,6 +11,7 @@ const arrowIcon = `<svg class="ui-arrow" viewBox="0 0 20 20" aria-hidden="true">
 const downIcon = `<svg class="ui-arrow ui-arrow-down" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4v11"/><path d="m6 11 4 4 4-4"/></svg>`;
 const app = document.querySelector("#app");
 const isPhoneViewport = window.matchMedia("(max-width: 760px)").matches;
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const siteLoader = document.querySelector("#site-loader");
 const loaderValue = document.querySelector("[data-loader-value]");
 const loaderPhase = document.querySelector("[data-loader-phase]");
@@ -32,7 +33,8 @@ const loaderPhases = [
 ];
 
 try {
-  loaderHouse3d = createLoaderHouse(document.querySelector("[data-loader-three]"));
+  // With reduced motion, the static SVG house from index.html stays in place.
+  if (!reducedMotion) loaderHouse3d = createLoaderHouse(document.querySelector("[data-loader-three]"));
   if (loaderHouse3d) siteLoader?.classList.add("loader-three-ready");
 } catch (error) {
   console.warn("3D loader unavailable; using SVG fallback.", error);
@@ -111,7 +113,7 @@ app.innerHTML = `
 
   <header class="site-header" data-header-theme="dark">
     <a class="brand" href="#top" aria-label="Radonjic JR Construction — početna">
-      <img class="brand-logo-image" src="/rjc-logo.png" alt="Radonjic Junior Construction" />
+      <img class="brand-logo-image" src="/rjc-logo.webp" alt="Radonjic Junior Construction" />
     </a>
 
     <nav class="desktop-nav" aria-label="Glavna navigacija">
@@ -187,30 +189,22 @@ app.innerHTML = `
 
       <div class="project-editorial shell">
         ${projects.map((project, index) => {
-          const isFixedAsset = project.provider === "local" || project.provider === "instagram";
-          const image = (width) => isFixedAsset
-            ? project.image
-            : project.provider === "unsplash"
-              ? `${project.image}?auto=format&fit=crop&q=82&w=${width}`
-              : `${project.image}?auto=compress&cs=tinysrgb&w=${width}`;
-          const responsiveAttrs = isFixedAsset
-            ? ""
-            : `srcset="${image(640)} 640w, ${image(960)} 960w, ${image(1400)} 1400w, ${image(2000)} 2000w"`;
-          const fallback = isFixedAsset
-            ? project.fallback
-            : `${project.fallback}?auto=compress&cs=tinysrgb&w=1200`;
+          // Landscape photos are cropped into taller frames, so on phones and desktop
+          // the rendered width follows the frame height rather than the column width.
+          const ratio = project.width / project.height;
+          const sizes = `(max-width: 760px) calc((100vw - 32px) * ${(ratio * 1.25).toFixed(2)}), (max-width: 900px) calc(100vw - 40px), calc((68vh + 48px) * ${ratio.toFixed(2)})`;
           return `
           <article class="project reveal">
             <div class="project-image">
               <img
-                src="${image(1200)}"
-                ${responsiveAttrs}
-                sizes="(max-width: 760px) calc(100vw - 28px), (max-width: 1180px) calc(100vw - 48px), 70vw"
-                data-fallback="${fallback}"
+                src="${project.image}"
+                srcset="${project.srcset}"
+                sizes="${sizes}"
+                data-fallback="${project.fallback}"
                 style="object-position:${project.position || "center"}"
                 alt="${project.title} — RADONJIC JR izvedeni radovi"
-                width="1200"
-                height="1500"
+                width="${project.width}"
+                height="${project.height}"
                 loading="${!isPhoneViewport && index === 0 ? "eager" : "lazy"}"
                 fetchpriority="${!isPhoneViewport && index === 0 ? "high" : "auto"}"
                 decoding="async"
@@ -238,7 +232,7 @@ app.innerHTML = `
       <div class="shell services-layout">
         <div class="service-picker reveal">
           <p class="service-tip"><span aria-hidden="true"></span>Odaberite radove</p>
-          <div class="service-list" role="list">
+          <div class="service-list">
           ${services.map((service, index) => `
             <button class="service-row ${index === 0 ? "is-active" : ""}" type="button" data-service="${service.key}" data-service-code="${service.code}" aria-pressed="${index === 0 ? "true" : "false"}">
               <span>${service.code}</span>
@@ -331,7 +325,6 @@ app.innerHTML = `
 `;
 
 const clamp01 = (value) => Math.max(0, Math.min(1, value));
-const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 
 const houseLayer = document.querySelector("[data-house-layer]");
@@ -391,7 +384,8 @@ document.querySelectorAll(".project-image img").forEach((image) => {
   }, { once: true });
   image.addEventListener("error", () => {
     const fallback = image.dataset.fallback;
-    if (fallback && image.src !== fallback) {
+    if (fallback && !image.dataset.fallbackTried) {
+      image.dataset.fallbackTried = "true";
       image.removeAttribute("srcset");
       image.src = fallback;
     } else {
@@ -477,6 +471,8 @@ function updateScrollState() {
     if (sectionProbe >= progressSectionOffsets[i]) activeSection = i;
     else break;
   }
+  // The last section can be too short to ever reach the probe line.
+  if (scrollY >= pageScrollRange - 2) activeSection = progressSections.length - 1;
 
   if (activeSection !== lastSiteSection) {
     const section = progressSections[activeSection];
@@ -540,7 +536,15 @@ if ("IntersectionObserver" in window) {
   for (let i = 0; i < projectElements.length; i += 1) visibleProjects.add(projectElements[i]);
 }
 
+let progressLabelTimer = 0;
+function showProgressLabel() {
+  siteProgress?.classList.add("is-scrolling");
+  clearTimeout(progressLabelTimer);
+  progressLabelTimer = window.setTimeout(() => siteProgress?.classList.remove("is-scrolling"), 900);
+}
+
 refreshScrollMetrics();
+window.addEventListener("scroll", showProgressLabel, { passive: true });
 window.addEventListener("scroll", requestScrollState, { passive: true });
 window.addEventListener("resize", requestMetricsRefresh, { passive: true });
 window.visualViewport?.addEventListener("resize", requestMetricsRefresh, { passive: true });

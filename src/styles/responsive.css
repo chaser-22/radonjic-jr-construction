@@ -5865,3 +5865,156 @@ main > section {
     position: absolute !important;
   }
 }
+
+
+/* V89 — corrections from the full site test pass. */
+/* Earlier layers set both scroll-padding and scroll-margin, and browsers add them together.
+   Sections carry their own top padding, so anchors land exactly on the section. */
+html {
+  scroll-padding-top: 0;
+}
+
+/* Decorative ::before panels extend past the shell; keep them from widening the page. */
+main > section {
+  scroll-margin-top: 0;
+  overflow-x: clip;
+}
+
+.service-row:focus-visible {
+  outline: 2px solid var(--yellow);
+  outline-offset: 2px;
+}
+
+/* The logo stays unboxed on desktop/tablet while scrolling too. */
+@media (min-width: 761px) {
+  .site-header .brand,
+  .site-header.is-scrolled .brand {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) and (min-width: 761px) {
+  .desktop-nav a {
+    min-width: 44px;
+    min-height: 44px;
+    justify-content: center;
+  }
+}
+
+/* Brand yellow is only 1.6:1 on the cream sections; this gold reaches 3.3:1. */
+.light-section .section-manifesto-accent {
+  color: #a87c00 !important;
+}
+
+
+/* V90 — text placement and readability pass. */
+/* Headings clear the fixed logo and menu when a section is opened from a link. */
+@media (min-width: 1181px) {
+  .about,
+  .structure,
+  .work,
+  .services,
+  .process {
+    padding-top: max(var(--section-space), 136px);
+  }
+}
+
+@media (min-width: 761px) and (max-width: 1180px) {
+  .about,
+  .structure,
+  .work,
+  .services,
+  .process {
+    padding-top: calc(var(--section-space) + 12px);
+  }
+
+  /* List beside the model, as on desktop, so both stay in view while choosing. */
+  .services-layout {
+    margin-top: 40px;
+    grid-template-columns: minmax(250px, .62fr) minmax(0, 1fr);
+    gap: 28px;
+  }
+
+  .service-stage {
+    order: initial;
+    position: sticky;
+    top: 96px;
+    height: min(62vh, 560px);
+    min-height: 0;
+  }
+
+  .service-row {
+    grid-template-columns: 30px minmax(0, 1fr) 20px;
+    padding-block: 14px;
+  }
+
+  .service-row p {
+    grid-column: 2 / 4;
+    margin-top: 4px;
+  }
+
+  .service-row i {
+    grid-column: 3;
+    grid-row: 1;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 560px) and (min-width: 761px) and (max-width: 900px) {
+  .about,
+  .structure,
+  .work,
+  .services,
+  .process {
+    padding-top: 78px;
+  }
+}
+
+/* In single-column layouts the phase list sits directly over the model. */
+@media (max-width: 900px) {
+  .phase-list {
+    isolation: isolate;
+  }
+
+  .phase-list::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -6px -10px;
+    border-radius: 14px;
+    background: rgba(16,17,15,.93);
+    pointer-events: none;
+  }
+}
+
+/* Minimum readable size for labels across every breakpoint. */
+.trust-row span,
+.project-copy > p,
+.project-image > span,
+.service-row > span,
+.service-tip,
+.quick-contact,
+.phase-list > article > span,
+.process-grid article > span {
+  font-size: 11px;
+}
+
+.hero-actions .button,
+.desktop-nav a {
+  font-size: 11px;
+}
+
+/* The section label appears while scrolling so it never rests on top of text. */
+@media (max-width: 1600px) {
+  .site-progress-marker > i {
+    opacity: 0;
+    transition: opacity .25s ease;
+  }
+
+  .site-progress.is-scrolling .site-progress-marker > i {
+    opacity: 1;
+  }
+}

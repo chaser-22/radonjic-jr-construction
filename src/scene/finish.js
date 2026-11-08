@@ -51,6 +51,71 @@ function addGable(ctx, group, z, depth, materialRef, start, end, kind) {
   return mesh;
 }
 
+const FENCE = {
+  halfX: 3.85,
+  halfZ: 2.85,
+  groundY: -1.68,
+  baysX: 5,
+  baysZ: 4,
+  gateBay: 2
+};
+
+// Concrete fence around the plot. It stands only while "Ograde" is selected,
+// so the finished house keeps its open silhouette everywhere else.
+function addConcreteFence(ctx) {
+  const { m } = ctx;
+  const { halfX, halfZ, groundY: y0, baysX, baysZ, gateBay } = FENCE;
+  const posts = new Map();
+  const shared = { tags: ["fence"], revealWith: "fence" };
+
+  const addPost = (x, z, gate) => {
+    const key = `${x.toFixed(3)},${z.toFixed(3)}`;
+    posts.set(key, { x, z, gate: gate || posts.get(key)?.gate || false });
+  };
+
+  const addRun = (axis, fixed, from, to, bays, skipBay = -1) => {
+    const step = (to - from) / bays;
+    const place = (along, y) => (axis === "x" ? [along, y, fixed] : [fixed, y, along]);
+    const size = (length, height, thickness) =>
+      (axis === "x" ? [length, height, thickness] : [thickness, height, length]);
+    const spans = skipBay < 0 ? [[0, bays]] : [[0, skipBay], [skipBay + 1, bays]];
+
+    for (let b = 0; b <= bays; b += 1) {
+      const along = from + step * b;
+      const [x, , z] = place(along, 0);
+      addPost(x, z, b === skipBay || b === skipBay + 1);
+    }
+
+    spans.forEach(([first, last]) => {
+      const center = from + step * (first + last) / 2;
+      const length = step * (last - first);
+      box(ctx, "fence", size(length, .26, .22), place(center, y0 + .13), m.concreteDark, 0, .34, { ...shared, axis });
+      box(ctx, "fence", size(length, .07, .17), place(center, y0 + .925), m.plasterDark, .62, .94, { ...shared, axis });
+
+      for (let b = first; b < last; b += 1) {
+        const panel = box(
+          ctx, "fence", size(step - .16, .64, .09), place(from + step * (b + .5), y0 + .57),
+          m.concrete, .3 + b * .025, .72 + b * .025, shared
+        );
+        if (!ctx.low) outline(panel, 0x55534f, .16);
+      }
+    });
+  };
+
+  addRun("x", -halfZ, -halfX, halfX, baysX);
+  addRun("x", halfZ, -halfX, halfX, baysX, gateBay);
+  addRun("z", -halfX, -halfZ, halfZ, baysZ);
+  addRun("z", halfX, -halfZ, halfZ, baysZ);
+
+  posts.forEach(({ x, z, gate }) => {
+    const width = gate ? .28 : .2;
+    const height = gate ? 1.3 : 1.12;
+    const post = box(ctx, "fence", [width, height, width], [x, y0 + height / 2, z], m.concrete, .1, .56, shared);
+    if (!ctx.low) outline(post, 0x55534f, .18);
+    box(ctx, "fence", [width + .08, .06, width + .08], [x, y0 + height + .03, z], m.plasterDark, .7, 1, { ...shared, axis: "all" });
+  });
+}
+
 function addRoofTiles(ctx) {
   const rows = ctx.quality.roofRows || (ctx.low ? 7 : 12);
   const cols = ctx.quality.roofCols || (ctx.low ? 10 : 16);
@@ -284,11 +349,12 @@ export function addFinish(ctx, xs, zs) {
     axis:"x",tags:["concrete","shell"]
   });
 
+  // Terrace railing: part of the finished house, not the "Ograde" service.
   for(let x=-1.45;x<=1.45;x+=.72) {
-    box(ctx,"fence",[.045,.68,.045],[x,2.51,2.05],m.steel,.89,.97,{tags:["fence"]});
+    box(ctx,"details",[.045,.68,.045],[x,2.51,2.05],m.steel,.89,.97,{tags:["shell"]});
   }
-  box(ctx,"fence",[3.05,.055,.055],[0,2.84,2.05],m.steel,.90,.98,{
-    axis:"x",tags:["fence"]
+  box(ctx,"details",[3.05,.055,.055],[0,2.84,2.05],m.steel,.90,.98,{
+    axis:"x",tags:["shell"]
   });
 
   box(ctx,"details",[1.55,.18,.74],[.02,-.95,2.06],m.concrete,.86,.93,{
@@ -298,12 +364,7 @@ export function addFinish(ctx, xs, zs) {
     axis:"z",tags:["prep","concrete"]
   });
 
-  [-3.2,3.2].forEach((x)=>
-    box(ctx,"fence",[.12,1.05,.12],[x,-.88,2.38],m.steel,.91,.98,{tags:["fence"]})
-  );
-  box(ctx,"fence",[6.4,.065,.065],[0,-.43,2.38],m.steel,.92,.99,{
-    axis:"x",tags:["fence"]
-  });
+  addConcreteFence(ctx);
 
   const scaffoldXs=ctx.low?[-2.8,0,2.8]:[-3,-1.5,0,1.5,3];
   scaffoldXs.forEach((x,i)=>

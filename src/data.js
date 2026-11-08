@@ -1,7 +1,15 @@
-import grubaGradnjaImage from "../Modern House Rising Above the Waterfront.png";
-import temeljiBetonImage from "../Golden-Hour Foundation Framework (1).png";
-import zidanjeImage from "../Golden-Hour Bricklaying at Sunset.png";
-import krovoviImage from "../5ba0da87-a3c3-417b-b3fe-469faa0a0071.png";
+const projectImageFiles = import.meta.glob("./assets/projects/*.webp", { eager: true, import: "default" });
+
+function responsiveImage(name, width, height) {
+  const urlFor = (size) => projectImageFiles[`./assets/projects/${name}-${size}.webp`];
+  return {
+    image: urlFor(1280),
+    srcset: [640, 960, 1280, width].map((size) => `${urlFor(size)} ${size}w`).join(", "),
+    fallback: urlFor(960),
+    width,
+    height
+  };
+}
 
 export const PHONE = "+38267058382";
 export const DISPLAY_PHONE = "+382 67 058 382";
@@ -12,50 +20,42 @@ export const projects = [
     number: "01",
     title: "Gruba gradnja",
     category: "Konstrukcija",
-    image: grubaGradnjaImage,
-    provider: "local",
+    ...responsiveImage("gruba-gradnja", 1448, 1086),
     position: "center 50%",
-    fallback: grubaGradnjaImage,
     text: "Temelji, ploče, zidovi i kompletna nosiva konstrukcija objekta."
   },
   {
     number: "02",
     title: "Temelji i beton",
     category: "Betonski radovi",
-    image: temeljiBetonImage,
-    provider: "local",
+    ...responsiveImage("temelji-beton", 1672, 941),
     position: "center 54%",
-    fallback: temeljiBetonImage,
     text: "Priprema, armiranje i betoniranje sa urednom geometrijom i jasnim fazama rada."
   },
   {
     number: "03",
     title: "Zidanje",
     category: "Zidovi",
-    image: zidanjeImage,
-    provider: "local",
+    ...responsiveImage("zidanje", 1672, 941),
     position: "center 50%",
-    fallback: zidanjeImage,
     text: "Nosivi i pregradni zidovi, otvori i priprema za naredne faze objekta."
   },
   {
     number: "04",
     title: "Krovovi",
     category: "Krov",
-    image: krovoviImage,
-    provider: "local",
+    ...responsiveImage("krovovi", 1672, 941),
     position: "center 48%",
-    fallback: krovoviImage,
     text: "Krovna konstrukcija, izolacija, letvanje i završno pokrivanje."
   }
 ];
 
 export const services = [
-  { code: "01", key: "shell", title: "Gruba gradnja", text: "Temelji, armatura, beton, ploče i kompletna nosiva konstrukcija.", image: grubaGradnjaImage },
-  { code: "02", key: "foundation", title: "Temelji", text: "Iskop, priprema, armiranje, temeljne trake i temeljna ploča.", image: temeljiBetonImage },
-  { code: "03", key: "concrete", title: "Betonski radovi", text: "Stubovi, grede, ploče i drugi armirano-betonski elementi.", image: temeljiBetonImage },
-  { code: "04", key: "masonry", title: "Zidanje", text: "Nosivi i pregradni zidovi, otvori, nadvoji i priprema za fasadu.", image: zidanjeImage },
-  { code: "05", key: "roof", title: "Krovovi", text: "Krovna konstrukcija, izolacija, letvanje, opšavi i pokrivanje.", image: krovoviImage },
+  { code: "01", key: "shell", title: "Gruba gradnja", text: "Temelji, armatura, beton, ploče i kompletna nosiva konstrukcija." },
+  { code: "02", key: "foundation", title: "Temelji", text: "Iskop, priprema, armiranje, temeljne trake i temeljna ploča." },
+  { code: "03", key: "concrete", title: "Betonski radovi", text: "Stubovi, grede, ploče i drugi armirano-betonski elementi." },
+  { code: "04", key: "masonry", title: "Zidanje", text: "Nosivi i pregradni zidovi, otvori, nadvoji i priprema za fasadu." },
+  { code: "05", key: "roof", title: "Krovovi", text: "Krovna konstrukcija, izolacija, letvanje, opšavi i pokrivanje." },
   { code: "06", key: "fence", title: "Ograde", text: "Betonske i metalne ograde sa urednim završnim detaljima." },
   { code: "07", key: "plinth", title: "Coklovi", text: "Izrada i završna obrada cokla i donje zone objekta." },
   { code: "08", key: "demolition", title: "Rušenje", text: "Kontrolisano uklanjanje zidova, plafona i postojećih elemenata." },

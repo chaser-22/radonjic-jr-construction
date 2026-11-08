@@ -13,7 +13,6 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preconnect" href="https://images.pexels.com" />
   <style id="loader-critical">
     html.is-loading,html.is-loading body{overflow:hidden}
     #site-loader{position:fixed;inset:0;z-index:9999;display:block;overflow:hidden;background:#0d0e0c;color:#f7f5ef;font-family:Arial,sans-serif;opacity:1;visibility:visible;transition:opacity .32s ease,visibility .32s ease}
@@ -79,7 +78,11 @@
       #site-loader .loader-bar{transition:none}
       #site-loader .loader-bar:after{animation:none}
     }
+    .static-fallback{min-height:100vh;padding:48px 24px;background:#10110f;color:#f7f5ef;font-family:Arial,sans-serif;font-size:18px;line-height:1.5}
+    .static-fallback h1{margin:0 0 12px;font-size:32px;line-height:1.15}
+    .static-fallback a{color:#f2b600}
   </style>
+  <noscript><style>#site-loader{display:none}</style></noscript>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
@@ -135,7 +138,15 @@
     }, 4800);
   </script>
   <a class="skip-link" href="#main">Preskoči na sadržaj</a>
-  <div id="app"></div>
+  <div id="app">
+    <!-- Shown only if the app script cannot run; main.js replaces it. Keep contact details in sync with src/data.js. -->
+    <main class="static-fallback">
+      <h1>Radonjic JR Construction</h1>
+      <p>Od temelja do krova — gruba gradnja, temelji, beton, zidanje, krovovi, ograde i pripremni radovi.</p>
+      <p><a href="tel:+38267058382">+382 67 058 382</a></p>
+      <p><a href="mailto:radonjic001@gmail.com">radonjic001@gmail.com</a></p>
+    </main>
+  </div>
   <script type="module" src="/src/main.js"></script>
 </body>
 </html>

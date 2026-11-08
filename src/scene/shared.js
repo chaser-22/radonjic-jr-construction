@@ -231,6 +231,8 @@ export function registerPart(ctx, group, mesh, start, end, o={}) {
     demolitionPart: !!(focusMask & FOCUS_BITS.demolition),
     fadeStart: o.fadeStart ?? null,
     fadeEnd: o.fadeEnd ?? null,
+    revealWith: o.revealWith ?? null,
+    lastReveal: -1,
     opacity: o.opacity ?? 1,
     baseColor: !Array.isArray(mesh.material) && mesh.material?.color
       ? mesh.material.color.clone()
@@ -287,14 +289,18 @@ export function outlineGeometry(mesh, geometry, color=0x4b4a45, opacity=.14) {
 
 export function updatePart(mesh, build, focusWeights, xray, demolition) {
   const d = mesh.userData;
-  let amount = smooth(d.start, d.end, build);
+  // A revealWith part exists only while that service is selected: its start/end
+  // span the service's focus weight instead of the construction timeline.
+  const reveal = d.revealWith ? (focusWeights?.[d.revealWith] || 0) : 1;
+  let amount = smooth(d.start, d.end, d.revealWith ? reveal : build);
   if (d.fadeStart !== null) amount *= 1 - smooth(d.fadeStart, d.fadeEnd, build);
 
   mesh.visible = amount > .002;
 
   const transformDirty =
     Math.abs(build - d.lastBuild) > .00045 ||
-    Math.abs(demolition - d.lastDemolition) > .00045;
+    Math.abs(demolition - d.lastDemolition) > .00045 ||
+    Math.abs(reveal - d.lastReveal) > .00045;
 
   if (transformDirty) {
     mesh.position.copy(d.basePosition);
@@ -324,6 +330,7 @@ export function updatePart(mesh, build, focusWeights, xray, demolition) {
 
     d.lastBuild = build;
     d.lastDemolition = demolition;
+    d.lastReveal = reveal;
   }
 
   let opacity = amount * d.opacity;
@@ -368,7 +375,9 @@ export function updatePart(mesh, build, focusWeights, xray, demolition) {
   if (mask & FOCUS_BITS.prep) highlight = Math.max(highlight, prep);
 
   if (maxFocus > .001) {
-    opacity *= 1 - maxFocus * .92 + highlight * .92;
+    // The fence only makes sense around the house, so the house dims less for it.
+    const dimming = .92 - fence * .5;
+    opacity *= 1 - maxFocus * dimming + highlight * dimming;
   }
 
   if (demolition > 0 && d.demolitionPart) {

@@ -8,6 +8,14 @@ const smootherStep01 = (value) => {
   return t * t * t * (t * (t * 6 - 15) + 10);
 };
 
+// The concrete fence is wider than the house, so the model pulls back while it is shown.
+const FENCE_FRAMING = {
+  desktop: { x: .1, y: .42, scale: .82 },
+  tablet: { x: .05, y: .35, scale: .64 },
+  smallDesktop: { x: -.55, y: .5, scale: .7 },
+  phone: { x: 0, y: .3, scale: .78 }
+};
+
 function chooseQuality() {
   const width = window.innerWidth;
   const memory = navigator.deviceMemory || 8;
@@ -318,7 +326,8 @@ export function createHouseScene(layer, canvas) {
       const key = motionKeys[i];
       target[key] = lerp(a[key], b[key], t);
     }
-    target.section = a.name;
+    // Opening Usluge from a link stops just short of its anchor; treat that as arrived.
+    target.section = b.name === "services" && t >= .5 ? b.name : a.name;
     wakeRenderer();
   }
 
@@ -569,7 +578,8 @@ export function createHouseScene(layer, canvas) {
         serviceWeights.prep
       );
       const roofMatch = Math.max(serviceWeights.roof, serviceWeights.shell);
-      const roofFocusFactor = 1 - maxServiceFocus * .92 + roofMatch * .92;
+      const roofDimming = .92 - serviceWeights.fence * .5;
+      const roofFocusFactor = 1 - maxServiceFocus * roofDimming + roofMatch * roofDimming;
       let tileOpacity = tileBuild * roofFocusFactor;
       if (state.xray > .02) tileOpacity *= 1 - state.xray * .30;
 
@@ -596,23 +606,25 @@ export function createHouseScene(layer, canvas) {
     extra.ghostFillMat.opacity = .008 + ghost * .035 + introGlow * .022;
     warm.intensity = baseWarmIntensity * (1 + introGlow * .72);
 
+    const layout = currentLayout();
+    const phone = layout === "phone";
+    const fenceWeight = serviceWeights.fence;
+    const fenceFrame = FENCE_FRAMING[layout === "desktop" && window.innerWidth <= 1180 ? "smallDesktop" : layout];
+
     world.position.set(
-      state.x + state.pointerX * .07,
-      state.y - state.pointerY * .025 + introLift,
+      state.x + state.pointerX * .07 + fenceFrame.x * fenceWeight,
+      state.y - state.pointerY * .025 + introLift + fenceFrame.y * fenceWeight,
       0
     );
-    world.scale.setScalar(state.scale * introScale);
+    world.scale.setScalar(state.scale * introScale * (1 + (fenceFrame.scale - 1) * fenceWeight));
     world.rotation.y = state.rotation + state.pointerX * .022 + introTurn;
     world.rotation.x = -state.pointerY * .010 + introTilt;
 
-    const layout = currentLayout();
-    const phone = layout === "phone";
     const shellWeight = serviceWeights.shell;
     const foundationWeight = serviceWeights.foundation;
     const concreteWeight = serviceWeights.concrete;
     const masonryWeight = serviceWeights.masonry;
     const roofWeight = serviceWeights.roof;
-    const fenceWeight = serviceWeights.fence;
     const plinthWeight = serviceWeights.plinth;
     const demolitionWeight = serviceWeights.demolition;
     const prepWeight = serviceWeights.prep;
